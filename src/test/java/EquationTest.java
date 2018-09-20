@@ -92,4 +92,16 @@ public class EquationTest {
         Assert.assertEquals(10., sum.getValueAt(2),0.0d);
         Assert.assertEquals(3., sum.getRightValue(),0.0d);
     }
+
+    @Test
+    public void testNormalize(){
+        Equation eq = Equation.of(new double[]{1., 2., 3.}, Relation.GREATER_OR_EQUAL, 3.);
+        Equation normEq = eq.normalize();
+        Assert.assertEquals(-1., normEq.getValueAt(0), 0.0d);
+        Assert.assertEquals(-2., normEq.getValueAt(1), 0.0d);
+        Assert.assertEquals(-3., normEq.getValueAt(2), 0.0d);
+        Assert.assertEquals(Relation.LESS_OR_EQUAL, normEq.getRelation());
+        Assert.assertEquals(-3., normEq.getRightValue(), 0.0d);
+    }
+
 }

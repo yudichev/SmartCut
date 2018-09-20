@@ -68,6 +68,14 @@ public class Equation {
         return new Equation(lvalues,rightValue,this.relation);
     }
 
+    public Equation normalize(){
+        if(Relation.GREATER_OR_EQUAL.equals(this.relation)){
+            return this.applyFactor(-1.);
+        } else {
+            return this.copy();
+        }
+    }
+
     public static Equation of(double[] values, Relation rel, double rightValue){
         double[] leftValues = copyOf(values,values.length);
         return new Equation(leftValues, rightValue, rel);
