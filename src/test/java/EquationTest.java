@@ -16,7 +16,7 @@ public class EquationTest {
     @Before
     public void prepareEquations(){
         _equation1 = Equation.of(new double[]{1., 2., 3.}, Relation.EQUAL, 0);
-        _equation2 = Equation.of(new double[]{4., 5., 7.}, Relation.GREATER_THEN, 0);
+        _equation2 = Equation.of(new double[]{4., 5., 7.}, Relation.GREATER_OR_EQUAL,0);
         _equationSet = EquationSet.create();
         _equationSet.addEquation(_equation1);
         _equationSet.addEquation(_equation2);
@@ -35,7 +35,7 @@ public class EquationTest {
         Assert.assertEquals(4., _equation2.getValueAt(0), 0.0d);
         Assert.assertEquals(5., _equation2.getValueAt(1), 0.0d);
         Assert.assertEquals(7., _equation2.getValueAt(2), 0.0d);
-        Assert.assertEquals(Relation.GREATER_THEN, _equation2.getRelation());
+        Assert.assertEquals(Relation.GREATER_OR_EQUAL, _equation2.getRelation());
         Assert.assertEquals(0., _equation1.getRightValue(), 0.0d);
 
         Assert.assertEquals(_equationSet.getNumberOfEquations(), 2);
@@ -48,25 +48,25 @@ public class EquationTest {
         Assert.assertEquals(4., eq.getValueAt(0),0.0d);
         Assert.assertEquals(5., eq.getValueAt(1),0.0d);
         Assert.assertEquals(7., eq.getValueAt(2),0.0d);
-        Assert.assertEquals(Relation.GREATER_THEN, eq.getRelation());
+        Assert.assertEquals(Relation.GREATER_OR_EQUAL, eq.getRelation());
 
         Equation feq = eq.applyFactor(7.);
         Assert.assertEquals(4.*7., feq.getValueAt(0),0.0d);
         Assert.assertEquals(5.*7., feq.getValueAt(1),0.0d);
         Assert.assertEquals(7.*7., feq.getValueAt(2),0.0d);
-        Assert.assertEquals(Relation.GREATER_THEN, eq.getRelation());
+        Assert.assertEquals(Relation.GREATER_OR_EQUAL, eq.getRelation());
 
         feq = eq.applyFactor(-3.);
         Assert.assertEquals(4.*(-3.), feq.getValueAt(0),0.0d);
         Assert.assertEquals(5.*(-3.), feq.getValueAt(1),0.0d);
         Assert.assertEquals(7.*(-3.), feq.getValueAt(2),0.0d);
-        Assert.assertEquals(Relation.LESS_THEN, feq.getRelation());
+        Assert.assertEquals(Relation.LESS_OR_EQUAL, feq.getRelation());
 
         feq = eq.copy();
         Assert.assertEquals(4., feq.getValueAt(0),0.0d);
         Assert.assertEquals(5., feq.getValueAt(1),0.0d);
         Assert.assertEquals(7., feq.getValueAt(2),0.0d);
-        Assert.assertEquals(Relation.GREATER_THEN, feq.getRelation());
+        Assert.assertEquals(Relation.GREATER_OR_EQUAL, feq.getRelation());
 
         EquationSet set2 = _equationSet.swapEquations(0,1);
         Equation eq2 = set2.getEquation(0);
