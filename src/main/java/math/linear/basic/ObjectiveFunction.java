@@ -6,6 +6,8 @@ package math.linear.basic;
  * of HireRight, Inc. Use is subject to license terms.
  */
 
+import java.util.stream.DoubleStream;
+
 public class ObjectiveFunction
 {
 	private static String ERROR_INDEX_OUT_OF_BOUNDS = "Index is out of bounds.";
@@ -35,6 +37,25 @@ public class ObjectiveFunction
 			return this.type;
 		}
 
+	public boolean isOptimal(){
+		return DoubleStream.of(this.values).noneMatch(val -> val > 0);
+	}
+
+	public ObjectiveFunction copy(){
+		double[] newValues = new double[values.length];
+		System.arraycopy(this.values,0 ,newValues ,0, values.length);
+		return new ObjectiveFunction(newValues, this.type);
+	}
+
+	public static ObjectiveFunction create(double[] values, ObjectiveFunctionType type){
+		if(values.length == 0){
+			throw new RuntimeException(ERROR_ZERO_LENGTH);
+		}
+		double[] valuesCopy = new double[values.length];
+		System.arraycopy(values, 0, valuesCopy, 0, values.length);
+		return new ObjectiveFunction(values, type);
+	}
+
 	private void calculateIndexOfMaximum(){
 		double maxValue = values[0];
 		for(int k = 1; k < values.length; k++){
@@ -53,20 +74,5 @@ public class ObjectiveFunction
 				this.indexOfMaximumAbs = k;
 			}
 		}
-	}
-
-	public ObjectiveFunction copy(){
-		double[] newValues = new double[values.length];
-		System.arraycopy(this.values,0 ,newValues ,0, values.length);
-		return new ObjectiveFunction(newValues, this.type);
-	}
-
-	public static ObjectiveFunction create(double[] values, ObjectiveFunctionType type){
-		if(values.length == 0){
-			throw new RuntimeException(ERROR_ZERO_LENGTH);
-		}
-		double[] valuesCopy = new double[values.length];
-		System.arraycopy(values, 0, valuesCopy, 0, values.length);
-		return new ObjectiveFunction(values, type);
 	}
 }
