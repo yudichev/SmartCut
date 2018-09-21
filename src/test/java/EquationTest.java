@@ -1,22 +1,21 @@
+import math.linear.basic.Equation;
 import math.linear.basic.EquationSet;
 import math.linear.basic.Relation;
-import math.linear.basic.Equation;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import sun.jvm.hotspot.utilities.AssertionFailure;
-
-import java.util.Arrays;
 
 public class EquationTest {
     private Equation _equation1;
     private Equation _equation2;
+    private Equation _equation3;
     private EquationSet _equationSet;
 
     @Before
     public void prepareEquations(){
         _equation1 = Equation.of(new double[]{1., 2., 3.}, Relation.EQUAL, 0);
         _equation2 = Equation.of(new double[]{4., 5., 7.}, Relation.GREATER_OR_EQUAL,0);
+        _equation3 = Equation.of(new double[]{4., 5., 7.}, Relation.EQUAL,3);
         _equationSet = EquationSet.create();
         _equationSet.addEquation(_equation1);
         _equationSet.addEquation(_equation2);
@@ -86,11 +85,18 @@ public class EquationTest {
 
     @Test
     public void testAdd(){
-        Equation sum = _equation1.add(_equation2);
+        Equation sum = _equation1.add(_equation3);
         Assert.assertEquals(5., sum.getValueAt(0),0.0d);
         Assert.assertEquals(7., sum.getValueAt(1),0.0d);
         Assert.assertEquals(10., sum.getValueAt(2),0.0d);
         Assert.assertEquals(3., sum.getRightValue(),0.0d);
+
+        try{
+            sum = _equation1.add(_equation2);
+            Assert.fail("Exception must be thrown here.");
+        } catch(RuntimeException ex){
+            Assert.assertEquals("Equations with different relation cannot be combined.",ex.getMessage());
+        }
     }
 
     @Test
