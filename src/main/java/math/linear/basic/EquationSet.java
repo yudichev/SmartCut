@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EquationSet {
+    private static String ERORR_LENGTH_MISMATCH = "Equation length mismatches the set.";
+
     private List<Equation> equationList;
     private int rowSize = 0;
 
@@ -15,7 +17,7 @@ public class EquationSet {
         if(equationList.size() == 0){
             rowSize = equation.getLength();
         } else if(rowSize != equation.getLength()){
-            throw new RuntimeException("Equation length mismatches the set.");
+            throw new RuntimeException(ERORR_LENGTH_MISMATCH);
         }
         this.equationList.add(equation);
     }

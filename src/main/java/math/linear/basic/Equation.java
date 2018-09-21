@@ -5,6 +5,10 @@ import java.util.Arrays;
 import static java.util.Arrays.*;
 
 public class Equation {
+    private static String ERROR_OUT_OF_BOUNDS = "Index is out of bounds.";
+    private static String ERROR_RELATION_MISMATCH = "Equations with different relation cannot be combined.";
+    private static String ERROR_LENGTH_MISMATCH = "Equations of different length cannot be combined";
+
     private int length;
     private double[] leftValues;
     private double rightValue;
@@ -29,7 +33,7 @@ public class Equation {
         if(n >= 0 && n < length){
             return leftValues[n];
         } else {
-            throw new RuntimeException("Index is out of bounds. ");
+            throw new RuntimeException(ERROR_OUT_OF_BOUNDS);
         }
     }
 
@@ -50,10 +54,10 @@ public class Equation {
 
     public final Equation add(Equation eq){
         if(!this.getRelation().equals(eq.getRelation())){
-            throw new RuntimeException("Equations with different relation cannot be combined.");
+            throw new RuntimeException(ERROR_RELATION_MISMATCH);
         }
         if(this.getLength() != eq.getLength()){
-            throw new RuntimeException(("Equations of different length cannot be combined"));
+            throw new RuntimeException((ERROR_LENGTH_MISMATCH));
         }
         double[] feq = new double[this.getLength()];
         for(int k = 0; k < this.length; k++){
