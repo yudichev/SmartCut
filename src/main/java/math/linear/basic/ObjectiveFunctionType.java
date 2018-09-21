@@ -6,8 +6,8 @@ package math.linear.basic;
  * of HireRight, Inc. Use is subject to license terms.
  */
 
-public enum FunctionalType
+public enum ObjectiveFunctionType
 {
-		MAXIMUM,
-		MINIMUM
+	MAXIMUM,
+	MINIMUM
 }
