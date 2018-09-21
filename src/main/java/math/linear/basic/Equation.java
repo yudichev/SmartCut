@@ -29,7 +29,7 @@ public class Equation {
         if(n >= 0 && n < length){
             return leftValues[n];
         } else {
-            throw new RuntimeException(this.getClass().getName() + ": index out of array. ");
+            throw new RuntimeException("Index is out of bounds. ");
         }
     }
 
