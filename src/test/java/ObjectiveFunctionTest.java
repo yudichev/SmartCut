@@ -15,6 +15,8 @@ public class ObjectiveFunctionTest {
         Assert.assertEquals(fun1.getType(),ObjectiveFunctionType.MAXIMUM);
 
         Assert.assertFalse("Is optimal", fun1.isOptimal());
+
+        Assert.assertEquals(2, fun1.getIndexOfMaximum());
     }
 
     @Test
@@ -34,5 +36,19 @@ public class ObjectiveFunctionTest {
         Assert.assertEquals(0., fun2.getValueAt(0), 0.0d);
         Assert.assertEquals(4., fun2.getValueAt(1), 0.0d);
         Assert.assertEquals(10., fun2.getValueAt(2), 0.0d);
+
+        Assert.assertEquals(2, fun2.getIndexOfMaximumAbs());
+    }
+
+    @Test
+    public void testCopy(){
+        double[] val1 = new double[] {1., 2., 3.};
+        ObjectiveFunction fun1 = ObjectiveFunction.create(val1, ObjectiveFunctionType.MINIMUM);
+        ObjectiveFunction fun2 = fun1.copy();
+        Assert.assertEquals(1., fun1.getValueAt(0), 0.0d);
+        Assert.assertEquals(2., fun1.getValueAt(1), 0.0d);
+        Assert.assertEquals(3., fun1.getValueAt(2), 0.0d);
+        Assert.assertArrayEquals(val1,fun1.getValues(),0.0d);
+        Assert.assertEquals(fun1.getType(),ObjectiveFunctionType.MINIMUM);
     }
 }

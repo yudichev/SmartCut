@@ -73,6 +73,14 @@ public class ObjectiveFunction
 		}
 	}
 
+	public int getIndexOfMaximum(){
+		return this.indexOfMaximum;
+	}
+
+	public int getIndexOfMaximumAbs(){
+		return this.indexOfMaximumAbs;
+	}
+
 	public ObjectiveFunction copy(){
 		double[] newValues = new double[values.length];
 		System.arraycopy(this.values,0 ,newValues ,0, values.length);
