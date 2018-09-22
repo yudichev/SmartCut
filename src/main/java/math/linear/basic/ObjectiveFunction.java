@@ -12,6 +12,7 @@ public class ObjectiveFunction
 {
 	private static String ERROR_INDEX_OUT_OF_BOUNDS = "Index is out of bounds.";
 	private static String ERROR_ZERO_LENGTH = "Cannot create functional with zero length.";
+	private static String ERROR_LENGTH_MISMATCH = "Objective function's length differs from the length of the array being added.";
 
 	private double[] values;
 	private int indexOfMaximum = 0;
@@ -33,12 +34,43 @@ public class ObjectiveFunction
 		}
 	}
 
+	public double[] getValues(){
+		double[] newValues = new double[values.length];
+		System.arraycopy(this.values, 0, newValues, 0, this.values.length);
+		return newValues;
+	}
+
 	public ObjectiveFunctionType getType() {
 			return this.type;
 		}
 
 	public boolean isOptimal(){
-		return DoubleStream.of(this.values).noneMatch(val -> val > 0);
+		if(ObjectiveFunctionType.MAXIMUM.equals(this.type)) {
+			return DoubleStream.of(this.values).noneMatch(val -> val > 0);
+		} else {
+			return DoubleStream.of(this.values).noneMatch(val -> val < 0);
+		}
+	}
+
+	public ObjectiveFunction add(double[] values){
+		if(this.values.length != values.length)
+			throw  new RuntimeException(ERROR_LENGTH_MISMATCH);
+		double[] sum = new double[this.values.length];
+		for(int k = 0; k < this.values.length; k++){
+			sum[k] = values[k] + this.values[k];
+		}
+		return create(sum, this.type);
+	}
+
+	public ObjectiveFunction getCanonical(){
+		if(ObjectiveFunctionType.MAXIMUM.equals(this.type)){
+			return this;
+		} else {
+			double[] val = new double[this.values.length];
+			for(int k = 0; k <this.values.length; k++)
+				val[k] = this.values[k] * (-1.);
+			return new ObjectiveFunction(val,ObjectiveFunctionType.MAXIMUM);
+		}
 	}
 
 	public ObjectiveFunction copy(){
