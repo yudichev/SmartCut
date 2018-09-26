@@ -13,4 +13,16 @@ public enum Relation {
             default: return EQUAL;
         }
     }
+
+    public boolean isEqual(){
+        return this.equals(EQUAL);
+    }
+
+    public boolean isGreaterOrEqual(){
+        return this.equals(GREATER_OR_EQUAL);
+    }
+
+    public boolean isLessOrEqual(){
+        return this.equals(LESS_OR_EQUAL);
+    }
 }

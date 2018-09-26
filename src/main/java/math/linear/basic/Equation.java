@@ -14,6 +14,8 @@ public class Equation {
     private double rightValue;
     private Relation relation;
 
+    private Equation(){};
+
     private Equation(double[] leftValues, double rightValue, Relation relation){
      this.leftValues = leftValues;
      this.rightValue = rightValue;

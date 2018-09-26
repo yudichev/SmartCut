@@ -2,6 +2,7 @@ package math.linear.basic;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class EquationSet {
     private static String ERORR_LENGTH_MISMATCH = "Equation length mismatches the set.";
@@ -51,6 +52,10 @@ public class EquationSet {
             newEquationSet.addEquation(Equation.of(lvalues,eq.getRelation(),eq.getRightValue()));
         }
         return newEquationSet;
+    }
+
+    public Stream<Equation> stream(){
+        return this.equationList.stream();
     }
 
     public static EquationSet create(){
