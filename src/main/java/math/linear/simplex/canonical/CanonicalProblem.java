@@ -5,13 +5,13 @@ import math.linear.basic.EquationSet;
 import math.linear.basic.Relation;
 
 public class CanonicalProblem {
-    private EquationSet originalSet;
+    private EquationSet equationSet;
 
     private CanonicalProblem(){
     }
 
     private CanonicalProblem(EquationSet set){
-        this.originalSet = set;
+        this.equationSet = set;
     }
 
 
@@ -25,6 +25,10 @@ public class CanonicalProblem {
             newSet.addEquation(equation);
         }
         return new CanonicalProblem(newSet);
+    }
+
+    public EquationSet getEquationSet(){
+        return this.equationSet;
     }
 
     private static Equation extend(Equation srcEquation, int extLength, int rowNumber){
