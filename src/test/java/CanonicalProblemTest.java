@@ -18,5 +18,8 @@ public class CanonicalProblemTest {
         EquationSet set2 = problem.getEquationSet();
         Assert.assertArrayEquals(new double[]{-1.,-2.,-1.,0},set2.getEquation(0).getLeftValues(),0.0);
         Assert.assertArrayEquals(new double[]{5.,4.,0.,1},set2.getEquation(1).getLeftValues(),0.0);
+        Assert.assertTrue(set2.getEquation(0).getRelation().isEqual());
+        Assert.assertTrue(set2.getEquation(1).getRelation().isEqual());
+        Assert.assertEquals(set2.getEquation(0).getRightValue(),-5.,0.0d);
     }
 }
