@@ -2,20 +2,23 @@ package math.linear.simplex.canonical;
 
 import math.linear.basic.Equation;
 import math.linear.basic.EquationSet;
+import math.linear.basic.ObjectiveFunction;
 import math.linear.basic.Relation;
 
 public class CanonicalProblem {
     private EquationSet equationSet;
+    private ObjectiveFunction objfunc;
 
     private CanonicalProblem(){
     }
 
-    private CanonicalProblem(EquationSet set){
+    private CanonicalProblem(EquationSet set, ObjectiveFunction objfunc){
         this.equationSet = set;
+        this.objfunc = objfunc;
     }
 
 
-    public static CanonicalProblem createFromEquationSet(EquationSet eqset){
+    public static CanonicalProblem create(EquationSet eqset, ObjectiveFunction func){
         int inqualityNumber = (int) eqset.stream().filter(equation -> !equation.getRelation().equals(Relation.EQUAL)).count();
 
         EquationSet newSet = EquationSet.create();
@@ -24,12 +27,14 @@ public class CanonicalProblem {
             equation = extend(equation, inqualityNumber, k);
             newSet.addEquation(equation);
         }
-        return new CanonicalProblem(newSet);
+        return new CanonicalProblem(newSet, func.getCanonical());
     }
 
     public EquationSet getEquationSet(){
         return this.equationSet;
     }
+
+    public ObjectiveFunction getObjectiveFunction(){return this.objfunc;}
 
     private static Equation extend(Equation srcEquation, int extLength, int rowNumber){
         double[] lvalues = srcEquation.getLeftValues();
@@ -42,5 +47,28 @@ public class CanonicalProblem {
             extLvalues[srcLength + rowNumber] = -1.0d;
         }
         return Equation.of(extLvalues, Relation.EQUAL, srcEquation.getRightValue());
+    }
+
+
+    public int getRowIndexForIteration(int columnIdx){
+        int rowIdx = 0;
+        double maxRate = this.equationSet.getEquation(0).getValueAt(columnIdx);
+
+
+        int columnSize = this.equationSet.getNumberOfEquations();
+        for(int k = 0; k < columnSize; k++){
+            Equation eq = this.equationSet.getEquation(k);
+            double val = eq.getValueAt(columnIdx);
+            double rval = eq.getRightValue();
+            if(rval > 0. && val >= 0.){
+                double rate = rval / val;
+                if(rate > maxRate){
+                    maxRate = rate;
+                    rowIdx = k;
+                }
+            }
+        }
+
+        return rowIdx;
     }
 }
