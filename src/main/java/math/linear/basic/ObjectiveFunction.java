@@ -56,6 +56,7 @@ public class ObjectiveFunction
 		return create(sum, this.type);
 	}
 
+
 	public ObjectiveFunction getCanonical(){
 		if(ObjectiveFunctionType.MAXIMUM.equals(this.type)){
 			return this;

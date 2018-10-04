@@ -54,7 +54,6 @@ public class CanonicalProblem {
         int rowIdx = 0;
         double maxRate = this.equationSet.getEquation(0).getValueAt(columnIdx);
 
-
         int columnSize = this.equationSet.getNumberOfEquations();
         for(int k = 0; k < columnSize; k++){
             Equation eq = this.equationSet.getEquation(k);
@@ -70,5 +69,37 @@ public class CanonicalProblem {
         }
 
         return rowIdx;
+    }
+
+    public CanonicalProblem gaussianExclusion(int row, int col){
+        Equation baseEquation = this.getEquationSet().getEquation(row);
+        double factor = baseEquation.getValueAt(col);
+        if(factor == 0.) throw new RuntimeException("Divisiona by zero");
+
+        baseEquation = baseEquation.applyFactor(1./factor);
+
+        EquationSet newSet = EquationSet.create();
+
+        for(int k = 0; k < this.getEquationSet().getNumberOfEquations(); k++){
+            if(k == row){
+                newSet.addEquation(baseEquation);
+            }
+            else
+            {
+                Equation eq = this.getEquationSet().getEquation(row);
+                double coeff = eq.getValueAt(col);
+                if(coeff != 0.){
+                    newSet.addEquation(eq.add(baseEquation.applyFactor(-1.*coeff)));
+                }
+            }
+        }
+
+        double objfunccoeff = this.getObjectiveFunction().getValueAt(col);
+        ObjectiveFunction objfunc = this.getObjectiveFunction();
+        if(objfunccoeff != 0.){
+            objfunc = this.getObjectiveFunction().add(baseEquation.applyFactor(objfunccoeff).getLeftValues());
+        }
+
+        return CanonicalProblem.create(newSet,objfunc);
     }
 }
