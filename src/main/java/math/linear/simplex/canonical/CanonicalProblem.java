@@ -50,7 +50,7 @@ public class CanonicalProblem {
     }
 
 
-    public int getRowIndexForIteration(int columnIdx){
+    public int getPivotRowIdx(int columnIdx){
         int rowIdx = 0;
         double maxRate = this.equationSet.getEquation(0).getValueAt(columnIdx);
 
@@ -59,9 +59,10 @@ public class CanonicalProblem {
             Equation eq = this.equationSet.getEquation(k);
             double val = eq.getValueAt(columnIdx);
             double rval = eq.getRightValue();
-            if(rval > 0. && val >= 0.){
-                double rate = rval / val;
-                if(rate > maxRate){
+            if((Double.compare(rval, 0.) > 0 && Double.compare(val , 0.) > 0) ||
+                    (Double.compare(rval , 0) < 0 && Double.compare(val , 0.) < 0)){
+                double rate = val / rval;
+                if(Double.compare(rate , maxRate) > 0){
                     maxRate = rate;
                     rowIdx = k;
                 }
@@ -88,7 +89,7 @@ public class CanonicalProblem {
             {
                 Equation eq = this.getEquationSet().getEquation(row);
                 double coeff = eq.getValueAt(col);
-                if(coeff != 0.){
+                if(Double.compare(coeff, 0.d) != 0){
                     newSet.addEquation(eq.add(baseEquation.applyFactor(-1.*coeff)));
                 }
             }
@@ -96,7 +97,7 @@ public class CanonicalProblem {
 
         double objfunccoeff = this.getObjectiveFunction().getValueAt(col);
         ObjectiveFunction objfunc = this.getObjectiveFunction();
-        if(objfunccoeff != 0.){
+        if(Double.compare(objfunccoeff, 0.d) != 0){
             objfunc = this.getObjectiveFunction().add(baseEquation.applyFactor(objfunccoeff).getLeftValues());
         }
 
