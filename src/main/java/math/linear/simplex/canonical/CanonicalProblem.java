@@ -5,6 +5,8 @@ import math.linear.basic.EquationSet;
 import math.linear.basic.ObjectiveFunction;
 import math.linear.basic.Relation;
 
+import java.util.Arrays;
+
 public class CanonicalProblem {
     private EquationSet equationSet;
     private ObjectiveFunction objfunc;
@@ -21,13 +23,16 @@ public class CanonicalProblem {
     public static CanonicalProblem create(EquationSet eqset, ObjectiveFunction func){
         int inqualityNumber = (int) eqset.stream().filter(equation -> !equation.getRelation().equals(Relation.EQUAL)).count();
 
+        if (inqualityNumber == 0)
+            return new CanonicalProblem(eqset,func);
+
         EquationSet newSet = EquationSet.create();
         for (int k = 0; k < eqset.getNumberOfEquations(); k++){
             Equation equation = eqset.getEquation(k).normalize();
             equation = extend(equation, inqualityNumber, k);
             newSet.addEquation(equation);
         }
-        return new CanonicalProblem(newSet, func.getCanonical());
+        return new CanonicalProblem(newSet, extend(func.getCanonical(),inqualityNumber));
     }
 
     public EquationSet getEquationSet(){
@@ -41,12 +46,19 @@ public class CanonicalProblem {
         int srcLength = lvalues.length;
         double[] extLvalues = new double[srcLength + extLength];
         System.arraycopy(lvalues,0,extLvalues,0,srcLength);
-        if(Double.compare(srcEquation.getRightValue(),0.0d) > 0){
-            extLvalues[srcLength + rowNumber] = 1.0d;
-        } else {
+        if(srcEquation.getRelation().equals(Relation.GREATER_OR_EQUAL)){
             extLvalues[srcLength + rowNumber] = -1.0d;
+        } else {
+            extLvalues[srcLength + rowNumber] = 1.0d;
         }
         return Equation.of(extLvalues, Relation.EQUAL, srcEquation.getRightValue());
+    }
+
+    private static ObjectiveFunction extend(ObjectiveFunction func, int extLength){
+        double[] newFuncCoeff = new double[func.getValues().length + extLength];
+        Arrays.fill(newFuncCoeff, 0.0d);
+        System.arraycopy(func.getValues(),0,newFuncCoeff,0,func.getValues().length);
+        return ObjectiveFunction.create(newFuncCoeff,func.getType());
     }
 
 
@@ -87,7 +99,7 @@ public class CanonicalProblem {
             }
             else
             {
-                Equation eq = this.getEquationSet().getEquation(row);
+                Equation eq = this.getEquationSet().getEquation(k);
                 double coeff = eq.getValueAt(col);
                 if(Double.compare(coeff, 0.d) != 0){
                     newSet.addEquation(eq.add(baseEquation.applyFactor(-1.*coeff)));
