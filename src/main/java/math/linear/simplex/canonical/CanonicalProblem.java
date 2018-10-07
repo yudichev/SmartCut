@@ -130,20 +130,21 @@ public class CanonicalProblem {
         double[] unsortedSolution = problem.getEquationSet().stream().mapToDouble(eq -> eq.getRightValue()).toArray();
         EquationSet eqSet = problem.getEquationSet();
         int m = eqSet.getNumberOfEquations();
-        double[] solution = new double[m];
+        double[] sortedSolution = new double[eqSet.getEquation(0).getLength()];
 
         for(int k = 0; k < m; k++){
             Equation eq = eqSet.getEquation(k);
             int t = 0;
-            for(int j = 0; j < m; j++){
+            for(int j = 0; j < eq.getLength(); j++){
                 if(Double.compare(eq.getValueAt(j), 1.) == 0){
                     t = j;
                     break;
                 }
             }
-            solution[k] = unsortedSolution[t];
+            sortedSolution[t] = unsortedSolution[k];
         }
-
+        double[] solution = new double[m];
+        System.arraycopy(sortedSolution, 0, solution, 0, m);
         return solution;
     }
 
