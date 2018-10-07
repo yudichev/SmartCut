@@ -6,6 +6,7 @@ import math.linear.basic.ObjectiveFunction;
 import math.linear.basic.Relation;
 
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class CanonicalProblem {
     private EquationSet equationSet;
@@ -110,9 +111,22 @@ public class CanonicalProblem {
         double objfunccoeff = this.getObjectiveFunction().getValueAt(col);
         ObjectiveFunction objfunc = this.getObjectiveFunction();
         if(Double.compare(objfunccoeff, 0.d) != 0){
-            objfunc = this.getObjectiveFunction().add(baseEquation.applyFactor(objfunccoeff).getLeftValues());
+            objfunc = this.getObjectiveFunction().add(baseEquation.applyFactor(-1.*objfunccoeff).getLeftValues());
         }
 
         return CanonicalProblem.create(newSet,objfunc);
     }
+
+    public static double[] solve(CanonicalProblem problem){
+        ObjectiveFunction objectiveFunction = problem.getObjectiveFunction();
+        while(!objectiveFunction.isOptimal()) {
+            int col = objectiveFunction.getIndexOfMaximum();
+            int row = problem.getPivotRowIdx(col);
+            problem = problem.gaussianExclusion(row, col);
+            objectiveFunction = problem.getObjectiveFunction();
+        }
+        return problem.getEquationSet().stream().mapToDouble(eq -> eq.getRightValue()).toArray();
+    }
+
+
 }

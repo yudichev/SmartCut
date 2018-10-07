@@ -43,5 +43,34 @@ public class CanonicalProblemTest {
         Assert.assertArrayEquals(new double[]{2.5, 0., -1.5, 1.},problem1.getEquationSet().getEquation(1).getLeftValues(),0.0);
         Assert.assertEquals(2.5, problem1.getEquationSet().getEquation(0).getRightValue(),0.0d);
         Assert.assertEquals(1.5, problem1.getEquationSet().getEquation(1).getRightValue(),0.0d);
+
+        Assert.assertEquals(0.,problem1.getObjectiveFunction().getValueAt(col),0.0d);
+        Assert.assertFalse(problem1.getObjectiveFunction().isOptimal());
+
+        int col1 = problem1.getObjectiveFunction().getIndexOfMaximum();
+        int row1 = problem1.getPivotRowIdx(col1);
+        CanonicalProblem problem2 = problem1.gaussianExclusion(row1, col1);
+
+        Assert.assertArrayEquals(new double[]{0., 1., 0.8, -0.2},problem2.getEquationSet().getEquation(0).getLeftValues(),0.0);
+        Assert.assertArrayEquals(new double[]{1., 0., -0.6, 0.4},problem2.getEquationSet().getEquation(1).getLeftValues(),1.e-10);
+        Assert.assertEquals(2.2, problem2.getEquationSet().getEquation(0).getRightValue(),0.0d);
+        Assert.assertEquals(0.6, problem2.getEquationSet().getEquation(1).getRightValue(),1.e-10);
+
+        Assert.assertArrayEquals(new double[]{0.,0.,-1.2,-0.2},problem2.getObjectiveFunction().getValues(),0.0d);
+        Assert.assertTrue(problem2.getObjectiveFunction().isOptimal());
+    }
+
+    @Test
+    public void testSolve(){
+        Equation eq1 = Equation.of(new double[]{1.,2.},Relation.LESS_OR_EQUAL,5);
+        Equation eq2 = Equation.of(new double[]{4.,3.},Relation.LESS_OR_EQUAL,9);
+        EquationSet equationSet = EquationSet.create();
+        equationSet.addEquation(eq1);
+        equationSet.addEquation(eq2);
+        ObjectiveFunction objectiveFunction = ObjectiveFunction.create(new double[]{2.,3.},ObjectiveFunctionType.MAXIMUM);
+
+        CanonicalProblem problem = CanonicalProblem.create(equationSet,objectiveFunction);
+        double[] solution = CanonicalProblem.solve(problem);
+        Assert.assertArrayEquals(new double[]{2.2,0.6}, solution, 1.e-10);
     }
 }
