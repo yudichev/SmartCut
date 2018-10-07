@@ -104,6 +104,8 @@ public class CanonicalProblem {
                 double coeff = eq.getValueAt(col);
                 if(Double.compare(coeff, 0.d) != 0){
                     newSet.addEquation(eq.add(baseEquation.applyFactor(-1.*coeff)));
+                } else {
+                    newSet.addEquation(eq);
                 }
             }
         }
@@ -125,7 +127,24 @@ public class CanonicalProblem {
             problem = problem.gaussianExclusion(row, col);
             objectiveFunction = problem.getObjectiveFunction();
         }
-        return problem.getEquationSet().stream().mapToDouble(eq -> eq.getRightValue()).toArray();
+        double[] unsortedSolution = problem.getEquationSet().stream().mapToDouble(eq -> eq.getRightValue()).toArray();
+        EquationSet eqSet = problem.getEquationSet();
+        int m = eqSet.getNumberOfEquations();
+        double[] solution = new double[m];
+
+        for(int k = 0; k < m; k++){
+            Equation eq = eqSet.getEquation(k);
+            int t = 0;
+            for(int j = 0; j < m; j++){
+                if(Double.compare(eq.getValueAt(j), 1.) == 0){
+                    t = j;
+                    break;
+                }
+            }
+            solution[k] = unsortedSolution[t];
+        }
+
+        return solution;
     }
 
 
