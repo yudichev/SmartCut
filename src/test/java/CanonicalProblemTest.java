@@ -142,4 +142,22 @@ public class CanonicalProblemTest
         double[] solution = SinglePhaseCanonicalProblem.solve(problem);
         Assert.assertArrayEquals(new double[]{5./12., 0., 0.}, solution, 1.e-10);
     }
+
+    @Test
+    public void testSolve3() {
+        Equation eq1 = Equation.of(new double[]{9., 3., -1., 0.}, Relation.LESS_OR_EQUAL, 14);
+        Equation eq2 = Equation.of(new double[]{-3., 0., 9., 7.}, Relation.LESS_OR_EQUAL, 18);
+        Equation eq3 = Equation.of(new double[]{12., -2., 6., 11.}, Relation.LESS_OR_EQUAL, 35);
+        Equation eq4 = Equation.of(new double[]{1., 0., 16., -4.}, Relation.LESS_OR_EQUAL, 21);
+        EquationSet equationSet = EquationSet.create();
+        equationSet.addEquation(eq1);
+        equationSet.addEquation(eq2);
+        equationSet.addEquation(eq3);
+        equationSet.addEquation(eq4);
+        ObjectiveFunction objectiveFunction = ObjectiveFunction.create(new double[]{4., 12., 1.,2.}, ObjectiveFunctionType.MAXIMUM);
+
+        SinglePhaseCanonicalProblem problem = SinglePhaseCanonicalProblem.create(equationSet, objectiveFunction);
+        double[] solution = SinglePhaseCanonicalProblem.solve(problem);
+        Assert.assertArrayEquals(new double[]{0., 2291./444., 219./148.,99./148.}, solution, 1.e-10);
+    }
 }
