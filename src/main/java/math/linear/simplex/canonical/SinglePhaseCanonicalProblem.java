@@ -24,9 +24,9 @@ public class SinglePhaseCanonicalProblem
 
 
     public static SinglePhaseCanonicalProblem create(EquationSet eqset, ObjectiveFunction func){
-        int inqualityNumber = (int) eqset.stream().filter(equation -> !equation.getRelation().equals(Relation.EQUAL)).count();
+        int inequalityNumber = (int) eqset.stream().filter(equation -> !equation.getRelation().equals(Relation.EQUAL)).count();
 
-        if (inqualityNumber == 0)
+        if (inequalityNumber == 0)
             return new SinglePhaseCanonicalProblem(eqset,func);
 
         EquationSet newSet = EquationSet.create();
@@ -35,13 +35,13 @@ public class SinglePhaseCanonicalProblem
             if(equation.getRelation().isGreaterOrEqual()) {
                 throw new RuntimeException(CANNOT_SOLVE);
             }
-            equation = extend(equation, inqualityNumber, k);
+            equation = extend(equation, inequalityNumber, k);
             newSet.addEquation(equation);
         }
         if(func.getType().isFindMinimum()) {
             throw new RuntimeException(CANNOT_SOLVE);
         }
-        return new SinglePhaseCanonicalProblem(newSet, extend(func.getCanonical(),inqualityNumber));
+        return new SinglePhaseCanonicalProblem(newSet, extend(func.getCanonical(),inequalityNumber));
     }
 
     public EquationSet getEquationSet(){
@@ -72,8 +72,9 @@ public class SinglePhaseCanonicalProblem
 
 
     public int getPivotRowIdx(int columnIdx){
-        int rowIdx = 0;
-        double maxRate = this.equationSet.getEquation(0).getValueAt(columnIdx);
+        int rowIdx = -1;
+        Equation firstEquation = this.equationSet.getEquation(0);
+        double maxRate = -1.;
 
         int columnSize = this.equationSet.getNumberOfEquations();
         for(int k = 0; k < columnSize; k++){
@@ -89,6 +90,7 @@ public class SinglePhaseCanonicalProblem
                 }
             }
         }
+        if(rowIdx < 0) throw new RuntimeException("Optimal index is not found");
 
         return rowIdx;
     }
