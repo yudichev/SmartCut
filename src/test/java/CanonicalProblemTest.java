@@ -1,28 +1,65 @@
 import math.linear.basic.*;
-import math.linear.simplex.canonical.CanonicalProblem;
+import math.linear.simplex.canonical.SinglePhaseCanonicalProblem;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class CanonicalProblemTest {
+public class CanonicalProblemTest
+{
 
     @Test
     public void testCanonical() {
-        Equation eq1 = Equation.of(new double[]{1., 2.}, Relation.GREATER_OR_EQUAL, 5.);
+        Equation eq1 = Equation.of(new double[]{1., 2.}, Relation.GREATER_OR_EQUAL, -5.);
         Equation eq2 = Equation.of(new double[]{5., 4.}, Relation.LESS_OR_EQUAL, 7.);
         EquationSet eqset = EquationSet.create();
         eqset.addEquation(eq1);
         eqset.addEquation(eq2);
 
-        ObjectiveFunction objfunc = ObjectiveFunction.create(new double[]{3., -4.}, ObjectiveFunctionType.MINIMUM);
-        CanonicalProblem problem = CanonicalProblem.create(eqset, objfunc);
+        ObjectiveFunction objfunc = ObjectiveFunction.create(new double[]{3., -4.}, ObjectiveFunctionType.MAXIMUM);
+        SinglePhaseCanonicalProblem problem = SinglePhaseCanonicalProblem.create(eqset, objfunc);
         EquationSet set2 = problem.getEquationSet();
         Assert.assertArrayEquals(new double[]{-1., -2., 1., 0}, set2.getEquation(0).getLeftValues(), 0.0);
         Assert.assertArrayEquals(new double[]{5., 4., 0., 1}, set2.getEquation(1).getLeftValues(), 0.0);
         Assert.assertTrue(set2.getEquation(0).getRelation().isEqual());
         Assert.assertTrue(set2.getEquation(1).getRelation().isEqual());
-        Assert.assertEquals(set2.getEquation(0).getRightValue(), -5., 0.0d);
-        Assert.assertArrayEquals(new double[]{-3., 4., 0., 0.}, problem.getObjectiveFunction().getValues(), 0.0d);
+        Assert.assertEquals(5., set2.getEquation(0).getRightValue(), 0.0d);
+        Assert.assertArrayEquals(new double[]{3., -4., 0., 0.}, problem.getObjectiveFunction().getValues(), 0.0d);
         Assert.assertEquals(ObjectiveFunctionType.MAXIMUM, problem.getObjectiveFunction().getType());
+    }
+
+    @Test
+    public void testCanonicalWithExceptions(){
+        try
+        {
+            Equation eq1 = Equation.of(new double[]{ 1., 2. }, Relation.GREATER_OR_EQUAL, 5.);
+            Equation eq2 = Equation.of(new double[]{ 5., 4. }, Relation.LESS_OR_EQUAL, 7.);
+            EquationSet eqset = EquationSet.create();
+            eqset.addEquation(eq1);
+            eqset.addEquation(eq2);
+
+            ObjectiveFunction objfunc = ObjectiveFunction.create(new double[]{ 3., -4. }, ObjectiveFunctionType.MAXIMUM);
+            SinglePhaseCanonicalProblem problem = SinglePhaseCanonicalProblem.create(eqset, objfunc);
+            Assert.fail("An exception must be here");
+        } catch(RuntimeException ex){
+            Assert.assertEquals("The task cannot be solved by a single phase method. Use double phase method.", ex.getMessage());
+        }
+    }
+
+    @Test
+    public void testCanonicalWithExceptions2(){
+        try
+        {
+            Equation eq1 = Equation.of(new double[]{ 1., 2. }, Relation.LESS_OR_EQUAL, 5.);
+            Equation eq2 = Equation.of(new double[]{ 5., 4. }, Relation.LESS_OR_EQUAL, 7.);
+            EquationSet eqset = EquationSet.create();
+            eqset.addEquation(eq1);
+            eqset.addEquation(eq2);
+
+            ObjectiveFunction objfunc = ObjectiveFunction.create(new double[]{ 3., -4. }, ObjectiveFunctionType.MINIMUM);
+            SinglePhaseCanonicalProblem problem = SinglePhaseCanonicalProblem.create(eqset, objfunc);
+            Assert.fail("An exception must be here");
+        } catch(RuntimeException ex){
+            Assert.assertEquals("The task cannot be solved by a single phase method. Use double phase method.", ex.getMessage());
+        }
     }
 
     @Test
@@ -34,10 +71,10 @@ public class CanonicalProblemTest {
         equationSet.addEquation(eq2);
         ObjectiveFunction objectiveFunction = ObjectiveFunction.create(new double[]{2., 3.}, ObjectiveFunctionType.MAXIMUM);
 
-        CanonicalProblem problem = CanonicalProblem.create(equationSet, objectiveFunction);
+        SinglePhaseCanonicalProblem problem = SinglePhaseCanonicalProblem.create(equationSet, objectiveFunction);
         int col = objectiveFunction.getIndexOfMaximum();
         int row = problem.getPivotRowIdx(col);
-        CanonicalProblem problem1 = problem.gaussianExclusion(row, col);
+        SinglePhaseCanonicalProblem problem1 = problem.gaussianExclusion(row, col);
 
         Assert.assertArrayEquals(new double[]{0.5, 1., 0.5, 0.}, problem1.getEquationSet().getEquation(0).getLeftValues(), 0.0);
         Assert.assertArrayEquals(new double[]{2.5, 0., -1.5, 1.}, problem1.getEquationSet().getEquation(1).getLeftValues(), 0.0);
@@ -49,7 +86,7 @@ public class CanonicalProblemTest {
 
         int col1 = problem1.getObjectiveFunction().getIndexOfMaximum();
         int row1 = problem1.getPivotRowIdx(col1);
-        CanonicalProblem problem2 = problem1.gaussianExclusion(row1, col1);
+        SinglePhaseCanonicalProblem problem2 = problem1.gaussianExclusion(row1, col1);
 
         Assert.assertArrayEquals(new double[]{0., 1., 0.8, -0.2}, problem2.getEquationSet().getEquation(0).getLeftValues(), 0.0);
         Assert.assertArrayEquals(new double[]{1., 0., -0.6, 0.4}, problem2.getEquationSet().getEquation(1).getLeftValues(), 1.e-10);
@@ -69,8 +106,8 @@ public class CanonicalProblemTest {
         equationSet.addEquation(eq2);
         ObjectiveFunction objectiveFunction = ObjectiveFunction.create(new double[]{2., 3.}, ObjectiveFunctionType.MAXIMUM);
 
-        CanonicalProblem problem = CanonicalProblem.create(equationSet, objectiveFunction);
-        double[] solution = CanonicalProblem.solve(problem);
+        SinglePhaseCanonicalProblem problem = SinglePhaseCanonicalProblem.create(equationSet, objectiveFunction);
+        double[] solution = SinglePhaseCanonicalProblem.solve(problem);
         Assert.assertArrayEquals(new double[]{0.6, 2.2}, solution, 1.e-10);
     }
 
@@ -85,8 +122,8 @@ public class CanonicalProblemTest {
         equationSet.addEquation(eq3);
         ObjectiveFunction objectiveFunction = ObjectiveFunction.create(new double[]{2., 7., 1.}, ObjectiveFunctionType.MAXIMUM);
 
-        CanonicalProblem problem = CanonicalProblem.create(equationSet, objectiveFunction);
-        double[] solution = CanonicalProblem.solve(problem);
+        SinglePhaseCanonicalProblem problem = SinglePhaseCanonicalProblem.create(equationSet, objectiveFunction);
+        double[] solution = SinglePhaseCanonicalProblem.solve(problem);
         Assert.assertArrayEquals(new double[]{0., 0.8, 0.}, solution, 1.e-10);
     }
 }

@@ -75,10 +75,10 @@ public class Equation {
     }
 
     public Equation normalize(){
-        if(Relation.GREATER_OR_EQUAL.equals(this.relation)){
-            return this.applyFactor(-1.);
-        } else {
+        if(Double.compare(this.getRightValue(),0.) > 0){
             return this.copy();
+        } else {
+            return this.applyFactor(-1.);
         }
     }
 

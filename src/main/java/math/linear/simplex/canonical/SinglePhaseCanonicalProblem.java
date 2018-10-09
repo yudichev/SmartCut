@@ -6,34 +6,42 @@ import math.linear.basic.ObjectiveFunction;
 import math.linear.basic.Relation;
 
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
-public class CanonicalProblem {
+public class SinglePhaseCanonicalProblem
+{
+    private static String CANNOT_SOLVE = "The task cannot be solved by a single phase method. Use double phase method.";
+
     private EquationSet equationSet;
     private ObjectiveFunction objfunc;
 
-    private CanonicalProblem(){
+    private SinglePhaseCanonicalProblem(){
     }
 
-    private CanonicalProblem(EquationSet set, ObjectiveFunction objfunc){
+    private SinglePhaseCanonicalProblem(EquationSet set, ObjectiveFunction objfunc){
         this.equationSet = set;
         this.objfunc = objfunc;
     }
 
 
-    public static CanonicalProblem create(EquationSet eqset, ObjectiveFunction func){
+    public static SinglePhaseCanonicalProblem create(EquationSet eqset, ObjectiveFunction func){
         int inqualityNumber = (int) eqset.stream().filter(equation -> !equation.getRelation().equals(Relation.EQUAL)).count();
 
         if (inqualityNumber == 0)
-            return new CanonicalProblem(eqset,func);
+            return new SinglePhaseCanonicalProblem(eqset,func);
 
         EquationSet newSet = EquationSet.create();
         for (int k = 0; k < eqset.getNumberOfEquations(); k++){
             Equation equation = eqset.getEquation(k).normalize();
+            if(equation.getRelation().isGreaterOrEqual()) {
+                throw new RuntimeException(CANNOT_SOLVE);
+            }
             equation = extend(equation, inqualityNumber, k);
             newSet.addEquation(equation);
         }
-        return new CanonicalProblem(newSet, extend(func.getCanonical(),inqualityNumber));
+        if(func.getType().isFindMinimum()) {
+            throw new RuntimeException(CANNOT_SOLVE);
+        }
+        return new SinglePhaseCanonicalProblem(newSet, extend(func.getCanonical(),inqualityNumber));
     }
 
     public EquationSet getEquationSet(){
@@ -85,7 +93,7 @@ public class CanonicalProblem {
         return rowIdx;
     }
 
-    public CanonicalProblem gaussianExclusion(int row, int col){
+    public SinglePhaseCanonicalProblem gaussianExclusion(int row, int col){
         Equation baseEquation = this.getEquationSet().getEquation(row);
         double factor = baseEquation.getValueAt(col);
         if(factor == 0.) throw new RuntimeException("Divisiona by zero");
@@ -116,10 +124,10 @@ public class CanonicalProblem {
             objfunc = this.getObjectiveFunction().add(baseEquation.applyFactor(-1.*objfunccoeff).getLeftValues());
         }
 
-        return CanonicalProblem.create(newSet,objfunc);
+        return SinglePhaseCanonicalProblem.create(newSet,objfunc);
     }
 
-    public static double[] solve(CanonicalProblem problem){
+    public static double[] solve(SinglePhaseCanonicalProblem problem){
         ObjectiveFunction objectiveFunction = problem.getObjectiveFunction();
         while(!objectiveFunction.isOptimal()) {
             int col = objectiveFunction.getIndexOfMaximum();
@@ -127,7 +135,7 @@ public class CanonicalProblem {
             problem = problem.gaussianExclusion(row, col);
             objectiveFunction = problem.getObjectiveFunction();
         }
-        double[] unsortedSolution = problem.getEquationSet().stream().mapToDouble(eq -> eq.getRightValue()).toArray();
+        double[] unsortedSolution = problem.getEquationSet().stream().mapToDouble(Equation::getRightValue).toArray();
         EquationSet eqSet = problem.getEquationSet();
         int m = eqSet.getNumberOfEquations();
         double[] sortedSolution = new double[eqSet.getEquation(0).getLength()];
@@ -147,6 +155,4 @@ public class CanonicalProblem {
         System.arraycopy(sortedSolution, 0, solution, 0, m);
         return solution;
     }
-
-
 }

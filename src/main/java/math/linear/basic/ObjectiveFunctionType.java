@@ -9,5 +9,13 @@ package math.linear.basic;
 public enum ObjectiveFunctionType
 {
 	MAXIMUM,
-	MINIMUM
+	MINIMUM;
+
+	public boolean isFindMaximum(){
+		return MAXIMUM.equals(this);
+	}
+
+	public boolean isFindMinimum(){
+		return MINIMUM.equals(this);
+	}
 }
