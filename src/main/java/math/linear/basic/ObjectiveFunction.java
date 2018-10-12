@@ -40,9 +40,9 @@ public class ObjectiveFunction
 
 	public boolean isOptimal(){
 		if(ObjectiveFunctionType.MAXIMUM.equals(this.type)) {
-			return DoubleStream.of(this.values).noneMatch(val -> val > 0);
+			return DoubleStream.of(this.values).noneMatch(val -> val > 0.);
 		} else {
-			return DoubleStream.of(this.values).noneMatch(val -> val < 0);
+			return DoubleStream.of(this.values).noneMatch(val -> val < 0.);
 		}
 	}
 

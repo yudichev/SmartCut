@@ -7,41 +7,42 @@ import math.linear.basic.Relation;
 
 import java.util.Arrays;
 
-public class SinglePhaseCanonicalProblem
+public class CanonicalProblem
 {
-    private static String CANNOT_SOLVE = "The task cannot be solved by a single phase method. Use double phase method.";
 
     private EquationSet equationSet;
     private ObjectiveFunction objfunc;
+    private boolean flagTwoPhases;
 
-    private SinglePhaseCanonicalProblem(){
+    private CanonicalProblem(){
     }
 
-    private SinglePhaseCanonicalProblem(EquationSet set, ObjectiveFunction objfunc){
+    private CanonicalProblem(EquationSet set, ObjectiveFunction objfunc){
         this.equationSet = set;
         this.objfunc = objfunc;
+        flagTwoPhases = false;
     }
 
 
-    public static SinglePhaseCanonicalProblem create(EquationSet eqset, ObjectiveFunction func){
+    public static CanonicalProblem create(EquationSet eqset, ObjectiveFunction func){
         int inequalityNumber = (int) eqset.stream().filter(equation -> !equation.getRelation().equals(Relation.EQUAL)).count();
 
+
+        boolean needTwoPhases = eqset.stream().anyMatch(eq -> eq.getRelation().isGreaterOrEqual());
+
         if (inequalityNumber == 0)
-            return new SinglePhaseCanonicalProblem(eqset,func);
+            return new CanonicalProblem(eqset,func);
 
         EquationSet newSet = EquationSet.create();
         for (int k = 0; k < eqset.getNumberOfEquations(); k++){
             Equation equation = eqset.getEquation(k).normalize();
-            if(equation.getRelation().isGreaterOrEqual()) {
-                throw new RuntimeException(CANNOT_SOLVE);
-            }
             equation = extend(equation, inequalityNumber, k);
             newSet.addEquation(equation);
         }
-        if(func.getType().isFindMinimum()) {
-            throw new RuntimeException(CANNOT_SOLVE);
-        }
-        return new SinglePhaseCanonicalProblem(newSet, extend(func.getCanonical(),inequalityNumber));
+
+        CanonicalProblem problem = new CanonicalProblem(newSet, extend(func.getCanonical(),inequalityNumber));
+        if(needTwoPhases) problem.setTwoPhases();
+        return problem;
     }
 
     public EquationSet getEquationSet(){
@@ -95,7 +96,7 @@ public class SinglePhaseCanonicalProblem
         return rowIdx;
     }
 
-    public SinglePhaseCanonicalProblem gaussianExclusion(int row, int col){
+    public CanonicalProblem gaussianExclusion(int row, int col){
         Equation baseEquation = this.getEquationSet().getEquation(row);
         double factor = baseEquation.getValueAt(col);
         if(factor == 0.) throw new RuntimeException("Divisiona by zero");
@@ -126,35 +127,15 @@ public class SinglePhaseCanonicalProblem
             objfunc = this.getObjectiveFunction().add(baseEquation.applyFactor(-1.*objfunccoeff).getLeftValues());
         }
 
-        return SinglePhaseCanonicalProblem.create(newSet,objfunc);
+        return CanonicalProblem.create(newSet,objfunc);
     }
 
-    public static double[] solve(SinglePhaseCanonicalProblem problem){
-        ObjectiveFunction objectiveFunction = problem.getObjectiveFunction();
-        while(!objectiveFunction.isOptimal()) {
-            int col = objectiveFunction.getIndexOfMaximum();
-            int row = problem.getPivotRowIdx(col);
-            problem = problem.gaussianExclusion(row, col);
-            objectiveFunction = problem.getObjectiveFunction();
-        }
-        double[] unsortedSolution = problem.getEquationSet().stream().mapToDouble(Equation::getRightValue).toArray();
-        EquationSet eqSet = problem.getEquationSet();
-        int m = eqSet.getNumberOfEquations();
-        double[] sortedSolution = new double[eqSet.getEquation(0).getLength()];
-
-        for(int k = 0; k < m; k++){
-            Equation eq = eqSet.getEquation(k);
-            int t = 0;
-            for(int j = 0; j < eq.getLength(); j++){
-                if(Double.compare(eq.getValueAt(j), 1.) == 0){
-                    t = j;
-                    break;
-                }
-            }
-            sortedSolution[t] = unsortedSolution[k];
-        }
-        double[] solution = new double[m];
-        System.arraycopy(sortedSolution, 0, solution, 0, m);
-        return solution;
+    public void setTwoPhases(){
+        this.flagTwoPhases = true;
     }
+
+    public boolean isTwoPhases(){
+        return flagTwoPhases;
+    }
+
 }
