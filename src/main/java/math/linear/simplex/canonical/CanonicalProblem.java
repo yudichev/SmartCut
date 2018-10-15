@@ -12,7 +12,9 @@ public class CanonicalProblem
 
     private EquationSet equationSet;
     private ObjectiveFunction objfunc;
+    private ObjectiveFunction auxObjFunc;
     private boolean flagTwoPhases;
+
 
     private CanonicalProblem(){
     }
@@ -99,7 +101,7 @@ public class CanonicalProblem
     public CanonicalProblem gaussianExclusion(int row, int col){
         Equation baseEquation = this.getEquationSet().getEquation(row);
         double factor = baseEquation.getValueAt(col);
-        if(factor == 0.) throw new RuntimeException("Divisiona by zero");
+        if(factor == 0.) throw new RuntimeException("Division by zero");
 
         baseEquation = baseEquation.applyFactor(1./factor);
 
@@ -121,13 +123,25 @@ public class CanonicalProblem
             }
         }
 
-        double objfunccoeff = this.getObjectiveFunction().getValueAt(col);
-        ObjectiveFunction objfunc = this.getObjectiveFunction();
+        double objfunccoeff = this.objfunc.getValueAt(col);
+        ObjectiveFunction objfunc = this.objfunc;
         if(Double.compare(objfunccoeff, 0.d) != 0){
-            objfunc = this.getObjectiveFunction().add(baseEquation.applyFactor(-1.*objfunccoeff).getLeftValues());
+            objfunc = this.objfunc.add(baseEquation.applyFactor(-1.*objfunccoeff).getLeftValues());
         }
 
-        return CanonicalProblem.create(newSet,objfunc);
+        CanonicalProblem newProblem = CanonicalProblem.create(newSet,objfunc);
+
+        if(auxObjFunc != null)
+        {
+            ObjectiveFunction auxFunc = auxObjFunc;
+            objfunccoeff = this.auxObjFunc.getValueAt(col);
+            if(Double.compare(objfunccoeff, 0.d) != 0){
+                auxFunc = this.auxObjFunc.add(baseEquation.applyFactor(-1.*objfunccoeff).getLeftValues());
+            }
+            newProblem.setAuxFunction(auxFunc);
+        }
+
+        return newProblem;
     }
 
     public void setTwoPhases(){
@@ -136,6 +150,16 @@ public class CanonicalProblem
 
     public boolean isTwoPhases(){
         return flagTwoPhases;
+    }
+
+    public void setAuxFunction(ObjectiveFunction auxFunc){
+        if(this.getObjectiveFunction().getValues().length != auxFunc.getValues().length)
+            throw new RuntimeException("Auxiliery objective function length mismatch");
+        auxObjFunc = auxFunc;
+    }
+
+    public ObjectiveFunction  getAuxFunction(){
+        return this.auxObjFunc;
     }
 
 }

@@ -11,25 +11,28 @@ import java.util.stream.Stream;
 public class DoublePhaseMethod {
     private EquationSet equationSet;
     private ObjectiveFunction objfunc;
+    private ObjectiveFunction auxFunc;
 
     public static CanonicalProblem processFirstPhase(CanonicalProblem problem){
-        CanonicalProblem auxProblem = getAuxiliaryProblem(problem);
+        CanonicalProblem auxProblem = addAuxiliaryVariables(problem);
         int eqNumber = auxProblem.getEquationSet().getNumberOfEquations();
+        if(eqNumber == 0)
+            throw new RuntimeException("Nothig to solve");
+
+        int origlength = auxProblem.getEquationSet().getEquation(0).getLength();
+
 
         ObjectiveFunction objectiveFunction = problem.getObjectiveFunction();
-        while(!isValidPlane(objectiveFunction,eqNumber)) {
+        while(Arrays.stream(problem.getAuxFunction().getValues()).skip(origlength).noneMatch(val -> Double.compare(val,0.d) > 0)) {
             int col = objectiveFunction.getIndexOfMaximum();
             int row = problem.getPivotRowIdx(col);
             problem = problem.gaussianExclusion(row, col);
-            objectiveFunction = problem.getObjectiveFunction();
         }
 
-
-
-        return null;
+        return problem;
     }
 
-    private static CanonicalProblem getAuxiliaryProblem(CanonicalProblem problem) {
+    private static CanonicalProblem addAuxiliaryVariables(CanonicalProblem problem) {
         EquationSet origSet = problem.getEquationSet();
         int eqNumber = origSet.getNumberOfEquations();
         if(eqNumber == 0)
@@ -50,16 +53,23 @@ public class DoublePhaseMethod {
             auxSet.addEquation(auxEquation);
         }
 
-        double[] auxObjFunctionValues = new double[auxLength];
-        Arrays.fill(auxObjFunctionValues,0.);
-        Arrays.fill(auxObjFunctionValues,eqOrigLength,auxLength,1.d);
-        ObjectiveFunction auxFunc = ObjectiveFunction.create(auxObjFunctionValues, ObjectiveFunctionType.MINIMUM);
 
-        return CanonicalProblem.create(auxSet,auxFunc);
-    }
+        double[] objFunctionValues = new double[auxLength];
+        Arrays.fill(objFunctionValues,eqOrigLength,auxLength,0.d);
+        ObjectiveFunction srcObjectiveFunction = problem.getObjectiveFunction();
+        double[] srcValues = srcObjectiveFunction.getValues();
+        int srcLength = srcValues.length;
+        System.arraycopy(srcValues,0,objFunctionValues,0,srcLength);
 
-    private  static boolean isValidPlane(ObjectiveFunction objfunc, int auxNumber){
-        double[] values = objfunc.getValues();
-        return Arrays.stream(values).skip(values.length - auxNumber).noneMatch(val -> Double.compare(val,0.d) > 0);
+        ObjectiveFunction extObjFunc = ObjectiveFunction.create(objFunctionValues, srcObjectiveFunction.getType());
+        CanonicalProblem extProblem = CanonicalProblem.create(auxSet,extObjFunc);
+
+        double[] auxValues = new double[eqOrigLength + eqNumber];
+        Arrays.fill(auxValues,0.d);
+        Arrays.fill(auxValues,eqOrigLength,eqOrigLength + eqNumber, 1.d);
+        ObjectiveFunction auxFunc = ObjectiveFunction.create(auxValues,ObjectiveFunctionType.MINIMUM);
+        extProblem.setAuxFunction(auxFunc);
+
+        return extProblem;
     }
 }
