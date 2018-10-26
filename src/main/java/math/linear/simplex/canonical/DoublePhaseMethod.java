@@ -19,17 +19,18 @@ public class DoublePhaseMethod {
         if(eqNumber == 0)
             throw new RuntimeException("Nothig to solve");
 
-        int origlength = auxProblem.getEquationSet().getEquation(0).getLength();
+        int origlength = problem.getEquationSet().getEquation(0).getLength();
 
 
-        ObjectiveFunction objectiveFunction = problem.getObjectiveFunction();
-        while(Arrays.stream(problem.getAuxFunction().getValues()).skip(origlength).noneMatch(val -> Double.compare(val,0.d) > 0)) {
-            int col = objectiveFunction.getIndexOfMaximum();
-            int row = problem.getPivotRowIdx(col);
-            problem = problem.gaussianExclusion(row, col);
+        ObjectiveFunction objectiveFunction = auxProblem.getAuxFunction();
+        while(Arrays.stream(objectiveFunction.getValues()).skip(origlength).anyMatch(val -> Double.compare(val,0.d) > 0)) {
+            int col = objectiveFunction.getIndexOfMaximum(origlength);
+            int row = auxProblem.getPivotRowIdx(col);
+            auxProblem = auxProblem.gaussianExclusion(row, col);
+            objectiveFunction = auxProblem.getAuxFunction();
         }
 
-        return problem;
+        return auxProblem;
     }
 
     private static CanonicalProblem addAuxiliaryVariables(CanonicalProblem problem) {
@@ -43,7 +44,7 @@ public class DoublePhaseMethod {
 
         EquationSet auxSet = EquationSet.create();
         for (int k = 0; k < eqNumber; k++) {
-            Equation eq = auxSet.getEquation(k);
+            Equation eq = origSet.getEquation(k);
 
             double[] auxLeftValues = new double[auxLength];
             Arrays.fill(auxLeftValues, 0.d);

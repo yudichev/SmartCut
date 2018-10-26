@@ -16,7 +16,7 @@ public class ObjectiveFunction
 	private ObjectiveFunction(double[] values, ObjectiveFunctionType type){
 		this.values = values;
 		this.type = type;
-		calculateIndexOfMaximum();
+		calculateIndexOfMaximum(0);
 		calculateIndexOfMaximumAbsolute();
 	}
 
@@ -72,6 +72,11 @@ public class ObjectiveFunction
 		return this.indexOfMaximum;
 	}
 
+	public int getIndexOfMaximum(int k){
+		calculateIndexOfMaximum(k);
+		return this.indexOfMaximum;
+	}
+
 	public int getIndexOfMaximumAbs(){
 		return this.indexOfMaximumAbs;
 	}
@@ -92,9 +97,9 @@ public class ObjectiveFunction
 		return new ObjectiveFunction(values, type);
 	}
 
-	private void calculateIndexOfMaximum(){
-		double maxValue = values[0];
-		for(int k = 1; k < values.length; k++){
+	private void calculateIndexOfMaximum(int m){
+		double maxValue = values[m];
+		for(int k = m + 1; k < values.length; k++){
 			if(maxValue < values[k]){
 				maxValue = values[k];
 				this.indexOfMaximum = k;
