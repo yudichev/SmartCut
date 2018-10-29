@@ -8,27 +8,23 @@ import math.linear.basic.ObjectiveFunctionType;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-public class DoublePhaseMethod {
-    private EquationSet equationSet;
-    private ObjectiveFunction objfunc;
-    private ObjectiveFunction auxFunc;
+public class DoublePhaseMethod extends  AbstractMethod{
 
-    public static CanonicalProblem processFirstPhase(CanonicalProblem problem){
+    public static CanonicalProblem prepareAuxilieryFunction(CanonicalProblem problem){
         CanonicalProblem auxProblem = addAuxiliaryVariables(problem);
         int eqNumber = auxProblem.getEquationSet().getNumberOfEquations();
         if(eqNumber == 0)
             throw new RuntimeException("Nothig to solve");
 
-        int origlength = problem.getEquationSet().getEquation(0).getLength();
+        ObjectiveFunction auxilieryFunction = auxProblem.getAuxFunction();
 
-
-        ObjectiveFunction objectiveFunction = auxProblem.getAuxFunction();
-        while(Arrays.stream(objectiveFunction.getValues()).skip(origlength).anyMatch(val -> Double.compare(val,0.d) > 0)) {
-            int col = objectiveFunction.getIndexOfMaximum(origlength);
-            int row = auxProblem.getPivotRowIdx(col);
-            auxProblem = auxProblem.gaussianExclusion(row, col);
-            objectiveFunction = auxProblem.getAuxFunction();
+        int auxVariablesNumber = auxProblem.getEquationSet().getNumberOfEquations();
+        EquationSet equationSet = auxProblem.getEquationSet();
+        for(int k = 0; k < auxVariablesNumber; k++){
+            auxilieryFunction = auxilieryFunction.add(equationSet.getEquation(k).applyFactor(-1.).getLeftValues());
         }
+
+        auxProblem.setAuxFunction(auxilieryFunction);
 
         return auxProblem;
     }
@@ -73,4 +69,37 @@ public class DoublePhaseMethod {
 
         return extProblem;
     }
+
+
+    public static CanonicalProblem solveAuxiliery(CanonicalProblem problem){
+        checkSolvable(problem);
+
+        int numberOfEquations = problem.getEquationSet().getNumberOfEquations();
+
+        ObjectiveFunction objectiveFunction = problem.getAuxFunction();
+        while(!objectiveFunction.isOptimal(numberOfEquations)) {
+            int col = objectiveFunction.getIndexOfMinimum();
+            int row = problem.getPivotRowIdx(col);
+            problem = problem.gaussianExclusion(row, col);
+            objectiveFunction = problem.getAuxFunction();
+        }
+        return problem;
+    }
+
+    public static CanonicalProblem solve(CanonicalProblem problem){
+        checkSolvable(problem);
+
+        int numberOfEquations = problem.getEquationSet().getNumberOfEquations();
+
+        ObjectiveFunction objectiveFunction = problem.getObjectiveFunction();
+        int length = objectiveFunction.getValues().length - numberOfEquations;
+        while(!objectiveFunction.isOptimal(numberOfEquations)) {
+            int col = objectiveFunction.getIndexOfMaximum(0,length);
+            int row = problem.getPivotRowIdx(col);
+            problem = problem.gaussianExclusion(row, col);
+            objectiveFunction = problem.getObjectiveFunction();
+        }
+        return problem;
+    }
+
 }

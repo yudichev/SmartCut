@@ -11,13 +11,15 @@ public class ObjectiveFunction
 	private double[] values;
 	private int indexOfMaximum = 0;
 	private int indexOfMaximumAbs = 0;
+	private int indexOfMinimum = 0;
+	private int indexOfMinimumAbs = 0;
 	private ObjectiveFunctionType type;
 
 	private ObjectiveFunction(double[] values, ObjectiveFunctionType type){
 		this.values = values;
 		this.type = type;
-		calculateIndexOfMaximum(0);
-		calculateIndexOfMaximumAbsolute();
+		calculateIndexOfMaximumMinimum(0);
+		calculateIndexOfMaximumMinimumAbsolute();
 	}
 
 	public double getValueAt(int k){
@@ -43,6 +45,15 @@ public class ObjectiveFunction
 			return DoubleStream.of(this.values).noneMatch(val -> val > 0.);
 		} else {
 			return DoubleStream.of(this.values).noneMatch(val -> val < 0.);
+		}
+	}
+
+	public boolean isOptimal(int skipLast){
+		int length = this.values.length - skipLast;
+		if(ObjectiveFunctionType.MAXIMUM.equals(this.type)) {
+			return DoubleStream.of(this.values).limit(length).noneMatch(val -> val > 0.);
+		} else {
+			return DoubleStream.of(this.values).limit(length).noneMatch(val -> val < 0.);
 		}
 	}
 
@@ -73,8 +84,26 @@ public class ObjectiveFunction
 	}
 
 	public int getIndexOfMaximum(int k){
-		calculateIndexOfMaximum(k);
+		calculateIndexOfMaximumMinimum(k);
 		return this.indexOfMaximum;
+	}
+
+	public int getIndexOfMaximum(int k, int n){
+		calculateIndexOfMaximumMinimum(k,n);
+		return this.indexOfMaximum;
+	}
+
+	public int getIndexOfMinimum(){
+		return this.indexOfMinimum;
+	}
+
+	public int getIndexOfMinimum(int k){
+		calculateIndexOfMaximumMinimum(k);
+		return this.indexOfMinimum;
+	}
+
+	public int getIndexOfMinimumAbs(){
+		return this.indexOfMinimumAbs;
 	}
 
 	public int getIndexOfMaximumAbs(){
@@ -97,22 +126,34 @@ public class ObjectiveFunction
 		return new ObjectiveFunction(values, type);
 	}
 
-	private void calculateIndexOfMaximum(int m){
+	private void calculateIndexOfMaximumMinimum(int m){
+		calculateIndexOfMaximumMinimum(m, values.length);
+	}
+
+	private void calculateIndexOfMaximumMinimum(int m, int n){
 		double maxValue = values[m];
-		for(int k = m + 1; k < values.length; k++){
-			if(maxValue < values[k]){
+		double minValue = maxValue;
+		for(int k = m + 1; k < n; k++){
+			if(Double.compare(maxValue , values[k]) < 0){
 				maxValue = values[k];
 				this.indexOfMaximum = k;
+			} else if(Double.compare(minValue , values[k]) > 0){
+				minValue = values[k];
+				this.indexOfMinimum = k;
 			}
 		}
 	}
 
-	private void calculateIndexOfMaximumAbsolute(){
+	private void calculateIndexOfMaximumMinimumAbsolute(){
 		double maxValue = Math.abs(values[0]);
+		double minValue = maxValue;
 		for(int k = 1; k < values.length; k++){
-			if(maxValue < Math.abs(values[k])){
+			if(Double.compare(maxValue , Math.abs(values[k])) < 0){
 				maxValue = Math.abs(values[k]);
 				this.indexOfMaximumAbs = k;
+			} else if (Double.compare(minValue, Math.abs(values[k])) > 0) {
+				minValue = Math.abs(values[k]);
+				this.indexOfMinimumAbs = k;
 			}
 		}
 	}

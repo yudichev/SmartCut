@@ -93,7 +93,8 @@ public class CanonicalProblemTest
         ObjectiveFunction objectiveFunction = ObjectiveFunction.create(new double[]{2., 3.}, ObjectiveFunctionType.MAXIMUM);
 
         CanonicalProblem problem = CanonicalProblem.create(equationSet, objectiveFunction);
-        double[] solution = SinglePhaseMethod.solve(problem);
+        problem = SinglePhaseMethod.solve(problem);
+        double[] solution = SinglePhaseMethod.extractSolution(problem);
         Assert.assertArrayEquals(new double[]{0.6, 2.2}, solution, 1.e-10);
     }
 
@@ -109,7 +110,8 @@ public class CanonicalProblemTest
         ObjectiveFunction objectiveFunction = ObjectiveFunction.create(new double[]{2., 7., 1.}, ObjectiveFunctionType.MAXIMUM);
 
         CanonicalProblem problem = CanonicalProblem.create(equationSet, objectiveFunction);
-        double[] solution = SinglePhaseMethod.solve(problem);
+        problem = SinglePhaseMethod.solve(problem);
+        double[] solution = SinglePhaseMethod.extractSolution(problem);
         Assert.assertArrayEquals(new double[]{0., 0.8, 0.}, solution, 1.e-10);
     }
 
@@ -125,7 +127,8 @@ public class CanonicalProblemTest
         ObjectiveFunction objectiveFunction = ObjectiveFunction.create(new double[]{2., -2., 1.}, ObjectiveFunctionType.MAXIMUM);
 
         CanonicalProblem problem = CanonicalProblem.create(equationSet, objectiveFunction);
-        double[] solution = SinglePhaseMethod.solve(problem);
+        problem = SinglePhaseMethod.solve(problem);
+        double[] solution = SinglePhaseMethod.extractSolution(problem);
         Assert.assertArrayEquals(new double[]{5./12., 0., 0.}, solution, 1.e-10);
     }
 
@@ -143,7 +146,8 @@ public class CanonicalProblemTest
         ObjectiveFunction objectiveFunction = ObjectiveFunction.create(new double[]{4., 12., 1.,2.}, ObjectiveFunctionType.MAXIMUM);
 
         CanonicalProblem problem = CanonicalProblem.create(equationSet, objectiveFunction);
-        double[] solution = SinglePhaseMethod.solve(problem);
+        problem = SinglePhaseMethod.solve(problem);
+        double[] solution = SinglePhaseMethod.extractSolution(problem);
         Assert.assertArrayEquals(new double[]{0., 2291./444., 219./148.,99./148.}, solution, 1.e-10);
     }
 }

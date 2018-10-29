@@ -19,9 +19,11 @@ public class CanonicalProblem
     private CanonicalProblem(){
     }
 
-    private CanonicalProblem(EquationSet set, ObjectiveFunction objfunc){
+
+    private CanonicalProblem(EquationSet set, ObjectiveFunction objfunc, ObjectiveFunction auxObjFunc){
         this.equationSet = set;
         this.objfunc = objfunc;
+        this.auxObjFunc = auxObjFunc;
         flagTwoPhases = false;
     }
 
@@ -33,7 +35,7 @@ public class CanonicalProblem
         boolean needTwoPhases = eqset.stream().anyMatch(eq -> eq.getRelation().isGreaterOrEqual());
 
         if (inequalityNumber == 0)
-            return new CanonicalProblem(eqset,func);
+            return new CanonicalProblem(eqset,func, null);
 
         EquationSet newSet = EquationSet.create();
         for (int k = 0; k < eqset.getNumberOfEquations(); k++){
@@ -42,7 +44,7 @@ public class CanonicalProblem
             newSet.addEquation(equation);
         }
 
-        CanonicalProblem problem = new CanonicalProblem(newSet, extend(func.getCanonical(),inequalityNumber));
+        CanonicalProblem problem = new CanonicalProblem(newSet, extend(func.getCanonical(),inequalityNumber), null);
         if(needTwoPhases) problem.setTwoPhases();
         return problem;
     }
