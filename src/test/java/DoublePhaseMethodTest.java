@@ -24,6 +24,7 @@ public class DoublePhaseMethodTest {
 
         CanonicalProblem problem2 = DoublePhaseMethod.prepareAuxilieryFunction(problem);
 
+
         CanonicalProblem problem3 = DoublePhaseMethod.solveAuxiliery(problem2);
 
         CanonicalProblem problem4 = DoublePhaseMethod.solve(problem3);
@@ -32,6 +33,33 @@ public class DoublePhaseMethodTest {
 
 
         Assert.assertArrayEquals(new double[]{0., 0.,36.,28.}, solution, 0.0d);
+
+    }
+
+
+    @Test
+    public void testDoublePhase1() {
+        Equation eq1 = Equation.of(new double[]{5., 11., 6., 12.}, Relation.GREATER_OR_EQUAL, 189.);
+        Equation eq2 = Equation.of(new double[]{3., 6., 0., 2.}, Relation.GREATER_OR_EQUAL, 145.);
+        EquationSet eqset = EquationSet.create();
+        eqset.addEquation(eq1);
+        eqset.addEquation(eq2);
+
+        ObjectiveFunction objfunc = ObjectiveFunction.create(new double[]{1., 7., 1., 2.}, ObjectiveFunctionType.MINIMUM);
+
+        CanonicalProblem problem = CanonicalProblem.create(eqset, objfunc);
+
+        CanonicalProblem problem2 = DoublePhaseMethod.prepareAuxilieryFunction(problem);
+
+
+        CanonicalProblem problem3 = DoublePhaseMethod.solveAuxiliery(problem2);
+
+        CanonicalProblem problem4 = DoublePhaseMethod.solve(problem3);
+
+        double[] solution = DoublePhaseMethod.extractSolution(problem4);
+
+
+        Assert.assertArrayEquals(new double[]{145./3., 0.}, solution, 0.0d);
 
     }
 }

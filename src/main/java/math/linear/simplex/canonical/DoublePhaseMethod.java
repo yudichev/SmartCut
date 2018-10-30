@@ -11,22 +11,25 @@ import java.util.stream.Stream;
 public class DoublePhaseMethod extends  AbstractMethod{
 
     public static CanonicalProblem prepareAuxilieryFunction(CanonicalProblem problem){
-        CanonicalProblem auxProblem = addAuxiliaryVariables(problem);
-        int eqNumber = auxProblem.getEquationSet().getNumberOfEquations();
+       // CanonicalProblem auxProblem = addAuxiliaryVariables(problem);
+        EquationSet eqSet = problem.getEquationSet();
+        int eqNumber = eqSet.getNumberOfEquations();
         if(eqNumber == 0)
             throw new RuntimeException("Nothig to solve");
 
-        ObjectiveFunction auxilieryFunction = auxProblem.getAuxFunction();
+        int eqLength = eqSet.getEquation(0).getLength();
+        double[] values = new double[eqLength];
+        Arrays.fill(values,0.d);
+        ObjectiveFunction auxilieryFunction = ObjectiveFunction.create(values, ObjectiveFunctionType.MINIMUM);
 
-        int auxVariablesNumber = auxProblem.getEquationSet().getNumberOfEquations();
-        EquationSet equationSet = auxProblem.getEquationSet();
-        for(int k = 0; k < auxVariablesNumber; k++){
+        EquationSet equationSet = problem.getEquationSet();
+        for(int k = 0; k < eqNumber; k++){
             auxilieryFunction = auxilieryFunction.add(equationSet.getEquation(k).applyFactor(-1.).getLeftValues());
         }
 
-        auxProblem.setAuxFunction(auxilieryFunction);
+        problem.setAuxFunction(auxilieryFunction);
 
-        return auxProblem;
+        return problem;
     }
 
     private static CanonicalProblem addAuxiliaryVariables(CanonicalProblem problem) {
@@ -72,12 +75,12 @@ public class DoublePhaseMethod extends  AbstractMethod{
 
 
     public static CanonicalProblem solveAuxiliery(CanonicalProblem problem){
-        checkSolvable(problem);
+        //checkSolvable(problem);
 
         int numberOfEquations = problem.getEquationSet().getNumberOfEquations();
 
         ObjectiveFunction objectiveFunction = problem.getAuxFunction();
-        while(!objectiveFunction.isOptimal(numberOfEquations)) {
+        while(!objectiveFunction.isOptimal()) {
             int col = objectiveFunction.getIndexOfMinimum();
             int row = problem.getPivotRowIdx(col);
             problem = problem.gaussianExclusion(row, col);
@@ -87,14 +90,14 @@ public class DoublePhaseMethod extends  AbstractMethod{
     }
 
     public static CanonicalProblem solve(CanonicalProblem problem){
-        checkSolvable(problem);
+        //checkSolvable(problem);
 
         int numberOfEquations = problem.getEquationSet().getNumberOfEquations();
 
         ObjectiveFunction objectiveFunction = problem.getObjectiveFunction();
         int length = objectiveFunction.getValues().length - numberOfEquations;
-        while(!objectiveFunction.isOptimal(numberOfEquations)) {
-            int col = objectiveFunction.getIndexOfMaximum(0,length);
+        while(!objectiveFunction.isOptimal()) {
+            int col = objectiveFunction.getIndexOfMaximum();
             int row = problem.getPivotRowIdx(col);
             problem = problem.gaussianExclusion(row, col);
             objectiveFunction = problem.getObjectiveFunction();

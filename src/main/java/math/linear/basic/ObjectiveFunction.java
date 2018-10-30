@@ -42,9 +42,9 @@ public class ObjectiveFunction
 
 	public boolean isOptimal(){
 		if(ObjectiveFunctionType.MAXIMUM.equals(this.type)) {
-			return DoubleStream.of(this.values).noneMatch(val -> val > 0.);
+			return DoubleStream.of(this.values).noneMatch(val -> Double.compare(Math.round(val), 0.) > 0);
 		} else {
-			return DoubleStream.of(this.values).noneMatch(val -> val < 0.);
+			return DoubleStream.of(this.values).noneMatch(val -> Double.compare(Math.round(val), 0.) < 0);
 		}
 	}
 
@@ -88,19 +88,11 @@ public class ObjectiveFunction
 		return this.indexOfMaximum;
 	}
 
-	public int getIndexOfMaximum(int k, int n){
-		calculateIndexOfMaximumMinimum(k,n);
-		return this.indexOfMaximum;
-	}
 
 	public int getIndexOfMinimum(){
 		return this.indexOfMinimum;
 	}
 
-	public int getIndexOfMinimum(int k){
-		calculateIndexOfMaximumMinimum(k);
-		return this.indexOfMinimum;
-	}
 
 	public int getIndexOfMinimumAbs(){
 		return this.indexOfMinimumAbs;

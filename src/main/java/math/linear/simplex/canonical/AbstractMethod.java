@@ -4,14 +4,7 @@ import math.linear.basic.Equation;
 import math.linear.basic.EquationSet;
 
 public abstract class AbstractMethod {
-    private static String CANNOT_SOLVE = "The task cannot be solved by a single phase method. Use double phase method.";
 
-
-    protected static void checkSolvable(CanonicalProblem problem){
-        if(problem.isTwoPhases()){
-            throw new RuntimeException(CANNOT_SOLVE);
-        }
-    }
 
     public static double[] extractSolution(CanonicalProblem problem){
         double[] unsortedSolution = problem.getEquationSet().stream().mapToDouble(Equation::getRightValue).toArray();
