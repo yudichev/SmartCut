@@ -1,5 +1,6 @@
 package math.linear.basic;
 
+import java.math.BigDecimal;
 import java.util.stream.DoubleStream;
 
 public class ObjectiveFunction
@@ -42,9 +43,9 @@ public class ObjectiveFunction
 
 	public boolean isOptimal(){
 		if(ObjectiveFunctionType.MAXIMUM.equals(this.type)) {
-			return DoubleStream.of(this.values).noneMatch(val -> Double.compare(Math.round(val), 0.) > 0);
+			return DoubleStream.of(this.values).map(val -> Math.abs(val) > 1.e-14 ? val : 0.).noneMatch(val -> Double.compare(val, 0.) > 0);
 		} else {
-			return DoubleStream.of(this.values).noneMatch(val -> Double.compare(Math.round(val), 0.) < 0);
+			return DoubleStream.of(this.values).map(val -> Math.abs(val) > 1.e-14 ? val : 0.).noneMatch(val -> Double.compare(val, 0.) < 0);
 		}
 	}
 
