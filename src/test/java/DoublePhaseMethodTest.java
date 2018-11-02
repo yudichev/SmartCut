@@ -29,7 +29,7 @@ public class DoublePhaseMethodTest {
 
         CanonicalProblem problem4 = DoublePhaseMethod.solve(problem3);
 
-        double[] solution = DoublePhaseMethod.extractSolution(problem4);
+        double[] solution = DoublePhaseMethod.extractSolution(problem4,4);
 
 
         Assert.assertArrayEquals(new double[]{0., 0.,36.,28.}, solution, 0.0d);
@@ -56,7 +56,7 @@ public class DoublePhaseMethodTest {
 
         CanonicalProblem problem4 = DoublePhaseMethod.solve(problem3);
 
-        double[] solution = DoublePhaseMethod.extractSolution(problem4);
+        double[] solution = DoublePhaseMethod.extractSolution(problem4, 2);
 
 
         Assert.assertArrayEquals(new double[]{145./3., 0.}, solution, 0.0d);
@@ -88,9 +88,9 @@ public class DoublePhaseMethodTest {
 
         CanonicalProblem problem4 = DoublePhaseMethod.solve(problem3);
 
-        double[] solution = DoublePhaseMethod.extractSolution(problem4);
+        double[] solution = DoublePhaseMethod.extractSolution(problem4, 6);
 
 
-        Assert.assertArrayEquals(new double[]{0., 23., 0., 0., 0., 136./3.}, solution, 0.0d);
+        Assert.assertArrayEquals(new double[]{0., 23., 0., 0., 136./3., 0.}, solution, 1.e-14);
     }
 }

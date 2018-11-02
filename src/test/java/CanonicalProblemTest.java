@@ -94,7 +94,7 @@ public class CanonicalProblemTest
 
         CanonicalProblem problem = CanonicalProblem.create(equationSet, objectiveFunction);
         problem = SinglePhaseMethod.solve(problem);
-        double[] solution = SinglePhaseMethod.extractSolution(problem);
+        double[] solution = SinglePhaseMethod.extractSolution(problem,2);
         Assert.assertArrayEquals(new double[]{0.6, 2.2}, solution, 1.e-10);
     }
 
@@ -111,7 +111,7 @@ public class CanonicalProblemTest
 
         CanonicalProblem problem = CanonicalProblem.create(equationSet, objectiveFunction);
         problem = SinglePhaseMethod.solve(problem);
-        double[] solution = SinglePhaseMethod.extractSolution(problem);
+        double[] solution = SinglePhaseMethod.extractSolution(problem,3);
         Assert.assertArrayEquals(new double[]{0., 0.8, 0.}, solution, 1.e-10);
     }
 
@@ -128,7 +128,7 @@ public class CanonicalProblemTest
 
         CanonicalProblem problem = CanonicalProblem.create(equationSet, objectiveFunction);
         problem = SinglePhaseMethod.solve(problem);
-        double[] solution = SinglePhaseMethod.extractSolution(problem);
+        double[] solution = SinglePhaseMethod.extractSolution(problem, 3);
         Assert.assertArrayEquals(new double[]{5./12., 0., 0.}, solution, 1.e-10);
     }
 
@@ -147,7 +147,7 @@ public class CanonicalProblemTest
 
         CanonicalProblem problem = CanonicalProblem.create(equationSet, objectiveFunction);
         problem = SinglePhaseMethod.solve(problem);
-        double[] solution = SinglePhaseMethod.extractSolution(problem);
+        double[] solution = SinglePhaseMethod.extractSolution(problem, 4);
         Assert.assertArrayEquals(new double[]{0., 2291./444., 219./148.,99./148.}, solution, 1.e-10);
     }
 }

@@ -14,28 +14,39 @@ public class CanonicalProblem
     private ObjectiveFunction objfunc;
     private ObjectiveFunction auxObjFunc;
     private boolean flagTwoPhases;
+    private int[] indices;
 
 
     private CanonicalProblem(){
     }
 
 
-    private CanonicalProblem(EquationSet set, ObjectiveFunction objfunc, ObjectiveFunction auxObjFunc){
+    private CanonicalProblem(EquationSet set, ObjectiveFunction objfunc, ObjectiveFunction auxObjFunc, int[] indices){
         this.equationSet = set;
         this.objfunc = objfunc;
         this.auxObjFunc = auxObjFunc;
         flagTwoPhases = false;
+        this.indices = indices;
     }
 
 
-    public static CanonicalProblem create(EquationSet eqset, ObjectiveFunction func){
+    public static CanonicalProblem create(EquationSet eqset, ObjectiveFunction func) {
+        int length = func.getValues().length;
+        int[] indices = new int[eqset.getNumberOfEquations()];
+        for(int t = 0; t < indices.length; t++){
+            indices[t] = length + t;
+        }
+        return create(eqset, func, indices);
+    }
+
+    public static CanonicalProblem create(EquationSet eqset, ObjectiveFunction func, int[] indices){
         int inequalityNumber = (int) eqset.stream().filter(equation -> !equation.getRelation().equals(Relation.EQUAL)).count();
 
 
         boolean needTwoPhases = eqset.stream().anyMatch(eq -> eq.getRelation().isGreaterOrEqual());
 
         if (inequalityNumber == 0)
-            return new CanonicalProblem(eqset,func, null);
+            return new CanonicalProblem(eqset,func, null, indices);
 
         EquationSet newSet = EquationSet.create();
         for (int k = 0; k < eqset.getNumberOfEquations(); k++){
@@ -44,7 +55,7 @@ public class CanonicalProblem
             newSet.addEquation(equation);
         }
 
-        CanonicalProblem problem = new CanonicalProblem(newSet, extend(func.getCanonical(),inequalityNumber), null);
+        CanonicalProblem problem = new CanonicalProblem(newSet, extend(func.getCanonical(),inequalityNumber), null, indices);
         if(needTwoPhases) problem.setTwoPhases();
         return problem;
     }
@@ -131,7 +142,9 @@ public class CanonicalProblem
             objfunc = this.objfunc.add(baseEquation.applyFactor(-1.*objfunccoeff).getLeftValues());
         }
 
-        CanonicalProblem newProblem = CanonicalProblem.create(newSet,objfunc);
+        this.indices[row] = col;
+
+        CanonicalProblem newProblem = CanonicalProblem.create(newSet,objfunc,this.indices);
 
         if(auxObjFunc != null)
         {
@@ -144,6 +157,12 @@ public class CanonicalProblem
         }
 
         return newProblem;
+    }
+
+    public int[] getIndices(){
+        int[] idxs = new int[this.indices.length];
+        System.arraycopy(this.indices,0,idxs,0, this.indices.length);
+        return idxs;
     }
 
     public void setTwoPhases(){
