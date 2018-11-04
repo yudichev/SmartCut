@@ -100,6 +100,17 @@ public class ObjectiveFunction
 		return new ObjectiveFunction(values, type);
 	}
 
+	public double apply(double[] vector){
+		if(vector.length != this.values.length)
+			throw new IllegalArgumentException("The length of given array mismatches the objecive function dimensions");
+
+		double result = 0.;
+		for(int k = 0; k < vector.length; k++){
+			result += vector[k]*this.values[k];
+		}
+		return result;
+	}
+
 	private void calculateIndexOfMaximumMinimum(int m){
 		calculateIndexOfMaximumMinimum(m, values.length);
 	}

@@ -27,8 +27,9 @@ public class DoublePhaseMethodTest {
 
         double[] solution = DoublePhaseMethod.solve(problem);
 
-
         Assert.assertArrayEquals(new double[]{0., 0.,36.,28.}, solution, 0.0d);
+
+        Assert.assertEquals(36.+28*2.,objfunc.apply(solution), 1.e-14d);
 
     }
 
@@ -51,6 +52,8 @@ public class DoublePhaseMethodTest {
 
 
         Assert.assertArrayEquals(new double[]{145./3., 0.,0.,0.}, solution, 0.0d);
+
+        Assert.assertEquals(145./3.,objfunc.apply(solution), 1.e-14d);
 
     }
 
@@ -78,6 +81,7 @@ public class DoublePhaseMethodTest {
         double[] solution = DoublePhaseMethod.solve(problem);
 
         Assert.assertArrayEquals(new double[]{0., 23., 0., 0., 136./3., 0.}, solution, 1.e-14);
+        Assert.assertEquals(23.+136./3.,objfunc.apply(solution), 1.e-13d);
     }
 
 
@@ -104,5 +108,6 @@ public class DoublePhaseMethodTest {
         double[] solution = DoublePhaseMethod.solve(problem);
 
         Assert.assertArrayEquals(new double[]{2.5, 4.}, solution, 1.e-14);
+        Assert.assertEquals(2.5*4.+4.*6.,objfunc.apply(solution), 1.e-14d);
     }
 }
