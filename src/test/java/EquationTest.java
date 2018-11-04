@@ -92,7 +92,7 @@ public class EquationTest {
         Assert.assertEquals(3., sum.getRightValue(),0.0d);
 
         try{
-            sum = _equation1.add(_equation2);
+            _equation1.add(_equation2);
             Assert.fail("Exception must be thrown here.");
         } catch(RuntimeException ex){
             Assert.assertEquals("Equations with different relation cannot be combined.",ex.getMessage());

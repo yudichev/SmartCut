@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class EquationSet {
-    private static String ERORR_LENGTH_MISMATCH = "Equation length mismatches the set.";
+    private static final String ERROR_LENGTH_MISMATCH = "Equation length mismatches the set.";
 
-    private List<Equation> equationList;
+    private final List<Equation> equationList;
     private int rowSize = 0;
 
     private EquationSet(){
@@ -18,7 +18,7 @@ public class EquationSet {
         if(equationList.size() == 0){
             rowSize = equation.getLength();
         } else if(rowSize != equation.getLength()){
-            throw new RuntimeException(ERORR_LENGTH_MISMATCH);
+            throw new RuntimeException(ERROR_LENGTH_MISMATCH);
         }
         this.equationList.add(equation);
     }
@@ -41,17 +41,6 @@ public class EquationSet {
             else {eqSet.addEquation(this.equationList.get(m).copy());}
         }
         return eqSet;
-    }
-
-    public final EquationSet swapColumns(int j, int k){
-        EquationSet newEquationSet = create();
-        for(Equation eq : this.equationList){
-            double[] lvalues = eq.getLeftValues();
-            lvalues[j] = eq.getValueAt(k);
-            lvalues[k] = eq.getValueAt(j);
-            newEquationSet.addEquation(Equation.of(lvalues,eq.getRelation(),eq.getRightValue()));
-        }
-        return newEquationSet;
     }
 
     public Stream<Equation> stream(){

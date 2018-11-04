@@ -5,16 +5,16 @@ import java.util.Arrays;
 import static java.util.Arrays.*;
 
 public class Equation {
-    private static String ERROR_OUT_OF_BOUNDS = "Index is out of bounds.";
-    private static String ERROR_RELATION_MISMATCH = "Equations with different relation cannot be combined.";
-    private static String ERROR_LENGTH_MISMATCH = "Equations of different length cannot be combined";
+    private static final String ERROR_OUT_OF_BOUNDS = "Index is out of bounds.";
+    private static final String ERROR_RELATION_MISMATCH = "Equations with different relation cannot be combined.";
+    private static final String ERROR_LENGTH_MISMATCH = "Equations of different length cannot be combined";
 
     private int length;
     private double[] leftValues;
     private double rightValue;
     private Relation relation;
 
-    private Equation(){};
+    private Equation(){}
 
     private Equation(double[] leftValues, double rightValue, Relation relation){
      this.leftValues = leftValues;

@@ -6,6 +6,7 @@ import math.linear.basic.ObjectiveFunction;
 import math.linear.basic.Relation;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 public class CanonicalProblem
 {
@@ -14,19 +15,20 @@ public class CanonicalProblem
     private ObjectiveFunction objfunc;
     private ObjectiveFunction auxObjFunc;
     private boolean flagTwoPhases;
-    private int[] indices;
+    private int[] permutations;
+    private int originalNumberOfVariables;
 
 
     private CanonicalProblem(){
     }
 
 
-    private CanonicalProblem(EquationSet set, ObjectiveFunction objfunc, ObjectiveFunction auxObjFunc, int[] indices){
+    private CanonicalProblem(EquationSet set, ObjectiveFunction objfunc, ObjectiveFunction auxObjFunc, int[] permutations){
         this.equationSet = set;
         this.objfunc = objfunc;
         this.auxObjFunc = auxObjFunc;
         flagTwoPhases = false;
-        this.indices = indices;
+        this.permutations = permutations;
     }
 
 
@@ -39,9 +41,8 @@ public class CanonicalProblem
         return create(eqset, func, indices);
     }
 
-    public static CanonicalProblem create(EquationSet eqset, ObjectiveFunction func, int[] indices){
+    private static CanonicalProblem create(EquationSet eqset, ObjectiveFunction func, int[] indices){
         int inequalityNumber = (int) eqset.stream().filter(equation -> !equation.getRelation().equals(Relation.EQUAL)).count();
-
 
         boolean needTwoPhases = eqset.stream().anyMatch(eq -> eq.getRelation().isGreaterOrEqual());
 
@@ -57,6 +58,8 @@ public class CanonicalProblem
 
         CanonicalProblem problem = new CanonicalProblem(newSet, extend(func.getCanonical(),inequalityNumber), null, indices);
         if(needTwoPhases) problem.setTwoPhases();
+        Optional<Equation> firstEq = eqset.stream().findFirst();
+        problem.originalNumberOfVariables = firstEq.isPresent() ? firstEq.get().getLength() : 0;
         return problem;
     }
 
@@ -142,9 +145,9 @@ public class CanonicalProblem
             objfunc = this.objfunc.add(baseEquation.applyFactor(-1.*objfunccoeff).getLeftValues());
         }
 
-        this.indices[row] = col;
+        this.permutations[row] = col;
 
-        CanonicalProblem newProblem = CanonicalProblem.create(newSet,objfunc,this.indices);
+        CanonicalProblem newProblem = CanonicalProblem.create(newSet,objfunc,this.permutations);
 
         if(auxObjFunc != null)
         {
@@ -159,13 +162,13 @@ public class CanonicalProblem
         return newProblem;
     }
 
-    public int[] getIndices(){
-        int[] idxs = new int[this.indices.length];
-        System.arraycopy(this.indices,0,idxs,0, this.indices.length);
+    public int[] getPermutations(){
+        int[] idxs = new int[this.permutations.length];
+        System.arraycopy(this.permutations,0,idxs,0, this.permutations.length);
         return idxs;
     }
 
-    public void setTwoPhases(){
+    private void setTwoPhases(){
         this.flagTwoPhases = true;
     }
 
@@ -181,6 +184,10 @@ public class CanonicalProblem
 
     public ObjectiveFunction  getAuxFunction(){
         return this.auxObjFunc;
+    }
+
+    public int getOriginalNumberOfVariables(){
+        return this.originalNumberOfVariables;
     }
 
 }

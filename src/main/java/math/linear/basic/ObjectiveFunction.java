@@ -1,20 +1,19 @@
 package math.linear.basic;
 
-import java.math.BigDecimal;
 import java.util.stream.DoubleStream;
 
 public class ObjectiveFunction
 {
-	private static String ERROR_INDEX_OUT_OF_BOUNDS = "Index is out of bounds.";
-	private static String ERROR_ZERO_LENGTH = "Cannot create functional with zero length.";
-	private static String ERROR_LENGTH_MISMATCH = "Objective function's length differs from the length of the array being added.";
+	private static final String ERROR_INDEX_OUT_OF_BOUNDS = "Index is out of bounds.";
+	private static final String ERROR_ZERO_LENGTH = "Cannot create functional with zero length.";
+	private static final String ERROR_LENGTH_MISMATCH = "Objective function's length differs from the length of the array being added.";
 
-	private double[] values;
+	private final double[] values;
 	private int indexOfMaximum = 0;
 	private int indexOfMaximumAbs = 0;
 	private int indexOfMinimum = 0;
 	private int indexOfMinimumAbs = 0;
-	private ObjectiveFunctionType type;
+	private final ObjectiveFunctionType type;
 
 	private ObjectiveFunction(double[] values, ObjectiveFunctionType type){
 		this.values = values;
@@ -49,15 +48,6 @@ public class ObjectiveFunction
 		}
 	}
 
-	public boolean isOptimal(int skipLast){
-		int length = this.values.length - skipLast;
-		if(ObjectiveFunctionType.MAXIMUM.equals(this.type)) {
-			return DoubleStream.of(this.values).limit(length).noneMatch(val -> val > 0.);
-		} else {
-			return DoubleStream.of(this.values).limit(length).noneMatch(val -> val < 0.);
-		}
-	}
-
 	public ObjectiveFunction add(double[] values){
 		if(this.values.length != values.length)
 			throw  new RuntimeException(ERROR_LENGTH_MISMATCH);
@@ -84,20 +74,11 @@ public class ObjectiveFunction
 		return this.indexOfMaximum;
 	}
 
-	public int getIndexOfMaximum(int k){
-		calculateIndexOfMaximumMinimum(k);
-		return this.indexOfMaximum;
-	}
-
 
 	public int getIndexOfMinimum(){
 		return this.indexOfMinimum;
 	}
 
-
-	public int getIndexOfMinimumAbs(){
-		return this.indexOfMinimumAbs;
-	}
 
 	public int getIndexOfMaximumAbs(){
 		return this.indexOfMaximumAbs;
@@ -115,7 +96,7 @@ public class ObjectiveFunction
 			throw new RuntimeException(ERROR_ZERO_LENGTH);
 		}
 		double[] valuesCopy = new double[values.length];
-		System.arraycopy(values, 0, valuesCopy, 0, values.length);
+		System.arraycopy(values, 0, valuesCopy, 0, valuesCopy.length);
 		return new ObjectiveFunction(values, type);
 	}
 

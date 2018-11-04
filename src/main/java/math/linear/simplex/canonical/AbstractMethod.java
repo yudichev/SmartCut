@@ -1,6 +1,5 @@
 package math.linear.simplex.canonical;
 
-import math.linear.basic.Equation;
 import math.linear.basic.EquationSet;
 
 import java.util.Arrays;
@@ -33,7 +32,7 @@ public abstract class AbstractMethod {
 
         double[] fullSolution = new double[problem.getObjectiveFunction().getValues().length];
         Arrays.fill(fullSolution, 0.);
-        int[] indices = problem.getIndices();
+        int[] indices = problem.getPermutations();
         EquationSet equationSet = problem.getEquationSet();
         for(int k = 0; k < equationSet.getNumberOfEquations(); k++){
             fullSolution[indices[k]] = equationSet.getEquation(k).getRightValue();
