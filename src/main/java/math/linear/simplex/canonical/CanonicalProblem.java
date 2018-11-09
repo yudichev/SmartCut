@@ -4,6 +4,7 @@ import math.linear.basic.Equation;
 import math.linear.basic.EquationSet;
 import math.linear.basic.ObjectiveFunction;
 import math.linear.basic.Relation;
+import math.linear.exceptions.ObjectiveFunctionUnboundedException;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -92,7 +93,6 @@ public class CanonicalProblem
 
     public int getPivotRowIdx(int columnIdx){
         int rowIdx = -1;
-        Equation firstEquation = this.equationSet.getEquation(0);
         double maxRate = -1.;
 
         int columnSize = this.equationSet.getNumberOfEquations();
@@ -109,7 +109,7 @@ public class CanonicalProblem
                 }
             }
         }
-        if(rowIdx < 0) throw new RuntimeException("Optimal index is not found");
+        if(rowIdx < 0) throw new ObjectiveFunctionUnboundedException();
 
         return rowIdx;
     }
@@ -117,7 +117,7 @@ public class CanonicalProblem
     public CanonicalProblem gaussianExclusion(int row, int col){
         Equation baseEquation = this.getEquationSet().getEquation(row);
         double factor = baseEquation.getValueAt(col);
-        if(factor == 0.) throw new RuntimeException("Division by zero");
+        if(factor == 0.) throw new ArithmeticException("Pivot row has zero in pivot column.");
 
         baseEquation = baseEquation.applyFactor(1./factor);
 

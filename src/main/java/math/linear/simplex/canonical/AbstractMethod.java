@@ -1,34 +1,24 @@
 package math.linear.simplex.canonical;
 
 import math.linear.basic.EquationSet;
+import math.linear.basic.ObjectiveFunction;
 
 import java.util.Arrays;
 
 public abstract class AbstractMethod {
 
+    static CanonicalProblem findOptimalSolution(CanonicalProblem problem, ObjectiveFunction objectiveFunction)
+    {
+        while(!objectiveFunction.isOptimal()) {
+            int col = objectiveFunction.getIndexOfMaximum();
+            int row = problem.getPivotRowIdx(col);
+            problem = problem.gaussianExclusion(row, col);
+            objectiveFunction = problem.getObjectiveFunction();
+        }
+        return problem;
+    }
 
     public static double[] extractSolution(CanonicalProblem problem, int originalVariablesNumber){
-        /*
-        double[] unsortedSolution = problem.getEquationSet().stream().mapToDouble(Equation::getRightValue).toArray();
-        EquationSet eqSet = problem.getEquationSet();
-        int m = eqSet.getNumberOfEquations();
-        double[] sortedSolution = new double[eqSet.getEquation(0).getLength()];
-
-        for(int k = 0; k < m; k++){
-            Equation eq = eqSet.getEquation(k);
-            int t = 0;
-            for(int j = 0; j < eq.getLength(); j++){
-                if(Double.compare(eq.getValueAt(j), 1.) == 0){
-                    t = j;
-                    break;
-                }
-            }
-            sortedSolution[t] = unsortedSolution[k];
-        }
-        double[] solution = new double[m];
-        System.arraycopy(sortedSolution, 0, solution, 0, m);
-        return solution;
-        */
 
         double[] fullSolution = new double[problem.getObjectiveFunction().getValues().length];
         Arrays.fill(fullSolution, 0.);

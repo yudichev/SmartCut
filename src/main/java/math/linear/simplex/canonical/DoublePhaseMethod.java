@@ -3,6 +3,8 @@ package math.linear.simplex.canonical;
 import math.linear.basic.EquationSet;
 import math.linear.basic.ObjectiveFunction;
 import math.linear.basic.ObjectiveFunctionType;
+import math.linear.exceptions.InitialCanonicalTableauNotExist;
+import math.linear.exceptions.ObjectiveFunctionUnboundedException;
 
 import java.util.Arrays;
 
@@ -30,26 +32,28 @@ public class DoublePhaseMethod extends  AbstractMethod{
     }
 
 
-    private static CanonicalProblem solveAuxiliery(CanonicalProblem problem){
+    private static CanonicalProblem solvePhaseOne(CanonicalProblem problem){
         ObjectiveFunction objectiveFunction = problem.getAuxFunction();
-        while(!objectiveFunction.isOptimal()) {
-            int col = objectiveFunction.getIndexOfMinimum();
-            int row = problem.getPivotRowIdx(col);
-            problem = problem.gaussianExclusion(row, col);
-            objectiveFunction = problem.getAuxFunction();
+        try
+        {
+            while(!objectiveFunction.isOptimal())
+            {
+                int col = objectiveFunction.getIndexOfMinimum();
+                int row = problem.getPivotRowIdx(col);
+                problem = problem.gaussianExclusion(row, col);
+                objectiveFunction = problem.getAuxFunction();
+            }
+        } catch(ObjectiveFunctionUnboundedException ex){
+            throw new InitialCanonicalTableauNotExist();
         }
+
         return problem;
     }
 
-    private static CanonicalProblem mainsolve(CanonicalProblem problem){
+    private static CanonicalProblem solvePhaseTwo(CanonicalProblem problem){
 
         ObjectiveFunction objectiveFunction = problem.getObjectiveFunction();
-        while(!objectiveFunction.isOptimal()) {
-            int col = objectiveFunction.getIndexOfMaximum();
-            int row = problem.getPivotRowIdx(col);
-            problem = problem.gaussianExclusion(row, col);
-            objectiveFunction = problem.getObjectiveFunction();
-        }
+        problem = findOptimalSolution(problem, objectiveFunction);
         return problem;
     }
 
@@ -60,9 +64,16 @@ public class DoublePhaseMethod extends  AbstractMethod{
 
         CanonicalProblem problem2 = prepareAuxilieryFunction(problem);
 
-        CanonicalProblem problem3 = solveAuxiliery(problem2);
+        CanonicalProblem problem3 = solvePhaseOne(problem2);
 
-        CanonicalProblem problem4 = mainsolve(problem3);
+        ObjectiveFunction auxObjectiveFunction = problem3.getAuxFunction();
+
+        if(Math.abs(auxObjectiveFunction.apply(DoublePhaseMethod.extractSolution(problem3, auxObjectiveFunction.getValues().length))) > 1.e-14 )
+        {
+            throw new InitialCanonicalTableauNotExist();
+        };
+
+        CanonicalProblem problem4 = solvePhaseTwo(problem3);
 
         return DoublePhaseMethod.extractSolution(problem4, originalNumberOfVariables);
     }

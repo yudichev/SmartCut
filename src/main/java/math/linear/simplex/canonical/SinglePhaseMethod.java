@@ -10,15 +10,9 @@ public class SinglePhaseMethod extends  AbstractMethod{
         checkSolvable(problem);
 
         ObjectiveFunction objectiveFunction = problem.getObjectiveFunction();
-        while(!objectiveFunction.isOptimal()) {
-            int col = objectiveFunction.getIndexOfMaximum();
-            int row = problem.getPivotRowIdx(col);
-            problem = problem.gaussianExclusion(row, col);
-            objectiveFunction = problem.getObjectiveFunction();
-        }
+        problem = findOptimalSolution(problem, objectiveFunction);
         return problem;
     }
-
 
 
     private static void checkSolvable(CanonicalProblem problem){
