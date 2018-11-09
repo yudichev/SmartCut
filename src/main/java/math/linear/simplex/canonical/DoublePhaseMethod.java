@@ -62,6 +62,12 @@ public class DoublePhaseMethod extends  AbstractMethod{
     public static double[] solve(CanonicalProblem problem){
         int originalNumberOfVariables = problem.getOriginalNumberOfVariables();
 
+        CanonicalProblem problem4 = findSolution(problem);
+
+        return DoublePhaseMethod.extractSolution(problem4, originalNumberOfVariables);
+    }
+
+    static CanonicalProblem findSolution(CanonicalProblem problem){
         CanonicalProblem problem2 = prepareAuxilieryFunction(problem);
 
         CanonicalProblem problem3 = solvePhaseOne(problem2);
@@ -73,9 +79,7 @@ public class DoublePhaseMethod extends  AbstractMethod{
             throw new InitialCanonicalTableauNotExist();
         };
 
-        CanonicalProblem problem4 = solvePhaseTwo(problem3);
-
-        return DoublePhaseMethod.extractSolution(problem4, originalNumberOfVariables);
+        return solvePhaseTwo(problem3);
     }
 
 }

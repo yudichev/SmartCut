@@ -1,5 +1,6 @@
 import math.linear.basic.*;
 import math.linear.simplex.canonical.CanonicalProblem;
+import math.linear.simplex.canonical.SimplexMethod;
 import math.linear.simplex.canonical.SinglePhaseMethod;
 import org.junit.Assert;
 import org.junit.Test;
@@ -39,10 +40,11 @@ public class CanonicalProblemTest
 
             ObjectiveFunction objfunc = ObjectiveFunction.create(new double[]{ 3., -4. }, ObjectiveFunctionType.MAXIMUM);
             CanonicalProblem problem = CanonicalProblem.create(eqset, objfunc);
-            SinglePhaseMethod.solve(problem);
+           // SinglePhaseMethod.findSolution(problem);
+            double[] solution = SimplexMethod.solve(problem);
             Assert.fail("An exception must be here");
         } catch(RuntimeException ex){
-            Assert.assertEquals("The task cannot be solved by a single phase method. Use double phase method.", ex.getMessage());
+            Assert.assertEquals("Solution does not exist: failed to find initial canonical tableau", ex.getMessage());
         }
     }
 
@@ -93,8 +95,7 @@ public class CanonicalProblemTest
         ObjectiveFunction objectiveFunction = ObjectiveFunction.create(new double[]{2., 3.}, ObjectiveFunctionType.MAXIMUM);
 
         CanonicalProblem problem = CanonicalProblem.create(equationSet, objectiveFunction);
-        problem = SinglePhaseMethod.solve(problem);
-        double[] solution = SinglePhaseMethod.extractSolution(problem,2);
+        double[] solution = SimplexMethod.solve(problem);
         Assert.assertArrayEquals(new double[]{0.6, 2.2}, solution, 1.e-10);
     }
 
@@ -110,8 +111,7 @@ public class CanonicalProblemTest
         ObjectiveFunction objectiveFunction = ObjectiveFunction.create(new double[]{2., 7., 1.}, ObjectiveFunctionType.MAXIMUM);
 
         CanonicalProblem problem = CanonicalProblem.create(equationSet, objectiveFunction);
-        problem = SinglePhaseMethod.solve(problem);
-        double[] solution = SinglePhaseMethod.extractSolution(problem,3);
+        double[] solution = SimplexMethod.solve(problem);
         Assert.assertArrayEquals(new double[]{0., 0.8, 0.}, solution, 1.e-10);
     }
 
@@ -127,8 +127,7 @@ public class CanonicalProblemTest
         ObjectiveFunction objectiveFunction = ObjectiveFunction.create(new double[]{2., -2., 1.}, ObjectiveFunctionType.MAXIMUM);
 
         CanonicalProblem problem = CanonicalProblem.create(equationSet, objectiveFunction);
-        problem = SinglePhaseMethod.solve(problem);
-        double[] solution = SinglePhaseMethod.extractSolution(problem, 3);
+        double[] solution = SimplexMethod.solve(problem);
         Assert.assertArrayEquals(new double[]{5./12., 0., 0.}, solution, 1.e-10);
     }
 
@@ -146,8 +145,7 @@ public class CanonicalProblemTest
         ObjectiveFunction objectiveFunction = ObjectiveFunction.create(new double[]{4., 12., 1.,2.}, ObjectiveFunctionType.MAXIMUM);
 
         CanonicalProblem problem = CanonicalProblem.create(equationSet, objectiveFunction);
-        problem = SinglePhaseMethod.solve(problem);
-        double[] solution = SinglePhaseMethod.extractSolution(problem, 4);
+        double[] solution = SimplexMethod.solve(problem);
         Assert.assertArrayEquals(new double[]{0., 2291./444., 219./148.,99./148.}, solution, 1.e-10);
     }
 }

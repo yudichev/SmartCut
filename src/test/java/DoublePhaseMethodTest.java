@@ -1,8 +1,11 @@
 import math.linear.basic.*;
 import math.linear.simplex.canonical.CanonicalProblem;
 import math.linear.simplex.canonical.DoublePhaseMethod;
+import math.linear.simplex.canonical.SimplexMethod;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.beans.SimpleBeanInfo;
 
 public class DoublePhaseMethodTest {
 
@@ -25,7 +28,7 @@ public class DoublePhaseMethodTest {
 
         CanonicalProblem problem = CanonicalProblem.create(eqset, objfunc);
 
-        double[] solution = DoublePhaseMethod.solve(problem);
+        double[] solution = SimplexMethod.solve(problem);
 
         Assert.assertArrayEquals(new double[]{0., 0.,36.,28.}, solution, 0.0d);
 
@@ -48,7 +51,7 @@ public class DoublePhaseMethodTest {
 
         CanonicalProblem problem = CanonicalProblem.create(eqset, objfunc);
 
-        double[] solution = DoublePhaseMethod.solve(problem);
+        double[] solution = SimplexMethod.solve(problem);
 
 
         Assert.assertArrayEquals(new double[]{145./3., 0.,0.,0.}, solution, 0.0d);
@@ -78,7 +81,7 @@ public class DoublePhaseMethodTest {
 
         CanonicalProblem problem = CanonicalProblem.create(eqset, objfunc);
 
-        double[] solution = DoublePhaseMethod.solve(problem);
+        double[] solution = SimplexMethod.solve(problem);
 
         Assert.assertArrayEquals(new double[]{0., 23., 0., 0., 136./3., 0.}, solution, 1.e-14);
         Assert.assertEquals(23.+136./3.,objfunc.apply(solution), 1.e-13d);
@@ -105,7 +108,7 @@ public class DoublePhaseMethodTest {
 
         CanonicalProblem problem = CanonicalProblem.create(eqset, objfunc);
 
-        double[] solution = DoublePhaseMethod.solve(problem);
+        double[] solution = SimplexMethod.solve(problem);
 
         Assert.assertArrayEquals(new double[]{2.5, 4.}, solution, 1.e-14);
         Assert.assertEquals(2.5*4.+4.*6.,objfunc.apply(solution), 1.e-14d);
