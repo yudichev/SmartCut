@@ -3,6 +3,7 @@ package math.linear.simplex.integer;
 import math.linear.basic.Equation;
 import math.linear.basic.EquationSet;
 import math.linear.basic.ObjectiveFunction;
+import math.linear.basic.ObjectiveFunctionType;
 import math.linear.simplex.canonical.CanonicalProblem;
 
 import java.util.Arrays;
@@ -40,7 +41,7 @@ public class GomoryMethod {
     }
 
 
-    public static CanonicalProblem addCuttingPlane(CanonicalProblem problem){
+    public static CanonicalProblem addCuttingPlane(CanonicalProblem problem, Equation cuttingEquation){
         EquationSet equationSet = EquationSet.create();
         EquationSet srcEqSet = problem.getEquationSet();
         for(int k = 0; k < srcEqSet.getNumberOfEquations(); k++){
@@ -51,13 +52,15 @@ public class GomoryMethod {
             Equation newEquation = Equation.of(lvalues,srcEquation.getRelation(),srcEquation.getRightValue());
             equationSet.addEquation(newEquation);
         }
-        equationSet.addEquation(getCuttingEquation(problem));
+        equationSet.addEquation(cuttingEquation);
         ObjectiveFunction srcObjectiveFunction = problem.getObjectiveFunction();
         double[] srcObjFuncValues = srcObjectiveFunction.getValues();
-        double[] objFuncValues = new double[srcObjFuncValues.length];
+        double[] objFuncValues = new double[srcObjFuncValues.length + 1];
         Arrays.fill(objFuncValues,0.d);
         System.arraycopy(srcObjFuncValues,0,objFuncValues,0,srcObjFuncValues.length);
-        ObjectiveFunction newObjFunc = ObjectiveFunction.create(objFuncValues,srcObjectiveFunction.getType());
+        ObjectiveFunction newObjFunc = ObjectiveFunction.create(objFuncValues, srcObjectiveFunction.getType());
         return CanonicalProblem.create(equationSet,newObjFunc);
     }
+
+
 }

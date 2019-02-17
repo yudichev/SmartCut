@@ -37,7 +37,7 @@ public class CanonicalProblem
         int length = func.getValues().length;
         int[] indices = new int[eqset.getNumberOfEquations()];
         for(int t = 0; t < indices.length; t++){
-            indices[t] = length + t;
+            indices[t] = length - indices.length + t;
         }
         return create(eqset, func, indices);
     }
@@ -47,18 +47,24 @@ public class CanonicalProblem
 
         boolean needTwoPhases = eqset.stream().anyMatch(eq -> eq.getRelation().isGreaterOrEqual());
 
-        if (inequalityNumber == 0)
-            return new CanonicalProblem(eqset,func, null, indices);
+        CanonicalProblem problem;
+        if (inequalityNumber == 0) {
+            problem = new CanonicalProblem(eqset,func, null, indices);
+        } else {
+            EquationSet newSet = EquationSet.create();
+            for (int k = 0; k < eqset.getNumberOfEquations(); k++) {
+                Equation equation = eqset.getEquation(k).normalize();
+                equation = extend(equation, inequalityNumber, k);
+                newSet.addEquation(equation);
+            }
 
-        EquationSet newSet = EquationSet.create();
-        for (int k = 0; k < eqset.getNumberOfEquations(); k++){
-            Equation equation = eqset.getEquation(k).normalize();
-            equation = extend(equation, inequalityNumber, k);
-            newSet.addEquation(equation);
+            indices = new int[eqset.getNumberOfEquations()];
+            for(int t = 0; t < indices.length; t++){
+                indices[t] = func.getValues().length + t;
+            }
+            problem = new CanonicalProblem(newSet, extend(func.getCanonical(), inequalityNumber), null, indices);
+            if (needTwoPhases) problem.setTwoPhases();
         }
-
-        CanonicalProblem problem = new CanonicalProblem(newSet, extend(func.getCanonical(),inequalityNumber), null, indices);
-        if(needTwoPhases) problem.setTwoPhases();
         Optional<Equation> firstEq = eqset.stream().findFirst();
         problem.originalNumberOfVariables = firstEq.isPresent() ? firstEq.get().getLength() : 0;
         return problem;
