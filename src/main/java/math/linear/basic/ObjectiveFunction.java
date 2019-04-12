@@ -1,5 +1,6 @@
 package math.linear.basic;
 
+import java.util.Arrays;
 import java.util.stream.DoubleStream;
 
 public class ObjectiveFunction
@@ -116,13 +117,13 @@ public class ObjectiveFunction
 	}
 
 	private void calculateIndexOfMaximumMinimum(int m, int n){
-		double maxValue = values[m];
+		double maxValue = Arrays.stream(values).limit(n).skip(m).filter(value -> Double.compare(value, 0.d) != 0).findFirst().orElse(0.d);
 		double minValue = maxValue;
 		for(int k = m + 1; k < n; k++){
-			if(Double.compare(maxValue , values[k]) < 0){
+			if(Double.compare(maxValue , values[k]) <= 0 && Double.compare(values[k], 0.d) != 0){
 				maxValue = values[k];
 				this.indexOfMaximum = k;
-			} else if(Double.compare(minValue , values[k]) > 0){
+			} else if(Double.compare(minValue , values[k]) >= 0 && Double.compare(values[k], 0.d) != 0){
 				minValue = values[k];
 				this.indexOfMinimum = k;
 			}
@@ -133,10 +134,10 @@ public class ObjectiveFunction
 		double maxValue = Math.abs(values[0]);
 		double minValue = maxValue;
 		for(int k = 1; k < values.length; k++){
-			if(Double.compare(maxValue , Math.abs(values[k])) < 0){
+			if(Double.compare(maxValue , Math.abs(values[k])) <= 0 && Double.compare(values[k], 0.d) != 0){
 				maxValue = Math.abs(values[k]);
 				this.indexOfMaximumAbs = k;
-			} else if (Double.compare(minValue, Math.abs(values[k])) > 0) {
+			} else if (Double.compare(minValue, Math.abs(values[k])) >= 0 && Double.compare(values[k], 0.d) != 0) {
 				minValue = Math.abs(values[k]);
 				this.indexOfMinimumAbs = k;
 			}
