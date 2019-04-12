@@ -3,7 +3,7 @@ package math.linear.simplex.integer;
 import math.linear.basic.Equation;
 import math.linear.basic.EquationSet;
 import math.linear.basic.ObjectiveFunction;
-import math.linear.basic.ObjectiveFunctionType;
+import math.linear.basic.Relation;
 import math.linear.simplex.canonical.CanonicalProblem;
 
 import java.util.Arrays;
@@ -31,13 +31,13 @@ public class GomoryMethod {
         int rowNumber = getIndexOfRowWithMaximalFraction(problem);
         Equation eq = problem.getEquationSet().getEquation(rowNumber);
         double[] lvalues = new double[eq.getLength() + 1];
-        Arrays.fill(lvalues, 1.d);
+        Arrays.fill(lvalues, -1.d);
         for(int k = 0; k < eq.getLength(); k++){
             double  value = eq.getValueAt(k);
             lvalues[k] = value - Math.floor(value);
         }
         double rvalue = eq.getRightValue() - Math.floor(eq.getRightValue());
-        return Equation.of(lvalues,eq.getRelation(),rvalue);
+        return Equation.of(lvalues,Relation.EQUAL,rvalue);
     }
 
 

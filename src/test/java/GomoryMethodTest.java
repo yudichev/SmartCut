@@ -28,7 +28,7 @@ public class GomoryMethodTest {
 
         Equation cutEq = GomoryMethod.getCuttingEquation(problem1);
 
-        CanonicalProblem problem2 = GomoryMethod.addCuttingPlane(problem, cutEq);
+        CanonicalProblem problem2 = GomoryMethod.addCuttingPlane(problem1, cutEq);
 
 
         problem2.getEquationSet().stream().forEach(
@@ -40,6 +40,7 @@ public class GomoryMethodTest {
         double[] sol = SimplexMethod.solve(problem2);
 
         Arrays.stream(sol).forEach(val-> System.out.print(val + ", "));
+        System.out.println("\nEnd.\n");
 
     }
 
