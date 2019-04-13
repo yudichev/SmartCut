@@ -4,6 +4,9 @@ import java.util.Arrays;
 
 import static java.util.Arrays.*;
 
+/**
+ * The class represents an equation for a linear problem.
+ */
 public class Equation {
     private static final String ERROR_OUT_OF_BOUNDS = "Index is out of bounds.";
     private static final String ERROR_RELATION_MISMATCH = "Equations with different relation cannot be combined.";
