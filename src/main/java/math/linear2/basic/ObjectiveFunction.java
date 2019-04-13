@@ -1,9 +1,14 @@
 package math.linear2.basic;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
-import java.util.Comparator;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
+/**
+ * Represents objective function for linear problem.
+ */
 public class ObjectiveFunction {
     private static final String ERROR_INDEX_OUT_OF_BOUNDS = "Index is out of bounds.";
     private static final String ERROR_ZERO_LENGTH = "Cannot create functional with zero length.";
@@ -28,5 +33,17 @@ public class ObjectiveFunction {
 
     private int compare(BigDecimal o1, BigDecimal o2) {
         return o1.compareTo(o2);
+    }
+
+    /**
+     * Creates an instance of ObjectiveFunction for the given coefficients and the type
+     * @param coeffs coefficients of the objective function
+     * @param type
+     * @return instance of ObjectiveFunction
+     */
+    public ObjectiveFunction create(double[] coeffs, ObjectiveFunctionType type){
+        List<BigDecimal> coefficients = Arrays.stream(coeffs).sequential()
+                .mapToObj(val -> BigDecimal.valueOf(val)).collect(Collectors.toList());
+        return new ObjectiveFunction(coefficients, type);
     }
 }
