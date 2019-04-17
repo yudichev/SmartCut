@@ -48,8 +48,8 @@ public class ProblemEquation
      * @return the value at position n
      */
     public final double getCoefficientAt(int n){
-        if(n >= 0 && n < length){
-            return coefficients[n];
+        if(n >= 1 && n <= length){
+            return coefficients[n - 1];
         } else {
             throw new RuntimeException(ERROR_OUT_OF_BOUNDS);
         }
