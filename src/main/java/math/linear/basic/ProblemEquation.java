@@ -74,7 +74,7 @@ public class ProblemEquation
      * Creates a copy of the equation
      * @return copy of equation
      */
-    public ProblemEquation copy(){
+    public final ProblemEquation copy(){
         double[] lvalues = new double[this.length];
         System.arraycopy(this.coefficients, 0, lvalues, 0, this.length);
         return new ProblemEquation(lvalues,rightValue,this.relation);
@@ -88,7 +88,7 @@ public class ProblemEquation
      * @param rightValue right value of the equation
      * @return
      */
-    public static ProblemEquation of(double[] coeff, Relation rel, double rightValue){
+    public final static ProblemEquation make(double[] coeff, Relation rel, double rightValue){
         return new ProblemEquation(copyOf(coeff,coeff.length), rightValue, rel);
     }
 }
