@@ -11,6 +11,7 @@ import math.linear.basic.problem.ProblemObjectiveFunction;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,6 +20,7 @@ import static java.util.Arrays.stream;
 public class TableauBuilder
 {
     private static int NOT_ASSIGNED = -1;
+    private static double ZERO = 0.d;
 
     private List<ProblemEquation> equations;
     private ProblemObjectiveFunction objectiveFunction;
@@ -44,10 +46,6 @@ public class TableauBuilder
         return this;
     }
 
-    public TableauBuilder setAuxilieryFunction(ProblemObjectiveFunction auxilieryFunction) {
-        this.auxilieryFunction = auxilieryFunction;
-        return this;
-    }
 
     public Tableau build() {
         checkData();
@@ -55,7 +53,7 @@ public class TableauBuilder
         nonBasicVariablesFirstIndex =  equations.get(0).getLength();
         totalNumberOfVariables = equations.get(0).getLength() + equations.size();
 
-        int auxilieryVariablesCount = (int) equations.stream().filter(TableauBuilder::needsAuxilieryVariable).count();
+        int auxilieryVariablesCount = equations.stream().mapToInt(TableauBuilder::getNumberOfNeededAuxilieryVariables).sum();
 
         if(auxilieryVariablesCount > 0) {
             auxilieryVariablesFirstIndex = totalNumberOfVariables;
@@ -63,15 +61,22 @@ public class TableauBuilder
         }
 
         List<GenericTableauRow> rows = new ArrayList<>(equations.size() + 2);
+
+        Tableau tableau = Tableau.getInstance();
         for(int k = 0; k < equations.size(); k++) {
             ProblemEquation equation = equations.get(k);
             Relation relation = equation.getRelation();
             double freeCoefficient = equation.getCoefficientAt(0);
+            boolean isFreeCoefficientNegative = Double.compare(freeCoefficient, ZERO) < 0;
+
             List<BigDecimal> coeffs = new ArrayList<>(totalNumberOfVariables);
-            for(int m = 0; m < totalNumberOfVariables; m++){
+
+            for(int m = 0; m < nonBasicVariablesFirstIndex; m++){
                 double coeff = equation.getCoefficientAt(m);
-                if(Double.compare(freeCoefficient, 0.d) < 0)
+                if(isFreeCoefficientNegative) {
                     coeff = coeff * (-1);
+                    relation = relation.invert();
+                }
                 coeffs.set(m, BigDecimal.valueOf(coeff));
             }
             for(int m = nonBasicVariablesFirstIndex; m < totalNumberOfVariables; m++){
@@ -79,19 +84,38 @@ public class TableauBuilder
             }
             coeffs.set(k + nonBasicVariablesFirstIndex, BigDecimal.ONE);
 
-            if(auxilieryVariablesCount > 0 && needsAuxilieryVariable(equation)) {
-                coeffs.set(k + auxilieryVariablesFirstIndex, BigDecimal.ONE);
-                coeffs.set(k + nonBasicVariablesFirstIndex, BigDecimal.ONE.negate());
-                rows.add(new EquationTableauRow(k + auxilieryVariablesFirstIndex, coeffs));
-            } else {
+            if(auxilieryVariablesCount == 0) {
                 coeffs.set(k + nonBasicVariablesFirstIndex, BigDecimal.ONE);
-                rows.add(new EquationTableauRow(k + nonBasicVariablesFirstIndex, coeffs));
+                tableau.addRow(new EquationTableauRow(k + nonBasicVariablesFirstIndex, coeffs));
+            } else {
+                if(relation.isGreaterOrEqual()){
+                    coeffs.set(k + auxilieryVariablesFirstIndex, BigDecimal.ONE);
+                    coeffs.set(k + nonBasicVariablesFirstIndex, BigDecimal.ONE.negate());
+                    tableau.addRow(new EquationTableauRow(k + auxilieryVariablesFirstIndex, coeffs));
+                } else if(relation.isEqual()){
+                    coeffs.set(k + auxilieryVariablesFirstIndex, BigDecimal.ONE);
+                    tableau.addRow(new EquationTableauRow(k + auxilieryVariablesFirstIndex, coeffs));
+                }
             }
-
-
         }
 
-        return null;
+        List<BigDecimal> objectiveFunctionCoeffs = new ArrayList<>(totalNumberOfVariables);
+        for(int m = 0; m < nonBasicVariablesFirstIndex; m++) {
+            objectiveFunctionCoeffs.set(m,BigDecimal.valueOf(objectiveFunction.getCoefficientAt(m) * (-1)));
+        }
+
+        tableau.setObjectiveFunction(new ObjectiveFunctionTableauRow(ObjectiveFunctionTableauRow.Type.STANDARD, objectiveFunctionCoeffs));
+
+        if(auxilieryVariablesCount > 0) {
+            List<BigDecimal> auxFunctionCoeffs = new ArrayList<>(totalNumberOfVariables);
+            Collections.fill(auxFunctionCoeffs,BigDecimal.ZERO);
+            for(int m = auxilieryVariablesFirstIndex; m < totalNumberOfVariables; m++) {
+                auxFunctionCoeffs.set(m,BigDecimal.ONE);
+            }
+            tableau.setAuxilieryFunction( new ObjectiveFunctionTableauRow(ObjectiveFunctionTableauRow.Type.AUXILIERY, auxFunctionCoeffs));
+        }
+
+        return tableau;
     }
 
     private void checkData() {
@@ -107,9 +131,22 @@ public class TableauBuilder
     private static boolean needsAuxilieryVariable(ProblemEquation equation) {
         Relation relation = equation.getRelation();
         double freeCoefficient = equation.getCoefficientAt(0);
-        return ((relation.isLessOrEqual() && Double.compare(freeCoefficient, 0.d) < 0)
-            || (relation.isGreaterOrEqual() && Double.compare(freeCoefficient, 0.d) > 0));
+        return ((relation.isLessOrEqual() && Double.compare(freeCoefficient, ZERO) < 0)
+            || (relation.isGreaterOrEqual() && Double.compare(freeCoefficient, ZERO) > 0));
 
+    }
+
+    private static int getNumberOfNeededAuxilieryVariables(ProblemEquation equation){
+        Relation relation = equation.getRelation();
+        double freeCoefficient = equation.getCoefficientAt(0);
+        if(relation.isEqual()) {
+            return 1;
+        } else if(((relation.isLessOrEqual() && Double.compare(freeCoefficient, ZERO) < 0)
+                || (relation.isGreaterOrEqual() && Double.compare(freeCoefficient, ZERO) > 0))) {
+            return 2;
+        } else {
+            return 0;
+        }
     }
 
 

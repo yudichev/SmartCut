@@ -104,6 +104,10 @@ public class Tableau
         return auxilieryFunctionIndex;
     }
 
+    public boolean isTwoPhases() {
+        return auxilieryFunctionIndex != INDEX_NOT_ASSIGNED;
+    }
+
     /**
      * Performs pivot operation. The initial state of the tableau must contain at least one equation row and an objective function.
      * @param rowNumber the row number to pivot at

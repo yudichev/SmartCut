@@ -25,5 +25,4 @@ public class ProblemEquationTest
         Assert.assertEquals(7.d, equation.getCoefficientAt(4),0.0d);
         Assert.assertEquals(9.d, equation.getCoefficientAt(0),0.0d);
     }
-
 }
