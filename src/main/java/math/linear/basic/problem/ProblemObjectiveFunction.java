@@ -1,8 +1,16 @@
-package math.linear.basic;
+package math.linear.basic.problem;
+
+/*
+ * Copyright 2001-2019 by HireRight, Inc. All rights reserved.
+ * This software is the confidential and proprietary information
+ * of HireRight, Inc. Use is subject to license terms.
+ */
 
 /*
  * Represents an objective function in the linear programming problem
  */
+
+import math.linear.basic.ObjectiveFunctionType;
 
 public class ProblemObjectiveFunction
 {
@@ -18,8 +26,8 @@ public class ProblemObjectiveFunction
     }
 
     public final double getCoefficientAt(int k){
-        if(k >= 0 && k < this.coefficients.length){
-            return this.coefficients[k];
+        if(k > 0 && k <= this.coefficients.length){
+            return this.coefficients[k - 1];
         } else {
             throw new RuntimeException(ERROR_INDEX_OUT_OF_BOUNDS);
         }

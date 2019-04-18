@@ -1,8 +1,16 @@
-package math.linear.basic;
+package math.linear.basic.problem;
+
+/*
+ * Copyright 2001-2019 by HireRight, Inc. All rights reserved.
+ * This software is the confidential and proprietary information
+ * of HireRight, Inc. Use is subject to license terms.
+ */
 
 /*
  * Class represents an initial problem equation
  */
+
+import math.linear.basic.Relation;
 
 import java.util.Arrays;
 
@@ -14,17 +22,16 @@ public class ProblemEquation
 
     private int length;
     private double[] coefficients;
-    private double rightValue;
     private Relation relation;
 
     private ProblemEquation(){}
 
-    private ProblemEquation(double[] coeff, double rightValue, Relation relation){
+    private ProblemEquation(double[] coeff, Relation relation){
         this.coefficients = coeff;
-        this.rightValue = rightValue;
         this.relation = relation;
         this.length = this.coefficients.length;
     }
+
 
     /**
      * Returns the length of the equation
@@ -48,8 +55,8 @@ public class ProblemEquation
      * @return the value at position n
      */
     public final double getCoefficientAt(int n){
-        if(n >= 1 && n <= length){
-            return coefficients[n - 1];
+        if(n >= 0 && n < length){
+            return coefficients[n];
         } else {
             throw new RuntimeException(ERROR_OUT_OF_BOUNDS);
         }
@@ -59,15 +66,6 @@ public class ProblemEquation
         return Arrays.copyOf(this.coefficients,this.length);
     }
 
-    /**
-     * Returns right value of the equation
-     * @return
-     */
-    public final double getRightValue(){
-        return this.rightValue;
-    }
-
-
 
 
     /**
@@ -75,9 +73,9 @@ public class ProblemEquation
      * @return copy of equation
      */
     public final ProblemEquation copy(){
-        double[] lvalues = new double[this.length];
-        System.arraycopy(this.coefficients, 0, lvalues, 0, this.length);
-        return new ProblemEquation(lvalues,rightValue,this.relation);
+        double[] coeffs = new double[this.length];
+        System.arraycopy(this.coefficients, 0, coeffs, 0, this.length);
+        return new ProblemEquation(coeffs,this.relation);
     }
 
 
@@ -89,6 +87,9 @@ public class ProblemEquation
      * @return
      */
     public final static ProblemEquation make(double[] coeff, Relation rel, double rightValue){
-        return new ProblemEquation(copyOf(coeff,coeff.length), rightValue, rel);
+        double[] coeffExt = new double[coeff.length + 1];
+        coeffExt[0] = rightValue;
+        System.arraycopy(coeff, 0, coeffExt, 1, coeff.length);
+        return new ProblemEquation(coeffExt, rel);
     }
 }
