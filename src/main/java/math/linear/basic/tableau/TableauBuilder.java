@@ -103,9 +103,6 @@ public class TableauBuilder
         }
     }
 
-    private static EquationTableauRow getEquationRow(ProblemEquation equation) {
-        stream(equation.getCoefficients()).
-    }
 
     private static boolean needsAuxilieryVariable(ProblemEquation equation) {
         Relation relation = equation.getRelation();
