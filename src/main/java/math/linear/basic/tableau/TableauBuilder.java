@@ -44,22 +44,13 @@ public class TableauBuilder
 
     public Tableau build() {
         checkData();
-
-        nonBasicVariablesFirstIndex =  equations.get(0).getLength();
-        totalNumberOfVariables = equations.get(0).getLength() + equations.size();
-
-        int auxilieryVariablesCount = equations.stream().mapToInt(TableauBuilder::getNumberOfNeededAuxilieryVariables).sum();
-
-        if(auxilieryVariablesCount > 0) {
-            auxilieryVariablesFirstIndex = totalNumberOfVariables;
-            totalNumberOfVariables += auxilieryVariablesCount;
-        }
+        analyze();
 
         List<GenericTableauRow> rows = new ArrayList<>(equations.size() + 2);
 
         Tableau tableau = Tableau.getInstance();
-        for(int k = 0; k < equations.size(); k++) {
-            ProblemEquation equation = equations.get(k);
+        for(int k = 0, knb = nonBasicVariablesFirstIndex, kaux = auxilieryVariablesFirstIndex; k < equations.size(); k++) {
+            ProblemEquation equation = this.equations.get(k);
             Relation relation = equation.getRelation();
             double freeCoefficient = equation.getCoefficientAt(0);
             boolean isFreeCoefficientNegative = Double.compare(freeCoefficient, ZERO) < 0;
@@ -78,18 +69,26 @@ public class TableauBuilder
                 coeffs.add(m, BigDecimal.ZERO);
             }
 
-            if(auxilieryVariablesCount == 0) {
-                coeffs.set(k + nonBasicVariablesFirstIndex, BigDecimal.ONE);
+            if(auxilieryVariablesFirstIndex == NOT_ASSIGNED) {
+                coeffs.set(knb++, BigDecimal.ONE);
                 tableau.addRow(new EquationTableauRow(k + nonBasicVariablesFirstIndex, coeffs));
             } else {
                 if(relation.isGreaterOrEqual()){
-                    coeffs.set(k + auxilieryVariablesFirstIndex, BigDecimal.ONE);
-                    coeffs.set(k + nonBasicVariablesFirstIndex, BigDecimal.ONE.negate());
-                    tableau.addRow(new EquationTableauRow(k + auxilieryVariablesFirstIndex, coeffs));
+                    coeffs.set(kaux, BigDecimal.ONE);
+                    coeffs.set(knb, BigDecimal.ONE.negate());
+                    tableau.addRow(new EquationTableauRow(kaux, coeffs));
+                    kaux++;
+                    knb++;
                 } else if(relation.isEqual()){
-                    coeffs.set(k + auxilieryVariablesFirstIndex, BigDecimal.ONE);
-                    tableau.addRow(new EquationTableauRow(k + auxilieryVariablesFirstIndex, coeffs));
+                    coeffs.set(kaux, BigDecimal.ONE);
+                    tableau.addRow(new EquationTableauRow(kaux, coeffs));
+                    kaux++;
+                } else {
+                    coeffs.set(knb, BigDecimal.ONE);
+                    tableau.addRow(new EquationTableauRow(knb, coeffs));
+                    knb++;
                 }
+
             }
         }
 
@@ -101,7 +100,7 @@ public class TableauBuilder
 
         tableau.setObjectiveFunction(new ObjectiveFunctionTableauRow(ObjectiveFunctionTableauRow.Type.STANDARD, objectiveFunctionCoeffs));
 
-        if(auxilieryVariablesCount > 0) {
+        if(auxilieryVariablesFirstIndex != NOT_ASSIGNED) {
             List<BigDecimal> auxFunctionCoeffs = new ArrayList<>(totalNumberOfVariables);
             for(int m = 0; m < auxilieryVariablesFirstIndex; m++) {
                 auxFunctionCoeffs.add(m,BigDecimal.ZERO);
@@ -124,18 +123,44 @@ public class TableauBuilder
         }
     }
 
+    private void analyze() {
+        totalNumberOfVariables = equations.get(0).getLength();
+        int numberOfAdditionalVariables = 0;
+        int numberOfAuxilieryVariables = 0;
+        for(ProblemEquation eq : equations) {
+            Relation relation = eq.getRelation();
+            double freeCoefficient = eq.getCoefficientAt(0);
+            boolean isFreeCoefficientNegative = Double.compare(freeCoefficient, ZERO) < 0;
+            if(relation.isEqual()) {
+                numberOfAuxilieryVariables++;
+            } else if(((relation.isLessOrEqual() && isFreeCoefficientNegative)
+                || (relation.isGreaterOrEqual() && !isFreeCoefficientNegative))){
+                numberOfAuxilieryVariables++;
+                numberOfAdditionalVariables++;
+            } else {
+                numberOfAdditionalVariables++;
+            }
+        }
+        nonBasicVariablesFirstIndex = totalNumberOfVariables;
+        totalNumberOfVariables += numberOfAdditionalVariables;
+        if(numberOfAuxilieryVariables > 0) {
+            auxilieryVariablesFirstIndex = totalNumberOfVariables;
+            totalNumberOfVariables += numberOfAuxilieryVariables;
+        }
+    }
 
     private static int getNumberOfNeededAuxilieryVariables(ProblemEquation equation){
         Relation relation = equation.getRelation();
         double freeCoefficient = equation.getCoefficientAt(0);
-        if(relation.isEqual()) {
-            return 1;
-        } else if(((relation.isLessOrEqual() && Double.compare(freeCoefficient, ZERO) < 0)
-                || (relation.isGreaterOrEqual() && Double.compare(freeCoefficient, ZERO) > 0))) {
-            return 2;
-        } else {
-            return 0;
-        }
+        return (relation.isEqual() || ((relation.isLessOrEqual() && Double.compare(freeCoefficient, ZERO) < 0)
+            || (relation.isGreaterOrEqual() && Double.compare(freeCoefficient, ZERO) > 0))) ? 1 : 0;
+    }
+
+    private static int getNumberOfNeededAdditionalVariables(ProblemEquation equation){
+        Relation relation = equation.getRelation();
+        double freeCoefficient = equation.getCoefficientAt(0);
+        return (((relation.isLessOrEqual() && Double.compare(freeCoefficient, ZERO) < 0)
+            || (relation.isGreaterOrEqual() && Double.compare(freeCoefficient, ZERO) > 0))) ? 1 : 0;
     }
 
 
