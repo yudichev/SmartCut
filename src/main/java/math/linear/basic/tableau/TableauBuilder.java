@@ -55,13 +55,15 @@ public class TableauBuilder
             double freeCoefficient = equation.getCoefficientAt(0);
             boolean isFreeCoefficientNegative = Double.compare(freeCoefficient, ZERO) < 0;
 
+            if(isFreeCoefficientNegative)
+                relation = relation.invert();
+
             List<BigDecimal> coeffs = new ArrayList<>(totalNumberOfVariables);
 
             for(int m = 0; m < nonBasicVariablesFirstIndex; m++){
                 double coeff = equation.getCoefficientAt(m);
                 if(isFreeCoefficientNegative) {
                     coeff = coeff * (-1);
-                    relation = relation.invert();
                 }
                 coeffs.add(m, BigDecimal.valueOf(coeff));
             }
@@ -96,6 +98,9 @@ public class TableauBuilder
         double factor = objectiveFunction.getType().isFindMaximum() ? -1.d : 1.d;
         for(int m = 0; m < nonBasicVariablesFirstIndex; m++) {
             objectiveFunctionCoeffs.add(m,BigDecimal.valueOf(objectiveFunction.getCoefficientAt(m) * factor));
+        }
+        for(int m = nonBasicVariablesFirstIndex; m < totalNumberOfVariables; m++) {
+            objectiveFunctionCoeffs.add(m,BigDecimal.ZERO);
         }
 
         tableau.setObjectiveFunction(new ObjectiveFunctionTableauRow(ObjectiveFunctionTableauRow.Type.STANDARD, objectiveFunctionCoeffs));
