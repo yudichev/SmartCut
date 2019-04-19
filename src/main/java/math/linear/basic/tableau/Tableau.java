@@ -144,9 +144,9 @@ public class Tableau
         pivotRow.multiplyBy(BigDecimal.ONE.divide(pivotCoefficient));
 
         for(int k = 0 ; k < this.rows.size(); k++) {
+            GenericTableauRow currentRow = this.rows.get(k);
+            BigDecimal coeff = currentRow.getCoefficients().get(columnNumber);
             if(k != rowNumber) {
-                GenericTableauRow currentRow = this.rows.get(k);
-                BigDecimal coeff = currentRow.getCoefficients().get(columnNumber);
                 currentRow.addWithFactor(pivotRow, coeff.negate());
             }
         }

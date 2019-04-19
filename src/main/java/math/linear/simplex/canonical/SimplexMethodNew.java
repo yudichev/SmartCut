@@ -1,21 +1,18 @@
 package math.linear.simplex.canonical;
 
 /*
- * Copyright 2001-2019 by HireRight, Inc. All rights reserved.
- * This software is the confidential and proprietary information
- * of HireRight, Inc. Use is subject to license terms.
+ * Provides methods to solve problem
  */
 
-import math.linear.basic.Equation;
+
 import math.linear.basic.tableau.EquationTableauRow;
-import math.linear.basic.tableau.GenericTableauRow;
 import math.linear.basic.tableau.ObjectiveFunctionTableauRow;
 import math.linear.basic.tableau.Tableau;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-public class SmplexMethodNew
+public class SimplexMethodNew
 {
     private static int NOT_ASSIGNED = -1;
 
@@ -28,7 +25,7 @@ public class SmplexMethodNew
             tableau.pivot(outcomingIndex, incomingIndex);
         }
 
-        return null;
+        return tableau;
     }
 
     private static int getOutcomingIndex(int incomingIndex, List<EquationTableauRow> equations) {
