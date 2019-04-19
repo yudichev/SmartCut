@@ -15,6 +15,8 @@ import java.util.List;
 
 public class ObjectiveFunctionTableauRow extends GenericTableauRow
 {
+    public final int INDEX_NOT_ASSIGNED = -1;
+
     private Type type;
     /**
      * Constructor of EquationTableauRow.
@@ -30,5 +32,26 @@ public class ObjectiveFunctionTableauRow extends GenericTableauRow
     public enum Type {
         STANDARD,
         AUXILIERY
+    }
+
+    public int getIncomingVariableIndex()
+    {
+        int index = INDEX_NOT_ASSIGNED;
+        List<BigDecimal> coefficients = getCoefficients();
+        BigDecimal absMaxCoeff = BigDecimal.ZERO;
+        for(int k = 1; k < coefficients.size(); k++) {
+            BigDecimal coeff = coefficients.get(k);
+            if(coeff.compareTo(BigDecimal.ZERO) < 0) {
+                if(k == INDEX_NOT_ASSIGNED || coeff.compareTo(absMaxCoeff) < 0) {
+                    index = k;
+                    absMaxCoeff = coeff;
+                }
+            }
+        }
+        return index;
+    }
+
+    public boolean isOptimal() {
+        return getIncomingVariableIndex() == INDEX_NOT_ASSIGNED;
     }
 }

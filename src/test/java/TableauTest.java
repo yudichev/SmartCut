@@ -66,6 +66,9 @@ public class TableauTest
         Assert.assertEquals(BigDecimal.valueOf(-3.d), objFuncRow.getCoefficients().get(1));
         Assert.assertEquals(BigDecimal.valueOf(0.d), objFuncRow.getCoefficients().get(2));
         Assert.assertEquals(BigDecimal.valueOf(-4.d), objFuncRow.getCoefficients().get(3));
+
+        Assert.assertEquals(3, objFuncRow.getIncomingVariableIndex());
+        Assert.assertFalse(objFuncRow.isOptimal() );
     }
 
     /**
