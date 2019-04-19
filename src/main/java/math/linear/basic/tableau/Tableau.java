@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Tableau
 {
@@ -84,6 +85,11 @@ public class Tableau
      */
     public List<GenericTableauRow> getRows() {
         return Collections.unmodifiableList(this.rows);
+    }
+
+    public List<EquationTableauRow> getEquationRows() {
+        return this.rows.stream().filter(row -> row instanceof EquationTableauRow)
+            .map(row -> (EquationTableauRow) row).collect(Collectors.toList());
     }
 
     /**

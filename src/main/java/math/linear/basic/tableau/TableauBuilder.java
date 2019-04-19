@@ -10,12 +10,8 @@ import math.linear.basic.problem.ProblemObjectiveFunction;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static java.util.Arrays.stream;
 
 public class TableauBuilder
 {
@@ -24,7 +20,6 @@ public class TableauBuilder
 
     private List<ProblemEquation> equations;
     private ProblemObjectiveFunction objectiveFunction;
-    private ProblemObjectiveFunction auxilieryFunction;
     private boolean isCanonicalForm = false;
     private int totalNumberOfVariables = NOT_ASSIGNED;
     private int nonBasicVariablesFirstIndex = NOT_ASSIGNED ;
@@ -77,12 +72,11 @@ public class TableauBuilder
                     coeff = coeff * (-1);
                     relation = relation.invert();
                 }
-                coeffs.set(m, BigDecimal.valueOf(coeff));
+                coeffs.add(m, BigDecimal.valueOf(coeff));
             }
             for(int m = nonBasicVariablesFirstIndex; m < totalNumberOfVariables; m++){
-                coeffs.set(m, BigDecimal.ZERO);
+                coeffs.add(m, BigDecimal.ZERO);
             }
-            coeffs.set(k + nonBasicVariablesFirstIndex, BigDecimal.ONE);
 
             if(auxilieryVariablesCount == 0) {
                 coeffs.set(k + nonBasicVariablesFirstIndex, BigDecimal.ONE);
@@ -100,17 +94,20 @@ public class TableauBuilder
         }
 
         List<BigDecimal> objectiveFunctionCoeffs = new ArrayList<>(totalNumberOfVariables);
+        double factor = objectiveFunction.getType().isFindMaximum() ? -1.d : 1.d;
         for(int m = 0; m < nonBasicVariablesFirstIndex; m++) {
-            objectiveFunctionCoeffs.set(m,BigDecimal.valueOf(objectiveFunction.getCoefficientAt(m) * (-1)));
+            objectiveFunctionCoeffs.add(m,BigDecimal.valueOf(objectiveFunction.getCoefficientAt(m) * factor));
         }
 
         tableau.setObjectiveFunction(new ObjectiveFunctionTableauRow(ObjectiveFunctionTableauRow.Type.STANDARD, objectiveFunctionCoeffs));
 
         if(auxilieryVariablesCount > 0) {
             List<BigDecimal> auxFunctionCoeffs = new ArrayList<>(totalNumberOfVariables);
-            Collections.fill(auxFunctionCoeffs,BigDecimal.ZERO);
+            for(int m = 0; m < auxilieryVariablesFirstIndex; m++) {
+                auxFunctionCoeffs.add(m,BigDecimal.ZERO);
+            }
             for(int m = auxilieryVariablesFirstIndex; m < totalNumberOfVariables; m++) {
-                auxFunctionCoeffs.set(m,BigDecimal.ONE);
+                auxFunctionCoeffs.add(m,BigDecimal.ONE);
             }
             tableau.setAuxilieryFunction( new ObjectiveFunctionTableauRow(ObjectiveFunctionTableauRow.Type.AUXILIERY, auxFunctionCoeffs));
         }
@@ -127,14 +124,6 @@ public class TableauBuilder
         }
     }
 
-
-    private static boolean needsAuxilieryVariable(ProblemEquation equation) {
-        Relation relation = equation.getRelation();
-        double freeCoefficient = equation.getCoefficientAt(0);
-        return ((relation.isLessOrEqual() && Double.compare(freeCoefficient, ZERO) < 0)
-            || (relation.isGreaterOrEqual() && Double.compare(freeCoefficient, ZERO) > 0));
-
-    }
 
     private static int getNumberOfNeededAuxilieryVariables(ProblemEquation equation){
         Relation relation = equation.getRelation();

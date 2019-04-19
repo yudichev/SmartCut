@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
-abstract class GenericTableauRow
+public abstract class GenericTableauRow
 {
     private List<BigDecimal> coefficients;
 
