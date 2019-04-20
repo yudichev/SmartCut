@@ -36,4 +36,12 @@ public final class EquationTableauRow extends GenericTableauRow
         this.basicVariableIndex = index;
     }
 
+    /**
+     * Returns the index of the basic variable which is expressed via this equation
+     * @return
+     */
+    int getBasicVariableIndex() {
+        return this.basicVariableIndex;
+    }
+
 }

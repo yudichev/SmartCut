@@ -4,6 +4,7 @@
 
 import math.linear.basic.ObjectiveFunctionType;
 import math.linear.basic.Relation;
+import math.linear.basic.problem.Problem;
 import math.linear.basic.problem.ProblemEquation;
 import math.linear.basic.problem.ProblemObjectiveFunction;
 import math.linear.basic.tableau.EquationTableauRow;
@@ -15,6 +16,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,15 +32,15 @@ public class TableauTest
      */
     @Test
     public void testTwoLessOrEqualFindMax() {
-        List<ProblemEquation> equations = new ArrayList<>();
-        equations.add(ProblemEquation.make(new double[]{1.d,7.d, -4.d}, Relation.LESS_OR_EQUAL, 50.d));
-        equations.add(ProblemEquation.make(new double[]{6.d,2.d, 1.d}, Relation.LESS_OR_EQUAL, 20.d));
 
-        ProblemObjectiveFunction objFunc = ProblemObjectiveFunction.make(new double[]{3.d,0.d,4.d}, ObjectiveFunctionType.MAXIMUM);
+        Problem problem = Problem.getInstance();
+        problem.setPrecision(16);
+        problem.addEquation(ProblemEquation.make(new double[]{1.d,7.d, -4.d}, Relation.LESS_OR_EQUAL, 50.d));
+        problem.addEquation(ProblemEquation.make(new double[]{6.d,2.d, 1.d}, Relation.LESS_OR_EQUAL, 20.d));
+        problem.addObjectiveFunction(ProblemObjectiveFunction.make(new double[]{3.d,0.d,4.d}, ObjectiveFunctionType.MAXIMUM));
 
         TableauBuilder tableauBuilder = TableauBuilder.getInstance();
-        tableauBuilder.setEquations(equations);
-        tableauBuilder.setObjectiveFunction(objFunc);
+        tableauBuilder.setProbliem(problem);
         Tableau tableau = tableauBuilder.build();
 
         Assert.assertEquals(false, tableau.isTwoPhases());
@@ -81,15 +83,15 @@ public class TableauTest
      */
     @Test
     public void testOneLessOrEqualOneEqualFindMax() {
-        List<ProblemEquation> equations = new ArrayList<>();
-        equations.add(ProblemEquation.make(new double[]{1.d,7.d, -4.d}, Relation.LESS_OR_EQUAL, 50.d));
-        equations.add(ProblemEquation.make(new double[]{6.d,2.d, 1.d}, Relation.EQUAL, 20.d));
 
-        ProblemObjectiveFunction objFunc = ProblemObjectiveFunction.make(new double[]{3.d,0.d,4.d}, ObjectiveFunctionType.MAXIMUM);
+        Problem problem = Problem.getInstance();
+        problem.setPrecision(16);
+        problem.addEquation(ProblemEquation.make(new double[]{1.d,7.d, -4.d}, Relation.LESS_OR_EQUAL, 50.d));
+        problem.addEquation(ProblemEquation.make(new double[]{6.d,2.d, 1.d}, Relation.EQUAL, 20.d));
+        problem.addObjectiveFunction(ProblemObjectiveFunction.make(new double[]{3.d,0.d,4.d}, ObjectiveFunctionType.MAXIMUM));
 
         TableauBuilder tableauBuilder = TableauBuilder.getInstance();
-        tableauBuilder.setEquations(equations);
-        tableauBuilder.setObjectiveFunction(objFunc);
+        tableauBuilder.setProbliem(problem);
         Tableau tableau = tableauBuilder.build();
 
         Assert.assertEquals(true, tableau.isTwoPhases());
@@ -145,15 +147,15 @@ public class TableauTest
      */
     @Test
     public void testOneLessOrEqualOneGreateOrEqualFindMax() {
-        List<ProblemEquation> equations = new ArrayList<>();
-        equations.add(ProblemEquation.make(new double[]{1.d,7.d, -4.d}, Relation.LESS_OR_EQUAL, 50.d));
-        equations.add(ProblemEquation.make(new double[]{6.d,2.d, 1.d}, Relation.GREATER_OR_EQUAL, 20.d));
 
-        ProblemObjectiveFunction objFunc = ProblemObjectiveFunction.make(new double[]{3.d,0.d,4.d}, ObjectiveFunctionType.MAXIMUM);
+        Problem problem = Problem.getInstance();
+        problem.setPrecision(16);
+        problem.addEquation(ProblemEquation.make(new double[]{1.d,7.d, -4.d}, Relation.LESS_OR_EQUAL, 50.d));
+        problem.addEquation(ProblemEquation.make(new double[]{6.d,2.d, 1.d}, Relation.GREATER_OR_EQUAL, 20.d));
+        problem.addObjectiveFunction(ProblemObjectiveFunction.make(new double[]{3.d,0.d,4.d}, ObjectiveFunctionType.MAXIMUM));
 
         TableauBuilder tableauBuilder = TableauBuilder.getInstance();
-        tableauBuilder.setEquations(equations);
-        tableauBuilder.setObjectiveFunction(objFunc);
+        tableauBuilder.setProbliem(problem);
         Tableau tableau = tableauBuilder.build();
 
         Assert.assertEquals(true, tableau.isTwoPhases());
@@ -213,15 +215,15 @@ public class TableauTest
      */
     @Test
     public void testOneGreaterOrEqualNegativeOneEqualNegativeFindMax() {
-        List<ProblemEquation> equations = new ArrayList<>();
-        equations.add(ProblemEquation.make(new double[]{1.d,7.d, -4.d}, Relation.GREATER_OR_EQUAL, -30.d));
-        equations.add(ProblemEquation.make(new double[]{6.d,2.d, 1.d}, Relation.EQUAL, -20.d));
 
-        ProblemObjectiveFunction objFunc = ProblemObjectiveFunction.make(new double[]{3.d,0.d,4.d}, ObjectiveFunctionType.MAXIMUM);
+        Problem problem = Problem.getInstance();
+        problem.setPrecision(16);
+        problem.addEquation(ProblemEquation.make(new double[]{1.d,7.d, -4.d}, Relation.GREATER_OR_EQUAL, -30.d));
+        problem.addEquation(ProblemEquation.make(new double[]{6.d,2.d, 1.d}, Relation.EQUAL, -20.d));
+        problem.addObjectiveFunction(ProblemObjectiveFunction.make(new double[]{3.d,0.d,4.d}, ObjectiveFunctionType.MAXIMUM));
 
         TableauBuilder tableauBuilder = TableauBuilder.getInstance();
-        tableauBuilder.setEquations(equations);
-        tableauBuilder.setObjectiveFunction(objFunc);
+        tableauBuilder.setProbliem(problem);
         Tableau tableau = tableauBuilder.build();
 
         Assert.assertEquals(true, tableau.isTwoPhases());
@@ -277,15 +279,15 @@ public class TableauTest
      */
     @Test
     public void testTwoGreaterOrEqualFindMin() {
-        List<ProblemEquation> equations = new ArrayList<>();
-        equations.add(ProblemEquation.make(new double[]{1.d,7.d, -4.d}, Relation.GREATER_OR_EQUAL, 50.d));
-        equations.add(ProblemEquation.make(new double[]{6.d,2.d, 1.d}, Relation.GREATER_OR_EQUAL, 20.d));
 
-        ProblemObjectiveFunction objFunc = ProblemObjectiveFunction.make(new double[]{3.d,0.d,4.d}, ObjectiveFunctionType.MINIMUM);
+        Problem problem = Problem.getInstance();
+        problem.setPrecision(16);
+        problem.addEquation(ProblemEquation.make(new double[]{1.d,7.d, -4.d}, Relation.GREATER_OR_EQUAL, 50.d));
+        problem.addEquation(ProblemEquation.make(new double[]{6.d,2.d, 1.d}, Relation.GREATER_OR_EQUAL, 20.d));
+        problem.addObjectiveFunction(ProblemObjectiveFunction.make(new double[]{3.d,0.d,4.d}, ObjectiveFunctionType.MINIMUM));
 
         TableauBuilder tableauBuilder = TableauBuilder.getInstance();
-        tableauBuilder.setEquations(equations);
-        tableauBuilder.setObjectiveFunction(objFunc);
+        tableauBuilder.setProbliem(problem);
         Tableau tableau = tableauBuilder.build();
 
         Assert.assertEquals(true, tableau.isTwoPhases());
@@ -338,5 +340,38 @@ public class TableauTest
         Assert.assertEquals(BigDecimal.ONE, objFuncRow.getCoefficients().get(6));
         Assert.assertEquals(BigDecimal.ONE, objFuncRow.getCoefficients().get(7));
     }
+
+    @Test
+    public void testPivot(){
+        Problem problem = Problem.getInstance();
+        problem.setPrecision(16);
+        problem.addEquation(ProblemEquation.make(new double[]{1.d,7.d, -4.d}, Relation.GREATER_OR_EQUAL, 50.d));
+        problem.addEquation(ProblemEquation.make(new double[]{6.d,2.d, 1.d}, Relation.GREATER_OR_EQUAL, 20.d));
+        problem.addObjectiveFunction(ProblemObjectiveFunction.make(new double[]{3.d,0.d,4.d}, ObjectiveFunctionType.MINIMUM));
+
+        TableauBuilder tableauBuilder = TableauBuilder.getInstance();
+        tableauBuilder.setProbliem(problem);
+        Tableau tableau = tableauBuilder.build();
+
+        tableau.pivot(1, 2);
+
+        List<GenericTableauRow> rows = tableau.getRows();
+        Assert.assertEquals(4, rows.size());
+
+        MathContext mc = new MathContext(3);
+
+        Assert.assertEquals(BigDecimal.valueOf(-20.d).doubleValue(), rows.get(0).getCoefficients().get(0).doubleValue(),1e-4);
+        Assert.assertEquals(BigDecimal.valueOf(-20.d).doubleValue(), rows.get(0).getCoefficients().get(1).doubleValue(),1e-4);
+        Assert.assertEquals(BigDecimal.valueOf(0.d).doubleValue(), rows.get(0).getCoefficients().get(2).doubleValue(),1e-4);
+        Assert.assertEquals(BigDecimal.valueOf(-7.5d).doubleValue(), rows.get(0).getCoefficients().get(3).doubleValue(), 1e-4);
+
+        Assert.assertEquals(BigDecimal.valueOf(10.d).doubleValue(), rows.get(1).getCoefficients().get(0).doubleValue(), 1e-4);
+        Assert.assertEquals(BigDecimal.valueOf(3.d).doubleValue(), rows.get(1).getCoefficients().get(1).doubleValue(), 1e-4);
+        Assert.assertEquals(BigDecimal.valueOf(1.d).doubleValue(), rows.get(1).getCoefficients().get(2).doubleValue(),1e-4);
+        Assert.assertEquals(BigDecimal.valueOf(0.5d).floatValue(), rows.get(1).getCoefficients().get(3).doubleValue(),1e-4);
+
+    }
+
+    //TODO create tests with exceptions
 
 }

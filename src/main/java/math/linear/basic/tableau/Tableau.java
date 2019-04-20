@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,11 +22,13 @@ import java.util.stream.Collectors;
 public class Tableau
 {
     public final int INDEX_NOT_ASSIGNED = -1;
+    private int numberOfProblemVariables = INDEX_NOT_ASSIGNED;
 
     private List<GenericTableauRow> rows;
     private int objectiveFunctionIndex = INDEX_NOT_ASSIGNED;
     private int auxilieryFunctionIndex = INDEX_NOT_ASSIGNED;
     private int rowSize = 0;
+    private int precision = 16;
 
     public int scale = 20;
 
@@ -83,15 +86,26 @@ public class Tableau
         }
     }
 
+    void setNumberOfProblemVariables(int numberOfProblemVariables){
+        this.numberOfProblemVariables = numberOfProblemVariables;
+    }
+    /**
+     * Set the pricision for coefficients
+     * @param precision
+     */
+    public final void setPrecision(int precision) {
+        this.precision = precision;
+    }
+
     /**
      * Returns an unmodifiable list of rows
      * @return
      */
-    public List<GenericTableauRow> getRows() {
+    public final List<GenericTableauRow> getRows() {
         return Collections.unmodifiableList(this.rows);
     }
 
-    public List<EquationTableauRow> getEquationRows() {
+    public final List<EquationTableauRow> getEquationRows() {
         return this.rows.stream().filter(row -> row instanceof EquationTableauRow)
             .map(row -> (EquationTableauRow) row).collect(Collectors.toList());
     }
@@ -100,7 +114,7 @@ public class Tableau
      * Returns the index of the objective function row
      * @return
      */
-    public int getObjectiveFunctionIndex()
+    public final int getObjectiveFunctionIndex()
     {
         return objectiveFunctionIndex;
     }
@@ -109,12 +123,12 @@ public class Tableau
      * Returns the index of the auxiliery function row
      * @return
      */
-    public int getAuxilieryFunctionIndex()
+    public final int getAuxilieryFunctionIndex()
     {
         return auxilieryFunctionIndex;
     }
 
-    public boolean isTwoPhases() {
+    public final boolean isTwoPhases() {
         return auxilieryFunctionIndex != INDEX_NOT_ASSIGNED;
     }
 
@@ -123,7 +137,7 @@ public class Tableau
      * @param rowNumber the row number to pivot at
      * @param columnNumber the column number to pivot at
      */
-    public void pivot(int rowNumber, int columnNumber) {
+    public final void pivot(int rowNumber, int columnNumber) {
         if(this.rows.size() == 0) {
             throw new IllegalStateException("Tableau contains no data");
         }
@@ -144,8 +158,11 @@ public class Tableau
             throw new RuntimeException("The pivot coefficient is zero");
         }
 
-        //TODO implement precision retrieval from a standard place
-        pivotRow.multiplyBy(BigDecimal.ONE.divide(pivotCoefficient,new MathContext(16)));
+        pivotRow.multiplyBy(BigDecimal.ONE.divide(pivotCoefficient,new MathContext(precision)));
+        if(pivotRow instanceof EquationTableauRow){
+            EquationTableauRow equationRow = (EquationTableauRow) pivotRow;
+            equationRow.setBasicVariableIndex(columnNumber);
+        }
 
         for(int k = 0 ; k < this.rows.size(); k++) {
             GenericTableauRow currentRow = this.rows.get(k);
@@ -156,7 +173,19 @@ public class Tableau
         }
     }
 
-
+    public double[] getSolution(){
+        List<EquationTableauRow> equationRows = this.getEquationRows();
+        double[] solutionValues = new double[numberOfProblemVariables];
+        Arrays.fill(solutionValues,0.d);
+        for(int k = 0; k < equationRows.size(); k++ ){
+            EquationTableauRow equation = equationRows.get(k);
+            int idx = equation.getBasicVariableIndex();
+            if(idx > 0 && idx <= numberOfProblemVariables){
+                solutionValues[idx - 1] = equation.getCoefficients().get(0).doubleValue();
+            }
+        }
+        return solutionValues;
+    }
 
 
 }

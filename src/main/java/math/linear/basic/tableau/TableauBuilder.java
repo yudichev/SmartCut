@@ -5,6 +5,7 @@ package math.linear.basic.tableau;
  */
 
 import math.linear.basic.Relation;
+import math.linear.basic.problem.Problem;
 import math.linear.basic.problem.ProblemEquation;
 import math.linear.basic.problem.ProblemObjectiveFunction;
 
@@ -18,39 +19,48 @@ public class TableauBuilder
     private static int NOT_ASSIGNED = -1;
     private static double ZERO = 0.d;
 
-    private List<ProblemEquation> equations;
-    private ProblemObjectiveFunction objectiveFunction;
+    private Problem problem;
     private boolean isCanonicalForm = false;
+    private int numberOfVariables = NOT_ASSIGNED;
     private int totalNumberOfVariables = NOT_ASSIGNED;
     private int nonBasicVariablesFirstIndex = NOT_ASSIGNED ;
     private int auxilieryVariablesFirstIndex = NOT_ASSIGNED;
 
     private TableauBuilder() {}
 
+    /**
+     * Returns an instance of the tableau builder
+     * @return
+     */
     public static TableauBuilder getInstance() {
         return new TableauBuilder();
     }
 
-    public TableauBuilder setEquations(List<ProblemEquation> equations) {
-        this.equations = equations;
-        return this;
+    /**
+     * Sets the problem
+     * @param probliem
+     */
+    public void setProbliem(Problem probliem){
+        this.problem = probliem;
     }
 
-    public TableauBuilder setObjectiveFunction(ProblemObjectiveFunction objectiveFunction) {
-        this.objectiveFunction = objectiveFunction;
-        return this;
-    }
-//TODO implement definition of precision
 
+    /**
+     * Build a tableau to be processed by simplex method
+     * @return tableau
+     */
     public Tableau build() {
         checkData();
         analyze();
-
+        List<ProblemEquation> equations = this.problem.getEquations();
         List<GenericTableauRow> rows = new ArrayList<>(equations.size() + 2);
 
         Tableau tableau = Tableau.getInstance();
+        tableau.setPrecision(problem.getPrecision());
+        tableau.setNumberOfProblemVariables(numberOfVariables);
+
         for(int k = 0, knb = nonBasicVariablesFirstIndex, kaux = auxilieryVariablesFirstIndex; k < equations.size(); k++) {
-            ProblemEquation equation = this.equations.get(k);
+            ProblemEquation equation = equations.get(k);
             Relation relation = equation.getRelation();
             double freeCoefficient = equation.getCoefficientAt(0);
             boolean isFreeCoefficientNegative = Double.compare(freeCoefficient, ZERO) < 0;
@@ -95,6 +105,7 @@ public class TableauBuilder
         }
 
         List<BigDecimal> objectiveFunctionCoeffs = new ArrayList<>(totalNumberOfVariables);
+        ProblemObjectiveFunction objectiveFunction = this.problem.getObjectiveFunction();
         double factor = objectiveFunction.getType().isFindMaximum() ? -1.d : 1.d;
         for(int m = 0; m < nonBasicVariablesFirstIndex; m++) {
             objectiveFunctionCoeffs.add(m,BigDecimal.valueOf(objectiveFunction.getCoefficientAt(m) * factor));
@@ -120,16 +131,24 @@ public class TableauBuilder
     }
 
     private void checkData() {
+        if(problem == null) {
+            throw new IllegalStateException("Problem is not set");
+        }
+        problem.validate();
+        List<ProblemEquation> equations = problem.getEquations();
         if(equations == null || equations.isEmpty()) {
             throw new IllegalStateException("Equations are not assigned");
         }
+        ProblemObjectiveFunction objectiveFunction = this.problem.getObjectiveFunction();
         if(objectiveFunction == null) {
             throw new IllegalStateException("Objective function is not assigned");
         }
     }
 
     private void analyze() {
+        List<ProblemEquation> equations = problem.getEquations();
         totalNumberOfVariables = equations.get(0).getLength();
+        numberOfVariables = totalNumberOfVariables - 1;
         int numberOfAdditionalVariables = 0;
         int numberOfAuxilieryVariables = 0;
         for(ProblemEquation eq : equations) {
@@ -153,20 +172,4 @@ public class TableauBuilder
             totalNumberOfVariables += numberOfAuxilieryVariables;
         }
     }
-
-    private static int getNumberOfNeededAuxilieryVariables(ProblemEquation equation){
-        Relation relation = equation.getRelation();
-        double freeCoefficient = equation.getCoefficientAt(0);
-        return (relation.isEqual() || ((relation.isLessOrEqual() && Double.compare(freeCoefficient, ZERO) < 0)
-            || (relation.isGreaterOrEqual() && Double.compare(freeCoefficient, ZERO) > 0))) ? 1 : 0;
-    }
-
-    private static int getNumberOfNeededAdditionalVariables(ProblemEquation equation){
-        Relation relation = equation.getRelation();
-        double freeCoefficient = equation.getCoefficientAt(0);
-        return (((relation.isLessOrEqual() && Double.compare(freeCoefficient, ZERO) < 0)
-            || (relation.isGreaterOrEqual() && Double.compare(freeCoefficient, ZERO) > 0))) ? 1 : 0;
-    }
-
-
 }
