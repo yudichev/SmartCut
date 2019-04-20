@@ -71,4 +71,33 @@ public class SimplexMethodNewTest
             System.out.println("\n");});
     }
 
+
+    @Test
+    public void testSinglePhase3() {
+
+
+        Problem problem = Problem.getInstance();
+        problem.setPrecision(16);
+        problem.addEquation(ProblemEquation.make(new double[]{14., 2., 11.7, -9.}, Relation.LESS_OR_EQUAL, 124.d));
+        problem.addEquation(ProblemEquation.make(new double[]{5., -4., 0., 0.}, Relation.LESS_OR_EQUAL, 100.d));
+        problem.addEquation(ProblemEquation.make(new double[]{12., 0., -26., 31.}, Relation.LESS_OR_EQUAL, 135.d));
+        problem.addEquation(ProblemEquation.make(new double[]{10., -0.1, 54., 14.}, Relation.LESS_OR_EQUAL, 178.d));
+        problem.addObjectiveFunction(ProblemObjectiveFunction.make(new double[]{27., 1.4, -1.,32.}, ObjectiveFunctionType.MAXIMUM));
+
+        TableauBuilder tableauBuilder = TableauBuilder.getInstance();
+        tableauBuilder.setProbliem(problem);
+        Tableau tableau = tableauBuilder.build();
+
+        Tableau solved = SimplexMethodNew.applySinglePhase(tableau);
+
+        double[] values = solved.getSolution();
+        for(int k = 0; k < values.length; k++){
+            System.out.format("x(%1$d)=%2$.3f\n", k+1, values[k]);
+        }
+
+        solved.getRows().forEach(row -> {row.getCoefficients()
+                .forEach(coeff -> System.out.print(coeff.round(new MathContext(5)).stripTrailingZeros()  + ", "));
+            System.out.println("\n");});
+    }
+
 }
