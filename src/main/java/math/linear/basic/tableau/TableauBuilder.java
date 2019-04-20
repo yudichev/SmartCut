@@ -40,7 +40,7 @@ public class TableauBuilder
         this.objectiveFunction = objectiveFunction;
         return this;
     }
-
+//TODO implement definition of precision
 
     public Tableau build() {
         checkData();

@@ -11,12 +11,15 @@ package math.linear.basic.tableau;
  */
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 public abstract class GenericTableauRow
 {
     private List<BigDecimal> coefficients;
+    private MathContext mathContext = MathContext.DECIMAL64;
 
 
     /**
@@ -26,6 +29,14 @@ public abstract class GenericTableauRow
     GenericTableauRow(List<BigDecimal> coefficients) {
         this.coefficients = coefficients;
     };
+
+    /**
+     * Defines the pricision
+     * @param precision
+     */
+    final void setPrecision(int precision){
+        this.mathContext = new MathContext(precision);
+    }
 
     /**
      * Returns the number of coefficients
@@ -57,7 +68,7 @@ public abstract class GenericTableauRow
         if( this.getSize() != row.getSize() )
             throw new RuntimeException("The size of the row does not match.");
         for(int k = 0; k < this.coefficients.size(); k++) {
-            coefficients.set(k,coefficients.get(k).add(row.getCoefficients().get(k)));
+            coefficients.set(k,coefficients.get(k).add(row.getCoefficients().get(k),mathContext));
         }
     }
 
@@ -77,7 +88,7 @@ public abstract class GenericTableauRow
             throw new RuntimeException("The size of the row does not match.");
 
         for(int k = 0; k < this.coefficients.size(); k++) {
-            coefficients.set(k,coefficients.get(k).add(row.getCoefficients().get(k).multiply(factor)));
+            coefficients.set(k,coefficients.get(k).add(row.getCoefficients().get(k).multiply(factor,mathContext),mathContext));
         }
     }
 
@@ -87,6 +98,11 @@ public abstract class GenericTableauRow
      * @return the list of products of the coefficients and the factor.
      */
     void multiplyBy(BigDecimal factor){
-        this.coefficients.stream().forEach(coeff -> coeff = coeff.multiply(factor));
+
+        for(int k = 0; k < this.coefficients.size(); k++){
+            BigDecimal coeff = this.coefficients.get(k);
+            if(coeff.equals(BigDecimal.ZERO)) continue;
+            this.coefficients.set(k, coeff.multiply(factor,mathContext));
+        }
     }
 }

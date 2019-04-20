@@ -11,6 +11,8 @@ package math.linear.basic.tableau;
  */
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -24,6 +26,8 @@ public class Tableau
     private int objectiveFunctionIndex = INDEX_NOT_ASSIGNED;
     private int auxilieryFunctionIndex = INDEX_NOT_ASSIGNED;
     private int rowSize = 0;
+
+    public int scale = 20;
 
     private Tableau() {
         rows = new ArrayList<>();
@@ -140,8 +144,8 @@ public class Tableau
             throw new RuntimeException("The pivot coefficient is zero");
         }
 
-
-        pivotRow.multiplyBy(BigDecimal.ONE.divide(pivotCoefficient));
+        //TODO implement precision retrieval from a standard place
+        pivotRow.multiplyBy(BigDecimal.ONE.divide(pivotCoefficient,new MathContext(16)));
 
         for(int k = 0 ; k < this.rows.size(); k++) {
             GenericTableauRow currentRow = this.rows.get(k);
