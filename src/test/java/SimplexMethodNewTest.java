@@ -10,6 +10,7 @@ import math.linear.basic.problem.ProblemObjectiveFunction;
 import math.linear.basic.tableau.Tableau;
 import math.linear.basic.tableau.TableauBuilder;
 import math.linear.simplex.canonical.SimplexMethodNew;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.math.MathContext;
@@ -95,9 +96,7 @@ public class SimplexMethodNewTest
             System.out.format("x(%1$d)=%2$.3f\n", k+1, values[k]);
         }
 
-        solved.getRows().forEach(row -> {row.getCoefficients()
-                .forEach(coeff -> System.out.print(coeff.round(new MathContext(5)).stripTrailingZeros()  + ", "));
-            System.out.println("\n");});
+        Assert.assertArrayEquals(new double[]{9.061d,0.d,1.148d,1.81d},values,0.01);
     }
 
 }
