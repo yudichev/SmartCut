@@ -139,26 +139,27 @@ public class Tableau
      */
     public final void pivot(int rowNumber, int columnNumber) {
         if(this.rows.size() == 0) {
-            throw new IllegalStateException("Tableau contains no data");
+            throw new IllegalStateException("Tableau contains no data.");
         }
         if(rowNumber < 0 || rowNumber > this.rows.size()) {
-            throw new IllegalArgumentException("Row number is out of range");
+            throw new IllegalArgumentException("Row number is out of range.");
         }
         if(rowNumber == objectiveFunctionIndex || rowNumber == auxilieryFunctionIndex) {
-            throw new IllegalArgumentException("Objective function cannot be the pivot row");
+            throw new IllegalArgumentException("Objective function cannot be the pivot row.");
         }
 
         if(columnNumber < 0 || columnNumber > rowSize) {
-            throw new IllegalArgumentException("Column number is out of range");
+            throw new IllegalArgumentException("Column number is out of range.");
         }
 
         GenericTableauRow pivotRow = this.rows.get(rowNumber);
         BigDecimal pivotCoefficient = pivotRow.getCoefficients().get(columnNumber);
         if(pivotCoefficient.equals(BigDecimal.ZERO)) {
-            throw new RuntimeException("The pivot coefficient is zero");
+            throw new RuntimeException("The pivot coefficient is zero.");
         }
 
         pivotRow.multiplyBy(BigDecimal.ONE.divide(pivotCoefficient,new MathContext(precision)));
+        pivotRow.getCoefficients().set(columnNumber,BigDecimal.ONE);
         if(pivotRow instanceof EquationTableauRow){
             EquationTableauRow equationRow = (EquationTableauRow) pivotRow;
             equationRow.setBasicVariableIndex(columnNumber);
@@ -187,5 +188,5 @@ public class Tableau
         return solutionValues;
     }
 
-
+ //TODO add analysis of solvability of the problem after each pivot
 }

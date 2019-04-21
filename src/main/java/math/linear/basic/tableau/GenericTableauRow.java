@@ -52,7 +52,7 @@ public abstract class GenericTableauRow
      * @return
      */
     public final List<BigDecimal> getCoefficients(){
-        return Collections.unmodifiableList(coefficients);
+        return coefficients;
     }
 
     /**

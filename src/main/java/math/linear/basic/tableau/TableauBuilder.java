@@ -20,7 +20,6 @@ public class TableauBuilder
     private static double ZERO = 0.d;
 
     private Problem problem;
-    private boolean isCanonicalForm = false;
     private int numberOfVariables = NOT_ASSIGNED;
     private int totalNumberOfVariables = NOT_ASSIGNED;
     private int nonBasicVariablesFirstIndex = NOT_ASSIGNED ;
@@ -135,14 +134,6 @@ public class TableauBuilder
             throw new IllegalStateException("Problem is not set");
         }
         problem.validate();
-        List<ProblemEquation> equations = problem.getEquations();
-        if(equations == null || equations.isEmpty()) {
-            throw new IllegalStateException("Equations are not assigned");
-        }
-        ProblemObjectiveFunction objectiveFunction = this.problem.getObjectiveFunction();
-        if(objectiveFunction == null) {
-            throw new IllegalStateException("Objective function is not assigned");
-        }
     }
 
     private void analyze() {

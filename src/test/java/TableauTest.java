@@ -374,4 +374,112 @@ public class TableauTest
 
     //TODO create tests with exceptions
 
+    @Test
+    public void testNoEquations(){
+        Problem problem = Problem.getInstance();
+        problem.setPrecision(16);
+        problem.addObjectiveFunction(ProblemObjectiveFunction.make(new double[]{3.d,0.d,4.d}, ObjectiveFunctionType.MINIMUM));
+
+        TableauBuilder tableauBuilder = TableauBuilder.getInstance();
+        tableauBuilder.setProbliem(problem);
+        try {
+            Tableau tableau = tableauBuilder.build();
+            Assert.fail("An exception must be thrown here");
+        } catch(IllegalStateException ex){
+            Assert.assertEquals("No equations assigned",ex.getMessage());
+        }
+    }
+
+    @Test
+    public void testNoObjectiveFunction(){
+        Problem problem = Problem.getInstance();
+        problem.setPrecision(16);
+        problem.addEquation(ProblemEquation.make(new double[]{1.d,7.d, -4.d}, Relation.GREATER_OR_EQUAL, 50.d));
+
+        TableauBuilder tableauBuilder = TableauBuilder.getInstance();
+        tableauBuilder.setProbliem(problem);
+        try {
+            Tableau tableau = tableauBuilder.build();
+            Assert.fail("An exception must be thrown here");
+        } catch(IllegalStateException ex){
+            Assert.assertEquals("No objective function assigned",ex.getMessage());
+        }
+    }
+
+    @Test
+    public void testInconsistentEquations(){
+        Problem problem = Problem.getInstance();
+        problem.setPrecision(16);
+        problem.addEquation(ProblemEquation.make(new double[]{1.d,7.d, -4.d}, Relation.GREATER_OR_EQUAL, 50.d));
+        problem.addEquation(ProblemEquation.make(new double[]{6.d,2.d}, Relation.GREATER_OR_EQUAL, 20.d));
+        problem.addObjectiveFunction(ProblemObjectiveFunction.make(new double[]{3.d,0.d,4.d}, ObjectiveFunctionType.MINIMUM));
+
+        TableauBuilder tableauBuilder = TableauBuilder.getInstance();
+        tableauBuilder.setProbliem(problem);
+        try {
+            Tableau tableau = tableauBuilder.build();
+            Assert.fail("An exception must be thrown here");
+        } catch(RuntimeException ex){
+            Assert.assertEquals("Equations system is inconsistent. Equations must have equal length.",ex.getMessage());
+        }
+    }
+
+
+    @Test
+    public void testPivotBadRow(){
+        Problem problem = Problem.getInstance();
+        problem.setPrecision(16);
+        problem.addEquation(ProblemEquation.make(new double[]{1.d,7.d, -4.d}, Relation.GREATER_OR_EQUAL, 50.d));
+        problem.addEquation(ProblemEquation.make(new double[]{6.d,2.d,3.d}, Relation.GREATER_OR_EQUAL, 20.d));
+        problem.addObjectiveFunction(ProblemObjectiveFunction.make(new double[]{3.d,0.d,4.d}, ObjectiveFunctionType.MINIMUM));
+
+        TableauBuilder tableauBuilder = TableauBuilder.getInstance();
+        tableauBuilder.setProbliem(problem);
+        try {
+            Tableau tableau = tableauBuilder.build();
+            tableau.pivot(6,1);
+            Assert.fail("An exception must be thrown here");
+        } catch(IllegalArgumentException ex){
+            Assert.assertEquals("Row number is out of range.",ex.getMessage());
+        }
+    }
+
+    @Test
+    public void testPivotBadColumn(){
+        Problem problem = Problem.getInstance();
+        problem.setPrecision(16);
+        problem.addEquation(ProblemEquation.make(new double[]{1.d,7.d, -4.d}, Relation.GREATER_OR_EQUAL, 50.d));
+        problem.addEquation(ProblemEquation.make(new double[]{6.d,2.d,3.d}, Relation.GREATER_OR_EQUAL, 20.d));
+        problem.addObjectiveFunction(ProblemObjectiveFunction.make(new double[]{3.d,0.d,4.d}, ObjectiveFunctionType.MINIMUM));
+
+        TableauBuilder tableauBuilder = TableauBuilder.getInstance();
+        tableauBuilder.setProbliem(problem);
+        try {
+            Tableau tableau = tableauBuilder.build();
+            tableau.pivot(1,-1);
+            Assert.fail("An exception must be thrown here");
+        } catch(IllegalArgumentException ex){
+            Assert.assertEquals("Column number is out of range.",ex.getMessage());
+        }
+    }
+
+    @Test
+    public void testPivotObjFunction(){
+        Problem problem = Problem.getInstance();
+        problem.setPrecision(16);
+        problem.addEquation(ProblemEquation.make(new double[]{1.d,7.d, -4.d}, Relation.GREATER_OR_EQUAL, 50.d));
+        problem.addEquation(ProblemEquation.make(new double[]{6.d,2.d,3.d}, Relation.GREATER_OR_EQUAL, 20.d));
+        problem.addObjectiveFunction(ProblemObjectiveFunction.make(new double[]{3.d,0.d,4.d}, ObjectiveFunctionType.MINIMUM));
+
+        TableauBuilder tableauBuilder = TableauBuilder.getInstance();
+        tableauBuilder.setProbliem(problem);
+        try {
+            Tableau tableau = tableauBuilder.build();
+            tableau.pivot(2,1);
+            Assert.fail("An exception must be thrown here");
+        } catch(IllegalArgumentException ex){
+            Assert.assertEquals("Objective function cannot be the pivot row.",ex.getMessage());
+        }
+    }
+
 }

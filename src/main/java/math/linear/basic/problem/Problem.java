@@ -42,7 +42,7 @@ public class Problem {
     }
 
     public void validate() {
-        if(equations == null) {
+        if(equations == null || equations.size() == 0) {
             throw new IllegalStateException("No equations assigned");
         }
         if(objectiveFunction == null){
@@ -53,7 +53,7 @@ public class Problem {
             if(length == -1) {
                 length = eq.getLength();
             } else if(length != eq.getLength()) {
-                throw new RuntimeException("Equations system is inconsistent. Equations must have equal length");
+                throw new RuntimeException("Equations system is inconsistent. Equations must have equal length.");
             }
         }
 
