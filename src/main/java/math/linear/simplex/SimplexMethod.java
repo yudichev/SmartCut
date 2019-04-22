@@ -80,7 +80,7 @@ public class SimplexMethod
         }
 
 
-        if(auxFuncRow.getCoefficients().get(0).setScale(precision - 2, RoundingMode.HALF_UP).compareTo(BigDecimal.ZERO) < 0) {
+        if(auxFuncRow.getCoefficients().get(0).setScale(precision/2, RoundingMode.HALF_UP).compareTo(BigDecimal.ZERO) < 0) {
             throw new RuntimeException("The problem has no base plane.");
         };
 

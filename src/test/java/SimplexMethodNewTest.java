@@ -14,6 +14,10 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.math.MathContext;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalTime;
+import java.util.Timer;
 
 
 public class SimplexMethodNewTest
@@ -32,6 +36,7 @@ public class SimplexMethodNewTest
 
         Tableau solved = SimplexMethod.applySinglePhase(tableau);
 
+        System.out.println("\n-----------------------------------");
         double[] values = solved.getSolution();
         for(int k = 0; k < values.length; k++){
             System.out.format("x(%1$d)=%2$.1f\n", k+1, values[k]);
@@ -60,13 +65,15 @@ public class SimplexMethodNewTest
 
         Tableau solved = SimplexMethod.applySinglePhase(tableau);
 
+        System.out.println("\n-----------------------------------");
         double[] values = solved.getSolution();
         for(int k = 0; k < values.length; k++){
             System.out.format("x(%1$d)=%2$.3f\n", k+1, values[k]);
         }
 
         solved.getRows().forEach(row -> {row.getCoefficients()
-                .forEach(coeff -> System.out.print(coeff.round(new MathContext(5)).stripTrailingZeros()  + ", "));
+                .forEach(coeff -> System.out.print(
+                        coeff.round(new MathContext(5)).stripTrailingZeros().toEngineeringString()  + ", "));
             System.out.println();});
     }
 
@@ -89,6 +96,7 @@ public class SimplexMethodNewTest
 
         Tableau solved = SimplexMethod.applySinglePhase(tableau);
 
+        System.out.println("\n-----------------------------------");
         double[] values = solved.getSolution();
         for(int k = 0; k < values.length; k++){
             System.out.format("x(%1$d)=%2$.3f\n", k+1, values[k]);
@@ -114,6 +122,7 @@ public class SimplexMethodNewTest
 
         Tableau solved = SimplexMethod.applySinglePhase(tableau);
 
+        System.out.println("\n-----------------------------------");
         double[] values = solved.getSolution();
         for(int k = 0; k < values.length; k++){
             System.out.format("x(%1$d)=%2$.3f\n", k+1, values[k]);
@@ -158,6 +167,7 @@ public class SimplexMethodNewTest
 
         Tableau solved = SimplexMethod.applyTwoPhases(tableau);
 
+        System.out.println("\n-----------------------------------");
         double[] values = solved.getSolution();
         for(int k = 0; k < values.length; k++){
             System.out.format("x(%1$d)=%2$.3f\n", k+1, values[k]);
@@ -166,7 +176,8 @@ public class SimplexMethodNewTest
         Assert.assertArrayEquals(new double[]{0.615d,0.d,3.384d,0.},values,0.01);
 
         solved.getRows().forEach(row -> {row.getCoefficients()
-            .forEach(coeff -> System.out.print(coeff.round(new MathContext(5)).stripTrailingZeros()  + ", "));
+            .forEach(coeff -> System.out.print(
+                    coeff.round(new MathContext(5)).stripTrailingZeros().toEngineeringString()  + ", "));
             System.out.println();});
 
     }
@@ -188,6 +199,7 @@ public class SimplexMethodNewTest
 
         Tableau solved = SimplexMethod.applyTwoPhases(tableau);
 
+        System.out.println("\n-----------------------------------");
         double[] values = solved.getSolution();
         for(int k = 0; k < values.length; k++){
             System.out.format("x(%1$d)=%2$.3f\n", k+1, values[k]);
@@ -196,7 +208,8 @@ public class SimplexMethodNewTest
         Assert.assertArrayEquals(new double[]{0.d,1.666d,0.733d,0.},values,0.01);
 
         solved.getRows().forEach(row -> {row.getCoefficients()
-            .forEach(coeff -> System.out.print(coeff.round(new MathContext(5)).stripTrailingZeros()  + ", "));
+            .forEach(coeff -> System.out.print(
+                    coeff.round(new MathContext(5)).stripTrailingZeros().toEngineeringString()  + ", "));
             System.out.println();});
 
     }
@@ -218,6 +231,7 @@ public class SimplexMethodNewTest
 
         Tableau solved = SimplexMethod.applyTwoPhases(tableau);
 
+        System.out.println("\n-----------------------------------");
         double[] values = solved.getSolution();
         for(int k = 0; k < values.length; k++){
             System.out.format("x(%1$d)=%2$.3f\n", k+1, values[k]);
@@ -226,7 +240,8 @@ public class SimplexMethodNewTest
         Assert.assertArrayEquals(new double[]{0.d,1.666d,0.733d,0.},values,0.01);
 
         solved.getRows().forEach(row -> {row.getCoefficients()
-            .forEach(coeff -> System.out.print(coeff.round(new MathContext(5)).stripTrailingZeros()  + ", "));
+            .forEach(coeff -> System.out.print(
+                    coeff.round(new MathContext(5)).stripTrailingZeros().toEngineeringString()  + ", "));
             System.out.println();});
 
     }
@@ -248,6 +263,7 @@ public class SimplexMethodNewTest
 
         Tableau solved = SimplexMethod.applyTwoPhases(tableau);
 
+        System.out.println("\n-----------------------------------");
         double[] values = solved.getSolution();
         for(int k = 0; k < values.length; k++){
             System.out.format("x(%1$d)=%2$.3f\n", k+1, values[k]);
@@ -260,6 +276,78 @@ public class SimplexMethodNewTest
             System.out.println();});
 
     }
+
+
+    @Test
+    public void testTwoPhases5(){
+        Instant start = Instant.now();
+        Problem problem = Problem.getInstance();
+        problem.setPrecision(32);
+        problem.addEquation(ProblemEquation.make(new double[]{3., 1.2, 2.1, 4.}, Relation.GREATER_OR_EQUAL, 34.7d));
+        problem.addEquation(ProblemEquation.make(new double[]{7., 6., 15., 34.}, Relation.GREATER_OR_EQUAL, 56.d));
+        problem.addEquation(ProblemEquation.make(new double[]{1., 3., -1., 8.}, Relation.LESS_OR_EQUAL, 29.1d));
+        problem.addEquation(ProblemEquation.make(new double[]{3., 9.1, 7., 16.}, Relation.GREATER_OR_EQUAL, 45.2d));
+        problem.addEquation(ProblemEquation.make(new double[]{24., 7.4, 15., 9.4}, Relation.GREATER_OR_EQUAL, 80.d));
+        problem.addEquation(ProblemEquation.make(new double[]{3.1, 1., 2., -3.2}, Relation.LESS_OR_EQUAL, 16.7d));
+        problem.addEquation(ProblemEquation.make(new double[]{5., 1.3, 2.1, 1}, Relation.GREATER_OR_EQUAL, 4d));
+        problem.addObjectiveFunction(ProblemObjectiveFunction.make(new double[]{4., 6., 1.,6.}, ObjectiveFunctionType.MINIMUM));
+
+        TableauBuilder tableauBuilder = TableauBuilder.getInstance();
+        tableauBuilder.setProbliem(problem);
+        Tableau tableau = tableauBuilder.build();
+
+        Tableau solved = SimplexMethod.applyTwoPhases(tableau);
+
+        System.out.println("\n-----------------------------------");
+        double[] values = solved.getSolution();
+        for(int k = 0; k < values.length; k++){
+            System.out.format("x(%1$d)=%2$.3f\n", k+1, values[k]);
+        }
+
+        Assert.assertArrayEquals(new double[]{0.d,0.d,12.081d,2.332d},values,0.01);
+
+        solved.getRows().forEach(row -> {row.getCoefficients()
+                .forEach(coeff -> System.out.print(coeff.round(new MathContext(5)).stripTrailingZeros()  + ", "));
+            System.out.println();});
+        Instant end = Instant.now();
+        System.out.println("Duration " + Duration.between(start,end).toMillis() + "ms");
+
+
+    }
+
+    @Test
+    public void testTwoPhases6(){
+        Instant start = Instant.now();
+        Problem problem = Problem.getInstance();
+        problem.setPrecision(32);
+        problem.addEquation(ProblemEquation.make(new double[]{3., 1.2, 2.1, 4.,7.,-2,11.,0.}, Relation.GREATER_OR_EQUAL, 56.d));
+        problem.addEquation(ProblemEquation.make(new double[]{4.3, 1.9, -1.2, 4.8,17.,6.,-2,11.}, Relation.GREATER_OR_EQUAL, 38.d));
+        problem.addEquation(ProblemEquation.make(new double[]{2., 1.5, 7., -0.5, 6., 4.2,1.1,0.1}, Relation.LESS_OR_EQUAL, 234.d));
+        problem.addObjectiveFunction(ProblemObjectiveFunction.make(new double[]{2.4, 3.7, 16.5,41.,5.,1.7,6.3,4.2}, ObjectiveFunctionType.MINIMUM));
+
+        TableauBuilder tableauBuilder = TableauBuilder.getInstance();
+        tableauBuilder.setProbliem(problem);
+        Tableau tableau = tableauBuilder.build();
+
+        Tableau solved = SimplexMethod.applyTwoPhases(tableau);
+
+        System.out.println("\n-----------------------------------");
+        double[] values = solved.getSolution();
+        for(int k = 0; k < values.length; k++){
+            System.out.format("x(%1$d)=%2$.3f\n", k+1, values[k]);
+        }
+
+        Assert.assertArrayEquals(new double[]{0.d,0.d,0.d,0.d,2.636d,0.d,3.412d,0.d},values,0.01);
+
+        solved.getRows().forEach(row -> {row.getCoefficients()
+                .forEach(coeff -> System.out.print(coeff.round(new MathContext(5)).stripTrailingZeros()  + ", "));
+            System.out.println();});
+        Instant end = Instant.now();
+        System.out.println("Duration " + Duration.between(start,end).toMillis() + "ms");
+
+
+    }
+
 
     @Test
     public void testTwoPhasesHasNoBasePlane(){
