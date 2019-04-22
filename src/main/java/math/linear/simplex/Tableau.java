@@ -1,4 +1,4 @@
-package math.linear.basic.tableau;
+package math.linear.simplex;
 
 /*
  * Copyright 2001-2019 by HireRight, Inc. All rights reserved.
@@ -49,10 +49,12 @@ public class Tableau
         if(rowSize != size || size == 0){
             throw new IllegalArgumentException("The size of the row to be added is incompatible");
         }
+        row.setPrecision(precision);
         this.rows.add(row);
     }
 
     void setObjectiveFunction(ObjectiveFunctionTableauRow objectiveFunction){
+        objectiveFunction.setPrecision(precision);
         if(objectiveFunctionIndex == INDEX_NOT_ASSIGNED) {
             this.rows.add(objectiveFunction);
             objectiveFunctionIndex = this.rows.indexOf(objectiveFunction);
@@ -62,6 +64,7 @@ public class Tableau
     }
 
     void setAuxiliaryFunction(ObjectiveFunctionTableauRow auxiliaryFunction){
+        auxiliaryFunction.setPrecision(precision);
         if(auxiliaryFunctionIndex == INDEX_NOT_ASSIGNED) {
             this.rows.add(auxiliaryFunction);
             auxiliaryFunctionIndex = this.rows.indexOf(auxiliaryFunction);
@@ -74,13 +77,6 @@ public class Tableau
         this.numberOfProblemVariables = numberOfProblemVariables;
     }
 
-    /**
-     * Returns the lowest index of columns related to nonbasic variables
-     * @return
-     */
-    public int getNonBasicVariablesFirstIndex(){
-        return nonBasicVariablesFirstIndex;
-    }
 
     void setNonBasicVariablesFirstIndex(int index){
         this.nonBasicVariablesFirstIndex = index;
@@ -105,7 +101,7 @@ public class Tableau
         this.precision = precision;
     }
 
-    public int getPrecision(){
+    public final int getPrecision(){
         return this.precision;
     }
 
@@ -140,15 +136,8 @@ public class Tableau
         return auxiliaryFunctionIndex;
     }
 
-    /**
-     * Returns true if the problem needs two phase for solution
-     * @return
-     */
-    public final boolean isTwoPhases() {
-        return auxiliaryFunctionIndex != INDEX_NOT_ASSIGNED;
-    }
 
-    public int getNumberOfProblemVariables(){
+    int getNumberOfProblemVariables(){
         return numberOfProblemVariables;
     }
 
@@ -198,7 +187,7 @@ public class Tableau
         }
     }
 
-    public double[] getSolution(){
+    public final double[] getSolution(){
         List<EquationTableauRow> equationRows = this.getEquationRows();
         double[] solutionValues = new double[numberOfProblemVariables];
         Arrays.fill(solutionValues,0.d);
@@ -212,7 +201,7 @@ public class Tableau
         return solutionValues;
     }
 
-    public List<BigDecimal> getSolutionBigDecimal(){
+    public final List<BigDecimal> getSolutionBigDecimal(){
         List<EquationTableauRow> equationRows = this.getEquationRows();
         List<BigDecimal> solutionValues = new ArrayList<>();
         for(int k = 0; k < equationRows.size(); k++ ){

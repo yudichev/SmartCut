@@ -1,4 +1,4 @@
-package math.linear.basic.tableau;
+package math.linear.simplex;
 
 /*
  * Copyright 2001-2019 by HireRight, Inc. All rights reserved.
@@ -12,8 +12,6 @@ package math.linear.basic.tableau;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 public abstract class GenericTableauRow

@@ -1,4 +1,4 @@
-package math.linear.basic.tableau;
+package math.linear.simplex;
 
 /*
  * Copyright 2001-2019 by HireRight, Inc. All rights reserved.

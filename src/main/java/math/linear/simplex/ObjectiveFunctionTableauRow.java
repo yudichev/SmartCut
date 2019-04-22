@@ -1,4 +1,4 @@
-package math.linear.basic.tableau;
+package math.linear.simplex;
 
 /*
  * Copyright 2001-2019 by HireRight, Inc. All rights reserved.
@@ -33,12 +33,12 @@ public class ObjectiveFunctionTableauRow extends GenericTableauRow
         STANDARD, AUXILIARY
     }
 
-    public int getIncomingVariableIndex()
+    public final int getIncomingVariableIndex()
     {
         return getIncomingVariableIndex(getCoefficients().size());
     }
 
-    public int getIncomingVariableIndex(int idx)
+    public final int getIncomingVariableIndex(int idx)
     {
 
         int index = INDEX_NOT_ASSIGNED;
@@ -57,11 +57,11 @@ public class ObjectiveFunctionTableauRow extends GenericTableauRow
         return index;
     }
 
-    public boolean isOptimal() {
+    public final boolean isOptimal() {
         return isOptimal(getCoefficients().size());
     }
 
-    public boolean isOptimal(int idx) {
+    public final boolean isOptimal(int idx) {
         return getIncomingVariableIndex(idx) == INDEX_NOT_ASSIGNED;
     }
 }

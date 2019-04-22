@@ -1,19 +1,16 @@
-package math.linear.simplex.canonical;
+package math.linear.simplex;
+
 
 /*
  * Provides methods to solve problem
  */
 
 
-import math.linear.basic.tableau.EquationTableauRow;
-import math.linear.basic.tableau.ObjectiveFunctionTableauRow;
-import math.linear.basic.tableau.Tableau;
-
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.List;
 
-public class SimplexMethodNew
+public class SimplexMethod
 {
     private static int NOT_ASSIGNED = -1;
 
