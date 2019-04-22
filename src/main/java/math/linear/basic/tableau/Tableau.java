@@ -12,7 +12,6 @@ package math.linear.basic.tableau;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -23,14 +22,14 @@ public class Tableau
 {
     public final int INDEX_NOT_ASSIGNED = -1;
     private int numberOfProblemVariables = INDEX_NOT_ASSIGNED;
+    private int nonBasicVariablesFirstIndex = INDEX_NOT_ASSIGNED;
+    private int auxiliaryVariablesFirstIndex = INDEX_NOT_ASSIGNED;
 
     private List<GenericTableauRow> rows;
     private int objectiveFunctionIndex = INDEX_NOT_ASSIGNED;
-    private int auxilieryFunctionIndex = INDEX_NOT_ASSIGNED;
+    private int auxiliaryFunctionIndex = INDEX_NOT_ASSIGNED;
     private int rowSize = 0;
     private int precision = 16;
-
-    public int scale = 20;
 
     private Tableau() {
         rows = new ArrayList<>();
@@ -42,7 +41,6 @@ public class Tableau
 
 
     void addRow(GenericTableauRow row) {
-
         int size = row.getSize();
         if(rowSize == 0) {
             rowSize = size;
@@ -54,20 +52,6 @@ public class Tableau
         this.rows.add(row);
     }
 
-    void addAllRows(List<GenericTableauRow> rows){
-        if(rows.isEmpty()) return;
-
-        int size = rows.get(0).getSize();
-        if(rowSize == 0) {
-            rowSize = size;
-        }
-
-        if(rowSize != size || size == 0){
-            throw new IllegalArgumentException("The size of the rows to be added is incompatible");
-        }
-        this.rows.addAll(rows);
-    }
-
     void setObjectiveFunction(ObjectiveFunctionTableauRow objectiveFunction){
         if(objectiveFunctionIndex == INDEX_NOT_ASSIGNED) {
             this.rows.add(objectiveFunction);
@@ -77,17 +61,41 @@ public class Tableau
         }
     }
 
-    void setAuxilieryFunction(ObjectiveFunctionTableauRow auxilieryFunction){
-        if(auxilieryFunctionIndex == INDEX_NOT_ASSIGNED) {
-            this.rows.add(auxilieryFunction);
-            auxilieryFunctionIndex = this.rows.indexOf(auxilieryFunction);
+    void setAuxiliaryFunction(ObjectiveFunctionTableauRow auxiliaryFunction){
+        if(auxiliaryFunctionIndex == INDEX_NOT_ASSIGNED) {
+            this.rows.add(auxiliaryFunction);
+            auxiliaryFunctionIndex = this.rows.indexOf(auxiliaryFunction);
         } else {
-            this.rows.set(auxilieryFunctionIndex, auxilieryFunction);
+            this.rows.set(auxiliaryFunctionIndex, auxiliaryFunction);
         }
     }
 
     void setNumberOfProblemVariables(int numberOfProblemVariables){
         this.numberOfProblemVariables = numberOfProblemVariables;
+    }
+
+    /**
+     * Returns the lowest index of columns related to nonbasic variables
+     * @return
+     */
+    public int getNonBasicVariablesFirstIndex(){
+        return nonBasicVariablesFirstIndex;
+    }
+
+    void setNonBasicVariablesFirstIndex(int index){
+        this.nonBasicVariablesFirstIndex = index;
+    }
+
+    /**
+     * Returns the lowest index of columns related to auxiliary variables
+     * @return
+     */
+    public int getAuxiliaryVariablesFirstIndex(){
+        return auxiliaryVariablesFirstIndex;
+    }
+
+    void setAuxiliaryVariablesFirstIndex(int index){
+        this.auxiliaryVariablesFirstIndex = index;
     }
     /**
      * Set the pricision for coefficients
@@ -95,6 +103,10 @@ public class Tableau
      */
     public final void setPrecision(int precision) {
         this.precision = precision;
+    }
+
+    public int getPrecision(){
+        return this.precision;
     }
 
     /**
@@ -123,13 +135,21 @@ public class Tableau
      * Returns the index of the auxiliery function row
      * @return
      */
-    public final int getAuxilieryFunctionIndex()
+    public final int getAuxiliaryFunctionIndex()
     {
-        return auxilieryFunctionIndex;
+        return auxiliaryFunctionIndex;
     }
 
+    /**
+     * Returns true if the problem needs two phase for solution
+     * @return
+     */
     public final boolean isTwoPhases() {
-        return auxilieryFunctionIndex != INDEX_NOT_ASSIGNED;
+        return auxiliaryFunctionIndex != INDEX_NOT_ASSIGNED;
+    }
+
+    public int getNumberOfProblemVariables(){
+        return numberOfProblemVariables;
     }
 
     /**
@@ -141,12 +161,16 @@ public class Tableau
         if(this.rows.size() == 0) {
             throw new IllegalStateException("Tableau contains no data.");
         }
+        if(rowNumber == INDEX_NOT_ASSIGNED) {
+            throw new RuntimeException("Solution does not exist.");
+        }
         if(rowNumber < 0 || rowNumber > this.rows.size()) {
             throw new IllegalArgumentException("Row number is out of range.");
         }
-        if(rowNumber == objectiveFunctionIndex || rowNumber == auxilieryFunctionIndex) {
+        if(rowNumber == objectiveFunctionIndex || rowNumber == auxiliaryFunctionIndex) {
             throw new IllegalArgumentException("Objective function cannot be the pivot row.");
         }
+
 
         if(columnNumber < 0 || columnNumber > rowSize) {
             throw new IllegalArgumentException("Column number is out of range.");
@@ -188,5 +212,17 @@ public class Tableau
         return solutionValues;
     }
 
- //TODO add analysis of solvability of the problem after each pivot
+    public List<BigDecimal> getSolutionBigDecimal(){
+        List<EquationTableauRow> equationRows = this.getEquationRows();
+        List<BigDecimal> solutionValues = new ArrayList<>();
+        for(int k = 0; k < equationRows.size(); k++ ){
+            EquationTableauRow equation = equationRows.get(k);
+            int idx = equation.getBasicVariableIndex();
+            if(idx > 0 && idx <= numberOfProblemVariables){
+                solutionValues.add(idx,  equation.getCoefficients().get(0));
+            }
+        }
+        return solutionValues;
+    }
+
 }

@@ -17,7 +17,6 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.util.ArrayList;
 import java.util.List;
 
 public class TableauTest
@@ -127,7 +126,7 @@ public class TableauTest
         Assert.assertEquals(BigDecimal.ZERO, objFuncRow.getCoefficients().get(4));
         Assert.assertEquals(BigDecimal.ZERO, objFuncRow.getCoefficients().get(5));
 
-        objFuncIdx = tableau.getAuxilieryFunctionIndex();
+        objFuncIdx = tableau.getAuxiliaryFunctionIndex();
         objFuncRow = (ObjectiveFunctionTableauRow) rows.get(objFuncIdx);
         Assert.assertEquals(BigDecimal.ZERO, objFuncRow.getCoefficients().get(0));
         Assert.assertEquals(BigDecimal.ZERO, objFuncRow.getCoefficients().get(1));
@@ -194,7 +193,7 @@ public class TableauTest
         Assert.assertEquals(BigDecimal.ZERO, objFuncRow.getCoefficients().get(5));
         Assert.assertEquals(BigDecimal.ZERO, objFuncRow.getCoefficients().get(6));
 
-        objFuncIdx = tableau.getAuxilieryFunctionIndex();
+        objFuncIdx = tableau.getAuxiliaryFunctionIndex();
         objFuncRow = (ObjectiveFunctionTableauRow) rows.get(objFuncIdx);
         Assert.assertEquals(BigDecimal.ZERO, objFuncRow.getCoefficients().get(0));
         Assert.assertEquals(BigDecimal.ZERO, objFuncRow.getCoefficients().get(1));
@@ -259,7 +258,7 @@ public class TableauTest
         Assert.assertEquals(BigDecimal.ZERO, objFuncRow.getCoefficients().get(4));
         Assert.assertEquals(BigDecimal.ZERO, objFuncRow.getCoefficients().get(5));
 
-        objFuncIdx = tableau.getAuxilieryFunctionIndex();
+        objFuncIdx = tableau.getAuxiliaryFunctionIndex();
         objFuncRow = (ObjectiveFunctionTableauRow) rows.get(objFuncIdx);
         Assert.assertEquals(BigDecimal.ZERO, objFuncRow.getCoefficients().get(0));
         Assert.assertEquals(BigDecimal.ZERO, objFuncRow.getCoefficients().get(1));
@@ -329,7 +328,7 @@ public class TableauTest
         Assert.assertEquals(BigDecimal.ZERO, objFuncRow.getCoefficients().get(6));
         Assert.assertEquals(BigDecimal.ZERO, objFuncRow.getCoefficients().get(7));
 
-        objFuncIdx = tableau.getAuxilieryFunctionIndex();
+        objFuncIdx = tableau.getAuxiliaryFunctionIndex();
         objFuncRow = (ObjectiveFunctionTableauRow) rows.get(objFuncIdx);
         Assert.assertEquals(BigDecimal.ZERO, objFuncRow.getCoefficients().get(0));
         Assert.assertEquals(BigDecimal.ZERO, objFuncRow.getCoefficients().get(1));
@@ -371,8 +370,6 @@ public class TableauTest
         Assert.assertEquals(BigDecimal.valueOf(0.5d).floatValue(), rows.get(1).getCoefficients().get(3).doubleValue(),1e-4);
 
     }
-
-    //TODO create tests with exceptions
 
     @Test
     public void testNoEquations(){
@@ -445,7 +442,26 @@ public class TableauTest
     }
 
     @Test
-    public void testPivotBadColumn(){
+public void testPivotBadColumn(){
+    Problem problem = Problem.getInstance();
+    problem.setPrecision(16);
+    problem.addEquation(ProblemEquation.make(new double[]{1.d,7.d, -4.d}, Relation.GREATER_OR_EQUAL, 50.d));
+    problem.addEquation(ProblemEquation.make(new double[]{6.d,2.d,3.d}, Relation.GREATER_OR_EQUAL, 20.d));
+    problem.addObjectiveFunction(ProblemObjectiveFunction.make(new double[]{3.d,0.d,4.d}, ObjectiveFunctionType.MINIMUM));
+
+    TableauBuilder tableauBuilder = TableauBuilder.getInstance();
+    tableauBuilder.setProbliem(problem);
+    try {
+        Tableau tableau = tableauBuilder.build();
+        tableau.pivot(1,-2);
+        Assert.fail("An exception must be thrown here");
+    } catch(IllegalArgumentException ex){
+        Assert.assertEquals("Column number is out of range.",ex.getMessage());
+    }
+}
+
+    @Test
+    public void testNoSolutionException(){
         Problem problem = Problem.getInstance();
         problem.setPrecision(16);
         problem.addEquation(ProblemEquation.make(new double[]{1.d,7.d, -4.d}, Relation.GREATER_OR_EQUAL, 50.d));
@@ -458,11 +474,10 @@ public class TableauTest
             Tableau tableau = tableauBuilder.build();
             tableau.pivot(1,-1);
             Assert.fail("An exception must be thrown here");
-        } catch(IllegalArgumentException ex){
-            Assert.assertEquals("Column number is out of range.",ex.getMessage());
+        } catch(RuntimeException ex){
+            Assert.assertEquals("Solution does not exist.",ex.getMessage());
         }
     }
-
     @Test
     public void testPivotObjFunction(){
         Problem problem = Problem.getInstance();

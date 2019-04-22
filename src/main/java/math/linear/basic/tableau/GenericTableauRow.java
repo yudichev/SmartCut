@@ -83,7 +83,7 @@ public abstract class GenericTableauRow
      * @param factor
      *
      */
-    void addWithFactor(GenericTableauRow row, BigDecimal factor) {
+    public void addWithFactor(GenericTableauRow row, BigDecimal factor) {
         if( this.getSize() != row.getSize() )
             throw new RuntimeException("The size of the row does not match.");
 

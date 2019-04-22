@@ -11,7 +11,6 @@ import math.linear.basic.problem.ProblemObjectiveFunction;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class TableauBuilder
@@ -23,7 +22,7 @@ public class TableauBuilder
     private int numberOfVariables = NOT_ASSIGNED;
     private int totalNumberOfVariables = NOT_ASSIGNED;
     private int nonBasicVariablesFirstIndex = NOT_ASSIGNED ;
-    private int auxilieryVariablesFirstIndex = NOT_ASSIGNED;
+    private int auxiliaryVariablesFirstIndex = NOT_ASSIGNED;
 
     private TableauBuilder() {}
 
@@ -58,7 +57,7 @@ public class TableauBuilder
         tableau.setPrecision(problem.getPrecision());
         tableau.setNumberOfProblemVariables(numberOfVariables);
 
-        for(int k = 0, knb = nonBasicVariablesFirstIndex, kaux = auxilieryVariablesFirstIndex; k < equations.size(); k++) {
+        for(int k = 0, knb = nonBasicVariablesFirstIndex, kaux = auxiliaryVariablesFirstIndex; k < equations.size(); k++) {
             ProblemEquation equation = equations.get(k);
             Relation relation = equation.getRelation();
             double freeCoefficient = equation.getCoefficientAt(0);
@@ -80,7 +79,7 @@ public class TableauBuilder
                 coeffs.add(m, BigDecimal.ZERO);
             }
 
-            if(auxilieryVariablesFirstIndex == NOT_ASSIGNED) {
+            if(auxiliaryVariablesFirstIndex == NOT_ASSIGNED) {
                 coeffs.set(knb++, BigDecimal.ONE);
                 tableau.addRow(new EquationTableauRow(k + nonBasicVariablesFirstIndex, coeffs));
             } else {
@@ -115,17 +114,20 @@ public class TableauBuilder
 
         tableau.setObjectiveFunction(new ObjectiveFunctionTableauRow(ObjectiveFunctionTableauRow.Type.STANDARD, objectiveFunctionCoeffs));
 
-        if(auxilieryVariablesFirstIndex != NOT_ASSIGNED) {
+        if(auxiliaryVariablesFirstIndex != NOT_ASSIGNED) {
             List<BigDecimal> auxFunctionCoeffs = new ArrayList<>(totalNumberOfVariables);
-            for(int m = 0; m < auxilieryVariablesFirstIndex; m++) {
+            for(int m = 0; m < auxiliaryVariablesFirstIndex; m++) {
                 auxFunctionCoeffs.add(m,BigDecimal.ZERO);
             }
-            for(int m = auxilieryVariablesFirstIndex; m < totalNumberOfVariables; m++) {
+            for(int m = auxiliaryVariablesFirstIndex; m < totalNumberOfVariables; m++) {
                 auxFunctionCoeffs.add(m,BigDecimal.ONE);
             }
-            tableau.setAuxilieryFunction( new ObjectiveFunctionTableauRow(ObjectiveFunctionTableauRow.Type.AUXILIERY, auxFunctionCoeffs));
+
+            tableau.setAuxiliaryFunction( new ObjectiveFunctionTableauRow(ObjectiveFunctionTableauRow.Type.AUXILIARY, auxFunctionCoeffs));
         }
 
+        tableau.setAuxiliaryVariablesFirstIndex(auxiliaryVariablesFirstIndex);
+        tableau.setNonBasicVariablesFirstIndex(nonBasicVariablesFirstIndex);
         return tableau;
     }
 
@@ -141,16 +143,16 @@ public class TableauBuilder
         totalNumberOfVariables = equations.get(0).getLength();
         numberOfVariables = totalNumberOfVariables - 1;
         int numberOfAdditionalVariables = 0;
-        int numberOfAuxilieryVariables = 0;
+        int numberOfAuxiliaryVariables = 0;
         for(ProblemEquation eq : equations) {
             Relation relation = eq.getRelation();
             double freeCoefficient = eq.getCoefficientAt(0);
             boolean isFreeCoefficientNegative = Double.compare(freeCoefficient, ZERO) < 0;
             if(relation.isEqual()) {
-                numberOfAuxilieryVariables++;
+                numberOfAuxiliaryVariables++;
             } else if(((relation.isLessOrEqual() && isFreeCoefficientNegative)
                 || (relation.isGreaterOrEqual() && !isFreeCoefficientNegative))){
-                numberOfAuxilieryVariables++;
+                numberOfAuxiliaryVariables++;
                 numberOfAdditionalVariables++;
             } else {
                 numberOfAdditionalVariables++;
@@ -158,9 +160,9 @@ public class TableauBuilder
         }
         nonBasicVariablesFirstIndex = totalNumberOfVariables;
         totalNumberOfVariables += numberOfAdditionalVariables;
-        if(numberOfAuxilieryVariables > 0) {
-            auxilieryVariablesFirstIndex = totalNumberOfVariables;
-            totalNumberOfVariables += numberOfAuxilieryVariables;
+        if(numberOfAuxiliaryVariables > 0) {
+            auxiliaryVariablesFirstIndex = totalNumberOfVariables;
+            totalNumberOfVariables += numberOfAuxiliaryVariables;
         }
     }
 }

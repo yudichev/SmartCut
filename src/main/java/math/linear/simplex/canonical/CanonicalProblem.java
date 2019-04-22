@@ -184,7 +184,7 @@ public class CanonicalProblem
 
     public void setAuxFunction(ObjectiveFunction auxFunc){
         if(this.getObjectiveFunction().getValues().length != auxFunc.getValues().length)
-            throw new RuntimeException("Auxiliery objective function length mismatch");
+            throw new RuntimeException("Auxiliary objective function length mismatch");
         auxObjFunc = auxFunc;
     }
 

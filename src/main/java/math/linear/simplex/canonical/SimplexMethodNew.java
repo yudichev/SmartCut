@@ -10,7 +10,7 @@ import math.linear.basic.tableau.ObjectiveFunctionTableauRow;
 import math.linear.basic.tableau.Tableau;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
+import java.math.MathContext;
 import java.util.List;
 
 public class SimplexMethodNew
@@ -20,32 +20,95 @@ public class SimplexMethodNew
     public static Tableau applySinglePhase(Tableau tableau){
         int objFuncIdx = tableau.getObjectiveFunctionIndex();
         ObjectiveFunctionTableauRow objFuncRow = (ObjectiveFunctionTableauRow) tableau.getRows().get(objFuncIdx);
+        List<EquationTableauRow> equations = tableau.getEquationRows();
+        int precision = tableau.getPrecision();
         while (!objFuncRow.isOptimal()) {
             int incomingIndex = objFuncRow.getIncomingVariableIndex();
-            int outcomingIndex = getOutcomingIndex(incomingIndex, tableau.getEquationRows(), tableau.scale);
+            int outcomingIndex = getOutcomingIndex(incomingIndex, equations, precision);
             tableau.pivot(outcomingIndex, incomingIndex);
         }
 
         return tableau;
     }
 
-    private static int getOutcomingIndex(int incomingIndex, List<EquationTableauRow> equations, int scale) {
+    public static boolean existsAlternativeSolution(Tableau tableau){
+        int objFuncIdx = tableau.getObjectiveFunctionIndex();
+        ObjectiveFunctionTableauRow objFuncRow = (ObjectiveFunctionTableauRow) tableau.getRows().get(objFuncIdx);
+        int numberOfVariables = tableau.getNumberOfProblemVariables();
+        return objFuncRow.getCoefficients().stream().sequential().skip(1).limit(numberOfVariables)
+            .filter(coeff->coeff.compareTo(BigDecimal.ZERO) == 0).count() > 0L;
+    }
+
+    private static int getOutcomingIndex(int incomingIndex, List<EquationTableauRow> equations, int precision) {
         int outcomingIndex = NOT_ASSIGNED;
-        BigDecimal maxRatio = null;
+        BigDecimal minRatio = null;
         for(int k = 0; k < equations.size(); k++) {
             EquationTableauRow eq = equations.get(k);
             List<BigDecimal> coefficients = eq.getCoefficients();
             BigDecimal currentCoeff = coefficients.get(incomingIndex);
             BigDecimal freeCoeff = coefficients.get(0);
 
-            if(currentCoeff.compareTo(BigDecimal.ZERO) > 0 && !(freeCoeff.compareTo(BigDecimal.ZERO) == 0)){
-                BigDecimal ratio = currentCoeff.divide(freeCoeff, scale, RoundingMode.HALF_UP);
-                if(maxRatio == null || maxRatio.compareTo(ratio) < 0){
-                    maxRatio = ratio;
+            MathContext mathContext = new MathContext(precision);
+            if(currentCoeff.compareTo(BigDecimal.ZERO) > 0){
+                BigDecimal ratio = freeCoeff.divide(currentCoeff,mathContext);
+                if(minRatio == null || minRatio.compareTo(ratio) > 0){
+                    minRatio = ratio;
                     outcomingIndex = k;
                 }
             }
         }
         return outcomingIndex;
+    }
+
+    public static Tableau applyTwoPhases(Tableau tableau){
+        int auxFuncIdx = tableau.getAuxiliaryFunctionIndex();
+        ObjectiveFunctionTableauRow auxFuncRow = (ObjectiveFunctionTableauRow) tableau.getRows().get(auxFuncIdx);
+        List<EquationTableauRow> equations = tableau.getEquationRows();
+        int auxFirstColumnIndex = tableau.getAuxiliaryVariablesFirstIndex();
+        for(int k = auxFirstColumnIndex; k < auxFuncRow.getCoefficients().size(); k++){
+            EquationTableauRow equation = getEquationWithUnitColumn(equations, k);
+            auxFuncRow.addWithFactor(equation, BigDecimal.ONE.negate());
+        }
+
+        int objFuncIdx = tableau.getObjectiveFunctionIndex();
+        ObjectiveFunctionTableauRow objFuncRow = (ObjectiveFunctionTableauRow) tableau.getRows().get(objFuncIdx);
+
+        int precision = tableau.getPrecision();
+
+        while (!auxFuncRow.isOptimal(auxFirstColumnIndex)) {
+            int incomingIndex = auxFuncRow.getIncomingVariableIndex(auxFirstColumnIndex);
+            int outcomingIndex = getOutcomingIndex(incomingIndex, equations, precision);
+            tableau.pivot(outcomingIndex, incomingIndex);
+        }
+
+        while (!objFuncRow.isOptimal(auxFirstColumnIndex)) {
+            int incomingIndex = objFuncRow.getIncomingVariableIndex(auxFirstColumnIndex);
+            int outcomingIndex = getOutcomingIndex(incomingIndex, equations, precision);
+            tableau.pivot(outcomingIndex, incomingIndex);
+        }
+
+        return tableau;
+    }
+
+
+
+    private static EquationTableauRow getEquationWithUnitColumn(List<EquationTableauRow> equations, int columnIndex){
+        return  equations.stream().filter(eq -> eq.getCoefficients().get(columnIndex).compareTo(BigDecimal.ONE) == 0).findFirst().get();
+    }
+
+    private static int getIncomingIndex(ObjectiveFunctionTableauRow objFunc, ObjectiveFunctionTableauRow auxFunc ){
+        int incomingIndexObj = objFunc.getIncomingVariableIndex();
+        int incomingIndexAux = auxFunc.getIncomingVariableIndex();
+
+        if(incomingIndexObj == NOT_ASSIGNED){
+            return incomingIndexAux;
+        } else if(incomingIndexAux == NOT_ASSIGNED) {
+            return incomingIndexObj;
+        } else  {
+            BigDecimal objFuncCoeff = objFunc.getCoefficients().get(incomingIndexObj);
+            BigDecimal auxFuncCoeff = auxFunc.getCoefficients().get(incomingIndexAux);
+            return objFuncCoeff.abs().compareTo(auxFuncCoeff.abs()) > 0 ? incomingIndexObj : incomingIndexAux;
+        }
+
     }
 }

@@ -30,19 +30,25 @@ public class ObjectiveFunctionTableauRow extends GenericTableauRow
     }
 
     public enum Type {
-        STANDARD,
-        AUXILIERY
+        STANDARD, AUXILIARY
     }
 
     public int getIncomingVariableIndex()
     {
+        return getIncomingVariableIndex(getCoefficients().size());
+    }
+
+    public int getIncomingVariableIndex(int idx)
+    {
+
         int index = INDEX_NOT_ASSIGNED;
         List<BigDecimal> coefficients = getCoefficients();
+        int maxIndex = Math.min(idx, coefficients.size());
         BigDecimal absMaxCoeff = BigDecimal.ZERO;
-        for(int k = 1; k < coefficients.size(); k++) {
+        for(int k = 1; k < maxIndex; k++) {
             BigDecimal coeff = coefficients.get(k);
-            if(coeff.compareTo(BigDecimal.ZERO) < 0) {
-                if(k == INDEX_NOT_ASSIGNED || coeff.compareTo(absMaxCoeff) < 0) {
+            if(coeff.compareTo(BigDecimal.ZERO) < 0 ) {
+                if(k == INDEX_NOT_ASSIGNED || coeff.abs().compareTo(absMaxCoeff.abs()) > 0) {
                     index = k;
                     absMaxCoeff = coeff;
                 }
@@ -52,6 +58,10 @@ public class ObjectiveFunctionTableauRow extends GenericTableauRow
     }
 
     public boolean isOptimal() {
-        return getIncomingVariableIndex() == INDEX_NOT_ASSIGNED;
+        return isOptimal(getCoefficients().size());
+    }
+
+    public boolean isOptimal(int idx) {
+        return getIncomingVariableIndex(idx) == INDEX_NOT_ASSIGNED;
     }
 }
