@@ -1,12 +1,6 @@
 package math.linear.simplex;
 
 /*
- * Copyright 2001-2019 by HireRight, Inc. All rights reserved.
- * This software is the confidential and proprietary information
- * of HireRight, Inc. Use is subject to license terms.
- */
-
-/*
  * Represents the tableau of a canonical linear problem
  */
 
@@ -22,7 +16,6 @@ public class Tableau
 {
     public final int INDEX_NOT_ASSIGNED = -1;
     private int numberOfProblemVariables = INDEX_NOT_ASSIGNED;
-    private int nonBasicVariablesFirstIndex = INDEX_NOT_ASSIGNED;
     private int auxiliaryVariablesFirstIndex = INDEX_NOT_ASSIGNED;
 
     private List<GenericTableauRow> rows;
@@ -78,15 +71,11 @@ public class Tableau
     }
 
 
-    void setNonBasicVariablesFirstIndex(int index){
-        this.nonBasicVariablesFirstIndex = index;
-    }
-
     /**
      * Returns the lowest index of columns related to auxiliary variables
      * @return
      */
-    public int getAuxiliaryVariablesFirstIndex(){
+    int getAuxiliaryVariablesFirstIndex(){
         return auxiliaryVariablesFirstIndex;
     }
 
@@ -97,11 +86,11 @@ public class Tableau
      * Set the pricision for coefficients
      * @param precision
      */
-    public final void setPrecision(int precision) {
+    final void setPrecision(int precision) {
         this.precision = precision;
     }
 
-    public final int getPrecision(){
+    final int getPrecision(){
         return this.precision;
     }
 

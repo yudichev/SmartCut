@@ -126,7 +126,7 @@ public class TableauBuilder
         }
 
         tableau.setAuxiliaryVariablesFirstIndex(auxiliaryVariablesFirstIndex);
-        tableau.setNonBasicVariablesFirstIndex(nonBasicVariablesFirstIndex);
+
         return tableau;
     }
 

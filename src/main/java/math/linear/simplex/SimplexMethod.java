@@ -100,19 +100,4 @@ public class SimplexMethod
         return  equations.stream().filter(eq -> eq.getCoefficients().get(columnIndex).compareTo(BigDecimal.ONE) == 0).findFirst().get();
     }
 
-    private static int getIncomingIndex(ObjectiveFunctionTableauRow objFunc, ObjectiveFunctionTableauRow auxFunc ){
-        int incomingIndexObj = objFunc.getIncomingVariableIndex();
-        int incomingIndexAux = auxFunc.getIncomingVariableIndex();
-
-        if(incomingIndexObj == NOT_ASSIGNED){
-            return incomingIndexAux;
-        } else if(incomingIndexAux == NOT_ASSIGNED) {
-            return incomingIndexObj;
-        } else  {
-            BigDecimal objFuncCoeff = objFunc.getCoefficients().get(incomingIndexObj);
-            BigDecimal auxFuncCoeff = auxFunc.getCoefficients().get(incomingIndexAux);
-            return objFuncCoeff.abs().compareTo(auxFuncCoeff.abs()) > 0 ? incomingIndexObj : incomingIndexAux;
-        }
-
-    }
 }
