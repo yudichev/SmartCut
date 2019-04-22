@@ -200,4 +200,88 @@ public class SimplexMethodNewTest
             System.out.println();});
 
     }
+
+    @Test
+    public void testTwoPhases3(){
+        Problem problem = Problem.getInstance();
+        problem.setPrecision(16);
+        problem.addEquation(ProblemEquation.make(new double[]{1., 3., 5., -1.}, Relation.GREATER_OR_EQUAL, 5.d));
+        problem.addEquation(ProblemEquation.make(new double[]{2., 6., 0., 0.}, Relation.GREATER_OR_EQUAL, 10.d));
+        problem.addEquation(ProblemEquation.make(new double[]{3., 7., 4., 0.}, Relation.GREATER_OR_EQUAL, 4.d));
+        problem.addEquation(ProblemEquation.make(new double[]{0., 2., 5., 1.}, Relation.GREATER_OR_EQUAL, 7.d));
+        problem.addEquation(ProblemEquation.make(new double[]{4., 1., 1., 7.}, Relation.GREATER_OR_EQUAL, 1.d));
+        problem.addObjectiveFunction(ProblemObjectiveFunction.make(new double[]{4., 3., 1.,7.}, ObjectiveFunctionType.MINIMUM));
+
+        TableauBuilder tableauBuilder = TableauBuilder.getInstance();
+        tableauBuilder.setProbliem(problem);
+        Tableau tableau = tableauBuilder.build();
+
+        Tableau solved = SimplexMethod.applyTwoPhases(tableau);
+
+        double[] values = solved.getSolution();
+        for(int k = 0; k < values.length; k++){
+            System.out.format("x(%1$d)=%2$.3f\n", k+1, values[k]);
+        }
+
+        Assert.assertArrayEquals(new double[]{0.d,1.666d,0.733d,0.},values,0.01);
+
+        solved.getRows().forEach(row -> {row.getCoefficients()
+            .forEach(coeff -> System.out.print(coeff.round(new MathContext(5)).stripTrailingZeros()  + ", "));
+            System.out.println();});
+
+    }
+
+    @Test
+    public void testTwoPhases4(){
+        Problem problem = Problem.getInstance();
+        problem.setPrecision(16);
+        problem.addEquation(ProblemEquation.make(new double[]{1., 3., 5., 1.}, Relation.GREATER_OR_EQUAL, 5.d));
+        problem.addEquation(ProblemEquation.make(new double[]{2., 1., 0., 0.}, Relation.LESS_OR_EQUAL, 10.d));
+        problem.addEquation(ProblemEquation.make(new double[]{3., 7., 4., 0.}, Relation.EQUAL, 4.d));
+        problem.addEquation(ProblemEquation.make(new double[]{0., 2., 5., 1.}, Relation.GREATER_OR_EQUAL, 7.d));
+        problem.addEquation(ProblemEquation.make(new double[]{4., 1., 1., 7.}, Relation.GREATER_OR_EQUAL, 1.d));
+        problem.addObjectiveFunction(ProblemObjectiveFunction.make(new double[]{3., 9., 7.,6.}, ObjectiveFunctionType.MINIMUM));
+
+        TableauBuilder tableauBuilder = TableauBuilder.getInstance();
+        tableauBuilder.setProbliem(problem);
+        Tableau tableau = tableauBuilder.build();
+
+        Tableau solved = SimplexMethod.applyTwoPhases(tableau);
+
+        double[] values = solved.getSolution();
+        for(int k = 0; k < values.length; k++){
+            System.out.format("x(%1$d)=%2$.3f\n", k+1, values[k]);
+        }
+
+        Assert.assertArrayEquals(new double[]{0.d,0.d,1.d,2.d},values,0.01);
+
+        solved.getRows().forEach(row -> {row.getCoefficients()
+            .forEach(coeff -> System.out.print(coeff.round(new MathContext(5)).stripTrailingZeros()  + ", "));
+            System.out.println();});
+
+    }
+
+    @Test
+    public void testTwoPhasesHasNoBasePlane(){
+        Problem problem = Problem.getInstance();
+        problem.setPrecision(16);
+        problem.addEquation(ProblemEquation.make(new double[]{1., 3., 5., -1.}, Relation.GREATER_OR_EQUAL, 5.d));
+        problem.addEquation(ProblemEquation.make(new double[]{2., 6., 0., 0.}, Relation.EQUAL, 10.d));
+        problem.addEquation(ProblemEquation.make(new double[]{3., 7., 4., 0.}, Relation.GREATER_OR_EQUAL, 4.d));
+        problem.addEquation(ProblemEquation.make(new double[]{0., 2., 5., 1.}, Relation.GREATER_OR_EQUAL, 7.d));
+        problem.addEquation(ProblemEquation.make(new double[]{4., 1., 1., 7.}, Relation.LESS_OR_EQUAL, 1.d));
+        problem.addObjectiveFunction(ProblemObjectiveFunction.make(new double[]{3., 9., 7.,6.}, ObjectiveFunctionType.MINIMUM));
+
+        TableauBuilder tableauBuilder = TableauBuilder.getInstance();
+        tableauBuilder.setProbliem(problem);
+        Tableau tableau = tableauBuilder.build();
+
+        try
+        {
+            SimplexMethod.applyTwoPhases(tableau);
+            Assert.fail("Exception 'The problem has no base plane.' must be throw here");
+        } catch(RuntimeException ex){
+            Assert.assertEquals("The problem has no base plane.", ex.getMessage());
+        }
+    }
 }

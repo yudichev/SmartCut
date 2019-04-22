@@ -8,6 +8,7 @@ package math.linear.simplex;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.List;
 
 public class SimplexMethod
@@ -77,6 +78,12 @@ public class SimplexMethod
             int outcomingIndex = getOutcomingIndex(incomingIndex, equations, precision);
             tableau.pivot(outcomingIndex, incomingIndex);
         }
+
+
+        if(auxFuncRow.getCoefficients().get(0).setScale(precision - 2, RoundingMode.HALF_UP).compareTo(BigDecimal.ZERO) < 0) {
+            throw new RuntimeException("The problem has no base plane.");
+        };
+
 
         while (!objFuncRow.isOptimal(auxFirstColumnIndex)) {
             int incomingIndex = objFuncRow.getIncomingVariableIndex(auxFirstColumnIndex);

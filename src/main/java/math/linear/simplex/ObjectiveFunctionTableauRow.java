@@ -11,6 +11,7 @@ package math.linear.simplex;
  */
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 public class ObjectiveFunctionTableauRow extends GenericTableauRow
@@ -46,7 +47,7 @@ public class ObjectiveFunctionTableauRow extends GenericTableauRow
         int maxIndex = Math.min(idx, coefficients.size());
         BigDecimal absMaxCoeff = BigDecimal.ZERO;
         for(int k = 1; k < maxIndex; k++) {
-            BigDecimal coeff = coefficients.get(k);
+            BigDecimal coeff = coefficients.get(k).setScale(getPrecision() - 3,RoundingMode.HALF_UP);
             if(coeff.compareTo(BigDecimal.ZERO) < 0 ) {
                 if(k == INDEX_NOT_ASSIGNED || coeff.abs().compareTo(absMaxCoeff.abs()) > 0) {
                     index = k;

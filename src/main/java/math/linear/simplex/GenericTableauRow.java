@@ -36,6 +36,10 @@ public abstract class GenericTableauRow
         this.mathContext = new MathContext(precision);
     }
 
+    final int getPrecision(){
+        return mathContext.getPrecision();
+    }
+
     /**
      * Returns the number of coefficients
      * @return number of coefficients in a row
