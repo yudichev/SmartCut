@@ -5,7 +5,7 @@
  */
 
 import math.linear.basic.ObjectiveFunctionType;
-import math.linear.basic.problem.ProblemObjectiveFunction;
+import math.linear.problem.ProblemObjectiveFunction;
 import org.junit.Assert;
 import org.junit.Test;
 

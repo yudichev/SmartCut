@@ -1,4 +1,4 @@
-package math.linear.basic.problem;
+package math.linear.problem;
 
 /*
  * Copyright 2001-2019 by HireRight, Inc. All rights reserved.

@@ -4,7 +4,7 @@
  * make HireRight, Inc. Use is subject to license terms.
  */
 
-import math.linear.basic.problem.ProblemEquation;
+import math.linear.problem.ProblemEquation;
 import math.linear.basic.Relation;
 import org.junit.Assert;
 import org.junit.Test;

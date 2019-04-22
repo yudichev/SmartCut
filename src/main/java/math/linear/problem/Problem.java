@@ -1,4 +1,4 @@
-package math.linear.basic.problem;
+package math.linear.problem;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -4,12 +4,12 @@
 
 import math.linear.basic.ObjectiveFunctionType;
 import math.linear.basic.Relation;
-import math.linear.basic.problem.Problem;
-import math.linear.basic.problem.ProblemEquation;
-import math.linear.basic.problem.ProblemObjectiveFunction;
-import math.linear.basic.tableau.Tableau;
-import math.linear.basic.tableau.TableauBuilder;
-import math.linear.simplex.canonical.SimplexMethodNew;
+import math.linear.problem.Problem;
+import math.linear.problem.ProblemEquation;
+import math.linear.problem.ProblemObjectiveFunction;
+import math.linear.simplex.Tableau;
+import math.linear.simplex.TableauBuilder;
+import math.linear.simplex.SimplexMethod;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -30,7 +30,7 @@ public class SimplexMethodNewTest
         tableauBuilder.setProbliem(problem);
         Tableau tableau = tableauBuilder.build();
 
-        Tableau solved = SimplexMethodNew.applySinglePhase(tableau);
+        Tableau solved = SimplexMethod.applySinglePhase(tableau);
 
         double[] values = solved.getSolution();
         for(int k = 0; k < values.length; k++){
@@ -58,7 +58,7 @@ public class SimplexMethodNewTest
         tableauBuilder.setProbliem(problem);
         Tableau tableau = tableauBuilder.build();
 
-        Tableau solved = SimplexMethodNew.applySinglePhase(tableau);
+        Tableau solved = SimplexMethod.applySinglePhase(tableau);
 
         double[] values = solved.getSolution();
         for(int k = 0; k < values.length; k++){
@@ -87,7 +87,7 @@ public class SimplexMethodNewTest
         tableauBuilder.setProbliem(problem);
         Tableau tableau = tableauBuilder.build();
 
-        Tableau solved = SimplexMethodNew.applySinglePhase(tableau);
+        Tableau solved = SimplexMethod.applySinglePhase(tableau);
 
         double[] values = solved.getSolution();
         for(int k = 0; k < values.length; k++){
@@ -112,7 +112,7 @@ public class SimplexMethodNewTest
         tableauBuilder.setProbliem(problem);
         Tableau tableau = tableauBuilder.build();
 
-        Tableau solved = SimplexMethodNew.applySinglePhase(tableau);
+        Tableau solved = SimplexMethod.applySinglePhase(tableau);
 
         double[] values = solved.getSolution();
         for(int k = 0; k < values.length; k++){
@@ -136,7 +136,7 @@ public class SimplexMethodNewTest
 
         try
         {
-            SimplexMethodNew.applySinglePhase(tableau);
+            SimplexMethod.applySinglePhase(tableau);
             Assert.fail("Exception 'Solution does not exist' must be thrown here.");
         }catch(RuntimeException ex){
             Assert.assertEquals("Solution does not exist.", ex.getMessage());
@@ -156,7 +156,7 @@ public class SimplexMethodNewTest
         tableauBuilder.setProbliem(problem);
         Tableau tableau = tableauBuilder.build();
 
-        Tableau solved = SimplexMethodNew.applyTwoPhases(tableau);
+        Tableau solved = SimplexMethod.applyTwoPhases(tableau);
 
         double[] values = solved.getSolution();
         for(int k = 0; k < values.length; k++){
@@ -186,7 +186,7 @@ public class SimplexMethodNewTest
         tableauBuilder.setProbliem(problem);
         Tableau tableau = tableauBuilder.build();
 
-        Tableau solved = SimplexMethodNew.applyTwoPhases(tableau);
+        Tableau solved = SimplexMethod.applyTwoPhases(tableau);
 
         double[] values = solved.getSolution();
         for(int k = 0; k < values.length; k++){

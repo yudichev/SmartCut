@@ -4,14 +4,14 @@
 
 import math.linear.basic.ObjectiveFunctionType;
 import math.linear.basic.Relation;
-import math.linear.basic.problem.Problem;
-import math.linear.basic.problem.ProblemEquation;
-import math.linear.basic.problem.ProblemObjectiveFunction;
-import math.linear.basic.tableau.EquationTableauRow;
-import math.linear.basic.tableau.GenericTableauRow;
-import math.linear.basic.tableau.ObjectiveFunctionTableauRow;
-import math.linear.basic.tableau.Tableau;
-import math.linear.basic.tableau.TableauBuilder;
+import math.linear.problem.Problem;
+import math.linear.problem.ProblemEquation;
+import math.linear.problem.ProblemObjectiveFunction;
+import math.linear.simplex.EquationTableauRow;
+import math.linear.simplex.GenericTableauRow;
+import math.linear.simplex.ObjectiveFunctionTableauRow;
+import math.linear.simplex.Tableau;
+import math.linear.simplex.TableauBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -41,8 +41,6 @@ public class TableauTest
         TableauBuilder tableauBuilder = TableauBuilder.getInstance();
         tableauBuilder.setProbliem(problem);
         Tableau tableau = tableauBuilder.build();
-
-        Assert.assertEquals(false, tableau.isTwoPhases());
 
         List<GenericTableauRow> rows = tableau.getRows();
         Assert.assertEquals(3, rows.size());
@@ -92,8 +90,6 @@ public class TableauTest
         TableauBuilder tableauBuilder = TableauBuilder.getInstance();
         tableauBuilder.setProbliem(problem);
         Tableau tableau = tableauBuilder.build();
-
-        Assert.assertEquals(true, tableau.isTwoPhases());
 
         //There must be 4 equations: 2 initial equations + 1 objecitve function + 1 auxiliery function
         List<GenericTableauRow> rows = tableau.getRows();
@@ -156,8 +152,6 @@ public class TableauTest
         TableauBuilder tableauBuilder = TableauBuilder.getInstance();
         tableauBuilder.setProbliem(problem);
         Tableau tableau = tableauBuilder.build();
-
-        Assert.assertEquals(true, tableau.isTwoPhases());
 
         //There must be 4 equations: 2 initial equations + 1 objecitve function + 1 auxiliery function
         List<GenericTableauRow> rows = tableau.getRows();
@@ -225,8 +219,6 @@ public class TableauTest
         tableauBuilder.setProbliem(problem);
         Tableau tableau = tableauBuilder.build();
 
-        Assert.assertEquals(true, tableau.isTwoPhases());
-
         //There must be 4 equations: 2 initial equations + 1 objecitve function + 1 auxiliery function
         List<GenericTableauRow> rows = tableau.getRows();
         Assert.assertEquals(4, rows.size());
@@ -288,8 +280,6 @@ public class TableauTest
         TableauBuilder tableauBuilder = TableauBuilder.getInstance();
         tableauBuilder.setProbliem(problem);
         Tableau tableau = tableauBuilder.build();
-
-        Assert.assertEquals(true, tableau.isTwoPhases());
 
         //There must be 4 equations: 2 initial equations + 1 objecitve function + 1 auxiliery function
         List<GenericTableauRow> rows = tableau.getRows();
@@ -472,7 +462,7 @@ public void testPivotBadColumn(){
         tableauBuilder.setProbliem(problem);
         try {
             Tableau tableau = tableauBuilder.build();
-            tableau.pivot(1,-1);
+            tableau.pivot(-1,1);
             Assert.fail("An exception must be thrown here");
         } catch(RuntimeException ex){
             Assert.assertEquals("Solution does not exist.",ex.getMessage());
