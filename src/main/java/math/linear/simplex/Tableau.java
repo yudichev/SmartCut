@@ -46,6 +46,14 @@ public class Tableau
         this.rows.add(row);
     }
 
+    int getRowSize() {
+        return this.rowSize;
+    }
+
+    void setRowSize(int rowSize){
+        this.rowSize = rowSize;
+    }
+
     void setObjectiveFunction(ObjectiveFunctionTableauRow objectiveFunction){
         objectiveFunction.setPrecision(precision);
         if(objectiveFunctionIndex == INDEX_NOT_ASSIGNED) {
@@ -193,13 +201,16 @@ public class Tableau
     public final List<BigDecimal> getSolutionBigDecimal(){
         List<EquationTableauRow> equationRows = this.getEquationRows();
         List<BigDecimal> solutionValues = new ArrayList<>();
+        for(int m = 0; m <= numberOfProblemVariables; m++)
+            solutionValues.add(BigDecimal.ZERO);
         for(int k = 0; k < equationRows.size(); k++ ){
             EquationTableauRow equation = equationRows.get(k);
             int idx = equation.getBasicVariableIndex();
             if(idx > 0 && idx <= numberOfProblemVariables){
-                solutionValues.add(idx,  equation.getCoefficients().get(0));
+                solutionValues.set(idx,  equation.getCoefficients().get(0));
             }
         }
+        solutionValues.set(0,this.getRows().get(this.getObjectiveFunctionIndex()).getCoefficients().get(0));
         return solutionValues;
     }
 

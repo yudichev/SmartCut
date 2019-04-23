@@ -1,5 +1,5 @@
 /*
- * Tests functinality of Tableau creation
+ * Tests functionality of Tableau creation and manipulation
  */
 
 import math.linear.basic.ObjectiveFunctionType;

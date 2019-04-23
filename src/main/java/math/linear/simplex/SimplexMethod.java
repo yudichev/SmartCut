@@ -34,7 +34,7 @@ public class SimplexMethod
         ObjectiveFunctionTableauRow objFuncRow = (ObjectiveFunctionTableauRow) tableau.getRows().get(objFuncIdx);
         int numberOfVariables = tableau.getNumberOfProblemVariables();
         return objFuncRow.getCoefficients().stream().sequential().skip(1).limit(numberOfVariables)
-            .filter(coeff->coeff.compareTo(BigDecimal.ZERO) == 0).count() > 0L;
+            .filter(coeff-> coeff.signum() == 0).count() > 0L;
     }
 
     private static int getOutcomingIndex(int incomingIndex, List<EquationTableauRow> equations, int precision) {
@@ -47,7 +47,7 @@ public class SimplexMethod
             BigDecimal freeCoeff = coefficients.get(0);
 
             MathContext mathContext = new MathContext(precision);
-            if(currentCoeff.compareTo(BigDecimal.ZERO) > 0){
+            if(currentCoeff.signum() > 0){
                 BigDecimal ratio = freeCoeff.divide(currentCoeff,mathContext);
                 if(minRatio == null || minRatio.compareTo(ratio) > 0){
                     minRatio = ratio;

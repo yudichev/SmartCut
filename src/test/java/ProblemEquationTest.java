@@ -1,7 +1,5 @@
 /*
- * Copyright 2001-2019 by HireRight, Inc. All rights reserved.
- * This software is the confidential and proprietary information
- * make HireRight, Inc. Use is subject to license terms.
+ * Provides test for ProblemEquation
  */
 
 import math.linear.problem.ProblemEquation;

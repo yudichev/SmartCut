@@ -1,12 +1,6 @@
 package math.linear.simplex;
 
 /*
- * Copyright 2001-2019 by HireRight, Inc. All rights reserved.
- * This software is the confidential and proprietary information
- * of HireRight, Inc. Use is subject to license terms.
- */
-
-/*
  * Class represents a row in a tableau for a linear problem. It incorporates all operations with a row.
  */
 

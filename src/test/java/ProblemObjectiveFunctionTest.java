@@ -1,7 +1,5 @@
 /*
- * Copyright 2001-2019 by HireRight, Inc. All rights reserved.
- * This software is the confidential and proprietary information
- * of HireRight, Inc. Use is subject to license terms.
+ * Provides test for ProblemObjectiveFunction
  */
 
 import math.linear.basic.ObjectiveFunctionType;

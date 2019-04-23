@@ -1,12 +1,6 @@
 package math.linear.simplex;
 
 /*
- * Copyright 2001-2019 by HireRight, Inc. All rights reserved.
- * This software is the confidential and proprietary information
- * of HireRight, Inc. Use is subject to license terms.
- */
-
-/*
  * Represents a row for tableau, containing coefficients of an objective function
  */
 
@@ -47,8 +41,8 @@ public class ObjectiveFunctionTableauRow extends GenericTableauRow
         int maxIndex = Math.min(idx, coefficients.size());
         BigDecimal absMaxCoeff = BigDecimal.ZERO;
         for(int k = 1; k < maxIndex; k++) {
-            BigDecimal coeff = coefficients.get(k).setScale(getPrecision() - 3,RoundingMode.HALF_UP);
-            if(coeff.compareTo(BigDecimal.ZERO) < 0 ) {
+            BigDecimal coeff = coefficients.get(k).setScale(getPrecision()/2,RoundingMode.HALF_UP);
+            if(coeff.signum() < 0 ) {
                 if(k == INDEX_NOT_ASSIGNED || coeff.abs().compareTo(absMaxCoeff.abs()) > 0) {
                     index = k;
                     absMaxCoeff = coeff;

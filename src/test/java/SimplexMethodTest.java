@@ -1,5 +1,5 @@
 /*
- *
+ * Provides test for simplex method
  */
 
 import math.linear.basic.ObjectiveFunctionType;
@@ -14,13 +14,12 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.math.MathContext;
+import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalTime;
-import java.util.Timer;
 
 
-public class SimplexMethodNewTest
+public class SimplexMethodTest
 {
     @Test
     public void testSinglePhase() {
@@ -177,7 +176,7 @@ public class SimplexMethodNewTest
 
         solved.getRows().forEach(row -> {row.getCoefficients()
             .forEach(coeff -> System.out.print(
-                    coeff.round(new MathContext(5)).stripTrailingZeros().toEngineeringString()  + ", "));
+                    coeff.setScale(5,RoundingMode.HALF_UP).stripTrailingZeros().toEngineeringString()  + ", "));
             System.out.println();});
 
     }
@@ -209,7 +208,7 @@ public class SimplexMethodNewTest
 
         solved.getRows().forEach(row -> {row.getCoefficients()
             .forEach(coeff -> System.out.print(
-                    coeff.round(new MathContext(5)).stripTrailingZeros().toEngineeringString()  + ", "));
+                    coeff.setScale(5,RoundingMode.HALF_UP).stripTrailingZeros().toEngineeringString()  + ", "));
             System.out.println();});
 
     }
@@ -241,7 +240,7 @@ public class SimplexMethodNewTest
 
         solved.getRows().forEach(row -> {row.getCoefficients()
             .forEach(coeff -> System.out.print(
-                    coeff.round(new MathContext(5)).stripTrailingZeros().toEngineeringString()  + ", "));
+                    coeff.setScale(5,RoundingMode.HALF_UP).stripTrailingZeros().toEngineeringString()  + ", "));
             System.out.println();});
 
     }
@@ -272,7 +271,8 @@ public class SimplexMethodNewTest
         Assert.assertArrayEquals(new double[]{0.d,0.d,1.d,2.d},values,0.01);
 
         solved.getRows().forEach(row -> {row.getCoefficients()
-            .forEach(coeff -> System.out.print(coeff.round(new MathContext(5)).stripTrailingZeros()  + ", "));
+            .forEach(coeff -> System.out.print(
+                coeff.setScale(5,RoundingMode.HALF_UP).stripTrailingZeros().toEngineeringString()  + ", "));
             System.out.println();});
 
     }
@@ -307,7 +307,8 @@ public class SimplexMethodNewTest
         Assert.assertArrayEquals(new double[]{0.d,0.d,12.081d,2.332d},values,0.01);
 
         solved.getRows().forEach(row -> {row.getCoefficients()
-                .forEach(coeff -> System.out.print(coeff.round(new MathContext(5)).stripTrailingZeros()  + ", "));
+                .forEach(coeff -> System.out.print(
+                    coeff.setScale(5,RoundingMode.HALF_UP).stripTrailingZeros().toEngineeringString()  + ", "));
             System.out.println();});
         Instant end = Instant.now();
         System.out.println("Duration " + Duration.between(start,end).toMillis() + "ms");
@@ -340,7 +341,8 @@ public class SimplexMethodNewTest
         Assert.assertArrayEquals(new double[]{0.d,0.d,0.d,0.d,2.636d,0.d,3.412d,0.d},values,0.01);
 
         solved.getRows().forEach(row -> {row.getCoefficients()
-                .forEach(coeff -> System.out.print(coeff.round(new MathContext(5)).stripTrailingZeros()  + ", "));
+                .forEach(coeff -> System.out.print(
+                    coeff.setScale(5,RoundingMode.HALF_UP).stripTrailingZeros().toEngineeringString()  + ", "));
             System.out.println();});
         Instant end = Instant.now();
         System.out.println("Duration " + Duration.between(start,end).toMillis() + "ms");
