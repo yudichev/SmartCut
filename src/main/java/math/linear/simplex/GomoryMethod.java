@@ -1,5 +1,7 @@
 package math.linear.simplex;
 
+import math.linear.basic.ObjectiveFunctionType;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
@@ -24,8 +26,12 @@ public class GomoryMethod {
         tableau.setRowSize(tableau.getRowSize() + 1);
         tableau.addRow(new EquationTableauRow(equation.getSize() + 1,fractions));
 
-        //TODO negate objective function
+        ObjectiveFunctionTableauRow objectiveFunction = (ObjectiveFunctionTableauRow) tableau.getRows().get(tableau.getObjectiveFunctionIndex());
+        List<BigDecimal> objFuncCoeffs = objectiveFunction.getCoefficients().stream().sequential().map(coeff -> coeff.negate()).collect(Collectors.toList());
 
+        //TODO create auxiliery function and add it to the tableau
+
+        tableau.setObjectiveFunction(new ObjectiveFunctionTableauRow(ObjectiveFunctionTableauRow.Type.STANDARD, objFuncCoeffs));
         SimplexMethod.applyTwoPhases(tableau);
 
         return tableau;
