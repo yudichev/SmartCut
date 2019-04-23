@@ -56,6 +56,43 @@ public class TableauBuilder
         tableau.setPrecision(problem.getPrecision());
         tableau.setNumberOfProblemVariables(numberOfVariables);
 
+
+
+        List<BigDecimal> objectiveFunctionCoeffs = new ArrayList<>(totalNumberOfVariables);
+        ProblemObjectiveFunction objectiveFunction = this.problem.getObjectiveFunction();
+        double factor = objectiveFunction.getType().isFindMaximum() ? -1.d : 1.d;
+        for(int m = 0; m < nonBasicVariablesFirstIndex; m++) {
+            objectiveFunctionCoeffs.add(m,BigDecimal.valueOf(objectiveFunction.getCoefficientAt(m) * factor));
+        }
+        for(int m = nonBasicVariablesFirstIndex; m < totalNumberOfVariables; m++) {
+            objectiveFunctionCoeffs.add(m,BigDecimal.ZERO);
+        }
+
+        tableau.setObjectiveFunction(new ObjectiveFunctionTableauRow(ObjectiveFunctionTableauRow.Type.STANDARD, objectiveFunctionCoeffs));
+
+        addEquations(equations, tableau);
+
+
+        if(auxiliaryVariablesFirstIndex != NOT_ASSIGNED) {
+            List<BigDecimal> auxFunctionCoeffs = new ArrayList<>(totalNumberOfVariables);
+            for(int m = 0; m < auxiliaryVariablesFirstIndex; m++) {
+                auxFunctionCoeffs.add(m,BigDecimal.ZERO);
+            }
+            for(int m = auxiliaryVariablesFirstIndex; m < totalNumberOfVariables; m++) {
+                auxFunctionCoeffs.add(m,BigDecimal.ONE);
+            }
+
+            tableau.setAuxiliaryFunction( new ObjectiveFunctionTableauRow(ObjectiveFunctionTableauRow.Type.AUXILIARY, auxFunctionCoeffs));
+        }
+
+        tableau.setAuxiliaryVariablesFirstIndex(auxiliaryVariablesFirstIndex);
+
+
+        return tableau;
+    }
+
+    private void addEquations(List<ProblemEquation> equations, Tableau tableau)
+    {
         for(int k = 0, knb = nonBasicVariablesFirstIndex, kaux = auxiliaryVariablesFirstIndex; k < equations.size(); k++) {
             ProblemEquation equation = equations.get(k);
             Relation relation = equation.getRelation();
@@ -100,34 +137,6 @@ public class TableauBuilder
 
             }
         }
-
-        List<BigDecimal> objectiveFunctionCoeffs = new ArrayList<>(totalNumberOfVariables);
-        ProblemObjectiveFunction objectiveFunction = this.problem.getObjectiveFunction();
-        double factor = objectiveFunction.getType().isFindMaximum() ? -1.d : 1.d;
-        for(int m = 0; m < nonBasicVariablesFirstIndex; m++) {
-            objectiveFunctionCoeffs.add(m,BigDecimal.valueOf(objectiveFunction.getCoefficientAt(m) * factor));
-        }
-        for(int m = nonBasicVariablesFirstIndex; m < totalNumberOfVariables; m++) {
-            objectiveFunctionCoeffs.add(m,BigDecimal.ZERO);
-        }
-
-        tableau.setObjectiveFunction(new ObjectiveFunctionTableauRow(ObjectiveFunctionTableauRow.Type.STANDARD, objectiveFunctionCoeffs));
-
-        if(auxiliaryVariablesFirstIndex != NOT_ASSIGNED) {
-            List<BigDecimal> auxFunctionCoeffs = new ArrayList<>(totalNumberOfVariables);
-            for(int m = 0; m < auxiliaryVariablesFirstIndex; m++) {
-                auxFunctionCoeffs.add(m,BigDecimal.ZERO);
-            }
-            for(int m = auxiliaryVariablesFirstIndex; m < totalNumberOfVariables; m++) {
-                auxFunctionCoeffs.add(m,BigDecimal.ONE);
-            }
-
-            tableau.setAuxiliaryFunction( new ObjectiveFunctionTableauRow(ObjectiveFunctionTableauRow.Type.AUXILIARY, auxFunctionCoeffs));
-        }
-
-        tableau.setAuxiliaryVariablesFirstIndex(auxiliaryVariablesFirstIndex);
-
-        return tableau;
     }
 
     private void checkData() {

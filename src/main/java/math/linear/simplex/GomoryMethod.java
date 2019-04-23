@@ -13,12 +13,22 @@ public class GomoryMethod {
     {
         List<BigDecimal> solution = tableau.getSolutionBigDecimal();
         int biggestFractionIndex = getBiggestFractionIndex(solution);
-        if(biggestFractionIndex == NOT_ASSIGNED) return tableau;
 
+        while(biggestFractionIndex != NOT_ASSIGNED) {
+            getCuttingPlane(tableau, biggestFractionIndex);
+            solution = tableau.getSolutionBigDecimal();
+            biggestFractionIndex = getBiggestFractionIndex(solution);
+        }
+
+        return tableau;
+    }
+
+    private static void getCuttingPlane(Tableau tableau, int biggestFractionIndex)
+    {
         EquationTableauRow equation = tableau.getEquationRows().stream().filter(eq -> eq.getBasicVariableIndex() == biggestFractionIndex).findFirst().get();
 
         List<BigDecimal> fractions = equation.getCoefficients().stream().sequential()
-            .map(coeff -> coeff.subtract(coeff.setScale(0, RoundingMode.FLOOR)).negate())
+            .map(coeff -> coeff.subtract(coeff.setScale(0, RoundingMode.FLOOR)))
             .collect(Collectors.toList());
         fractions.add(BigDecimal.ONE);
 
@@ -29,12 +39,9 @@ public class GomoryMethod {
         ObjectiveFunctionTableauRow objectiveFunction = (ObjectiveFunctionTableauRow) tableau.getRows().get(tableau.getObjectiveFunctionIndex());
         List<BigDecimal> objFuncCoeffs = objectiveFunction.getCoefficients().stream().sequential().map(coeff -> coeff.negate()).collect(Collectors.toList());
 
-        //TODO create auxiliery function and add it to the tableau
-
+        //TODO add iteration eliminating the negative free coefficient
         tableau.setObjectiveFunction(new ObjectiveFunctionTableauRow(ObjectiveFunctionTableauRow.Type.STANDARD, objFuncCoeffs));
-        SimplexMethod.applyTwoPhases(tableau);
-
-        return tableau;
+        SimplexMethod.applySinglePhase(tableau);
     }
 
     private static int getBiggestFractionIndex(List<BigDecimal> solution) {
@@ -53,7 +60,4 @@ public class GomoryMethod {
         return index;
     }
 
-    private static void addCuttingPlane(Tableau tableau, int idx){
-
-    }
 }

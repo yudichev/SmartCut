@@ -20,10 +20,8 @@ public class GomoryMethodTest
     public void testAddCuttingPlane(){
         Problem problem = Problem.getInstance();
         problem.setPrecision(16);
-        problem.addEquation(ProblemEquation.make(new double[]{9., 3., -1., 0.}, Relation.LESS_OR_EQUAL, 14.d));
-        problem.addEquation(ProblemEquation.make(new double[]{-3., 0., 9., 7.}, Relation.LESS_OR_EQUAL, 18.d));
-        problem.addEquation(ProblemEquation.make(new double[]{12., -2., 6., 11.}, Relation.LESS_OR_EQUAL, 35.d));
-        problem.addEquation(ProblemEquation.make(new double[]{1., 0., 16., -4.}, Relation.LESS_OR_EQUAL, 21.d));
+        problem.addEquation(ProblemEquation.make(new double[]{9., 3., -1., 0.}, Relation.LESS_OR_EQUAL, 140.d));
+        problem.addEquation(ProblemEquation.make(new double[]{-3., 0., 9., 7.}, Relation.LESS_OR_EQUAL, 180.d));
         problem.addObjectiveFunction(ProblemObjectiveFunction.make(new double[]{4., 12., 1.,2.}, ObjectiveFunctionType.MAXIMUM));
 
         TableauBuilder tableauBuilder = TableauBuilder.getInstance();
@@ -32,6 +30,12 @@ public class GomoryMethodTest
 
         Tableau solved = SimplexMethod.applySinglePhase(tableau);
 
-        Tableau tableau1 = GomoryMethod.applyTo(tableau);
+        Tableau tableau1 = GomoryMethod.applyTo(solved);
+
+        System.out.println("\n-----------------------------------");
+        double[] values = tableau1.getSolution();
+        for(int k = 0; k < values.length; k++){
+            System.out.format("x(%1$d)=%2$.3f\n", k+1, values[k]);
+        }
     }
 }

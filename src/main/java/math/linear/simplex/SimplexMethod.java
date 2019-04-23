@@ -51,7 +51,7 @@ public class SimplexMethod
                 BigDecimal ratio = freeCoeff.divide(currentCoeff,mathContext);
                 if(minRatio == null || minRatio.compareTo(ratio) > 0){
                     minRatio = ratio;
-                    outcomingIndex = k;
+                    outcomingIndex = k + 1;
                 }
             }
         }
