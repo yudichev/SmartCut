@@ -6,10 +6,12 @@ package math.linear.simplex;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.List;
 
 public abstract class GenericTableauRow
 {
+    private int INDEX_NOT_ASSIGNED = -1;
     private List<BigDecimal> coefficients;
     private MathContext mathContext = MathContext.DECIMAL64;
 
@@ -51,22 +53,6 @@ public abstract class GenericTableauRow
         return coefficients;
     }
 
-    /**
-     * Calculates the sum of coefficients per column.
-     * Let a(j) be the coefficient at index j in this row and b(j) the coefficient at index j in the row passed as argument.
-     * Then a new row is created, for which the coefficient at index j is calculated as follows:
-     *
-     * c(j) = a(j) + b(j)
-     *
-     * @param row the row to add
-     */
-     void add(GenericTableauRow row) {
-        if( this.getSize() != row.getSize() )
-            throw new RuntimeException("The size of the row does not match.");
-        for(int k = 0; k < this.coefficients.size(); k++) {
-            coefficients.set(k,coefficients.get(k).add(row.getCoefficients().get(k),mathContext).stripTrailingZeros());
-        }
-    }
 
     /**
      * Calculates the sum of coefficients per column.
@@ -79,12 +65,12 @@ public abstract class GenericTableauRow
      * @param factor
      *
      */
-    public void addWithFactor(GenericTableauRow row, BigDecimal factor) {
+    void addWithFactor(GenericTableauRow row, BigDecimal factor) {
         if( this.getSize() != row.getSize() )
             throw new RuntimeException("The size of the row does not match.");
 
-        for(int k = 0; k < this.coefficients.size(); k++) {
-            coefficients.set(k,coefficients.get(k).add(row.getCoefficients().get(k).multiply(factor,mathContext),mathContext).round(mathContext).stripTrailingZeros());
+        for(int k = 0; k < coefficients.size(); k++) {
+            coefficients.set(k,coefficients.get(k).add(row.getCoefficients().get(k).multiply(factor,mathContext),mathContext).stripTrailingZeros());
         }
     }
 
@@ -95,10 +81,23 @@ public abstract class GenericTableauRow
      */
     void multiplyBy(BigDecimal factor){
 
-        for(int k = 0; k < this.coefficients.size(); k++){
-            BigDecimal coeff = this.coefficients.get(k);
+        for(int k = 0; k < coefficients.size(); k++){
+            BigDecimal coeff = coefficients.get(k);
             if(coeff.equals(BigDecimal.ZERO)) continue;
-            this.coefficients.set(k, coeff.multiply(factor,mathContext).stripTrailingZeros());
+            coefficients.set(k, coeff.multiply(factor,mathContext).stripTrailingZeros());
         }
+    }
+
+    int getIndexOfMaxAbsValue(){
+        int index = INDEX_NOT_ASSIGNED;
+        BigDecimal maxAbsValue = BigDecimal.ZERO;
+        for(int k = 1; k < coefficients.size(); k++){
+            BigDecimal coeff = coefficients.get(k);
+            if(coeff.compareTo(maxAbsValue) > 0){
+                index = k;
+                maxAbsValue = coeff;
+            }
+        }
+        return index;
     }
 }

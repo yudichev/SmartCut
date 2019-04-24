@@ -46,6 +46,19 @@ public class Tableau
         this.rows.add(row);
     }
 
+    void addCuttingRow(GenericTableauRow row) {
+        row.setPrecision(precision);
+        if(auxiliaryFunctionIndex == INDEX_NOT_ASSIGNED)
+        {
+            addRow(row);
+        } else {
+            int size = this.rows.size();
+            if(auxiliaryFunctionIndex == size - 1) {
+                this.rows.add(auxiliaryFunctionIndex++, row);
+            }
+        }
+    }
+
     int getRowSize() {
         return this.rowSize;
     }

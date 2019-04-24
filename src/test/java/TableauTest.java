@@ -48,15 +48,15 @@ public class TableauTest
         List<EquationTableauRow> equationTableauRows = tableau.getEquationRows();
         Assert.assertEquals(2, equationTableauRows.size());
 
-        Assert.assertEquals(BigDecimal.valueOf(50.d), rows.get(0).getCoefficients().get(0));
-        Assert.assertEquals(BigDecimal.valueOf(1.d), rows.get(0).getCoefficients().get(1));
-        Assert.assertEquals(BigDecimal.valueOf(7.d), rows.get(0).getCoefficients().get(2));
-        Assert.assertEquals(BigDecimal.valueOf(-4.d), rows.get(0).getCoefficients().get(3));
+        Assert.assertEquals(BigDecimal.valueOf(50.d), rows.get(1).getCoefficients().get(0));
+        Assert.assertEquals(BigDecimal.valueOf(1.d), rows.get(1).getCoefficients().get(1));
+        Assert.assertEquals(BigDecimal.valueOf(7.d), rows.get(1).getCoefficients().get(2));
+        Assert.assertEquals(BigDecimal.valueOf(-4.d), rows.get(1).getCoefficients().get(3));
 
-        Assert.assertEquals(BigDecimal.valueOf(20.d), rows.get(1).getCoefficients().get(0));
-        Assert.assertEquals(BigDecimal.valueOf(6.d), rows.get(1).getCoefficients().get(1));
-        Assert.assertEquals(BigDecimal.valueOf(2.d), rows.get(1).getCoefficients().get(2));
-        Assert.assertEquals(BigDecimal.valueOf(1.d), rows.get(1).getCoefficients().get(3));
+        Assert.assertEquals(BigDecimal.valueOf(20.d), rows.get(2).getCoefficients().get(0));
+        Assert.assertEquals(BigDecimal.valueOf(6.d), rows.get(2).getCoefficients().get(1));
+        Assert.assertEquals(BigDecimal.valueOf(2.d), rows.get(2).getCoefficients().get(2));
+        Assert.assertEquals(BigDecimal.valueOf(1.d), rows.get(2).getCoefficients().get(3));
 
 
         int objFuncIdx = tableau.getObjectiveFunctionIndex();
@@ -98,19 +98,19 @@ public class TableauTest
         List<EquationTableauRow> equationTableauRows = tableau.getEquationRows();
         Assert.assertEquals(2, equationTableauRows.size());
 
-        Assert.assertEquals(BigDecimal.valueOf(50.d), rows.get(0).getCoefficients().get(0));
-        Assert.assertEquals(BigDecimal.valueOf(1.d), rows.get(0).getCoefficients().get(1));
-        Assert.assertEquals(BigDecimal.valueOf(7.d), rows.get(0).getCoefficients().get(2));
-        Assert.assertEquals(BigDecimal.valueOf(-4.d), rows.get(0).getCoefficients().get(3));
-        Assert.assertEquals(BigDecimal.ONE, rows.get(0).getCoefficients().get(4));
-        Assert.assertEquals(BigDecimal.ZERO, rows.get(0).getCoefficients().get(5));
+        Assert.assertEquals(BigDecimal.valueOf(50.d), rows.get(1).getCoefficients().get(0));
+        Assert.assertEquals(BigDecimal.valueOf(1.d), rows.get(1).getCoefficients().get(1));
+        Assert.assertEquals(BigDecimal.valueOf(7.d), rows.get(1).getCoefficients().get(2));
+        Assert.assertEquals(BigDecimal.valueOf(-4.d), rows.get(1).getCoefficients().get(3));
+        Assert.assertEquals(BigDecimal.ONE, rows.get(1).getCoefficients().get(4));
+        Assert.assertEquals(BigDecimal.ZERO, rows.get(1).getCoefficients().get(5));
 
-        Assert.assertEquals(BigDecimal.valueOf(20.d), rows.get(1).getCoefficients().get(0));
-        Assert.assertEquals(BigDecimal.valueOf(6.d), rows.get(1).getCoefficients().get(1));
-        Assert.assertEquals(BigDecimal.valueOf(2.d), rows.get(1).getCoefficients().get(2));
-        Assert.assertEquals(BigDecimal.valueOf(1.d), rows.get(1).getCoefficients().get(3));
-        Assert.assertEquals(BigDecimal.ZERO, rows.get(1).getCoefficients().get(4));
-        Assert.assertEquals(BigDecimal.ONE, rows.get(1).getCoefficients().get(5));
+        Assert.assertEquals(BigDecimal.valueOf(20.d), rows.get(2).getCoefficients().get(0));
+        Assert.assertEquals(BigDecimal.valueOf(6.d), rows.get(2).getCoefficients().get(1));
+        Assert.assertEquals(BigDecimal.valueOf(2.d), rows.get(2).getCoefficients().get(2));
+        Assert.assertEquals(BigDecimal.valueOf(1.d), rows.get(2).getCoefficients().get(3));
+        Assert.assertEquals(BigDecimal.ZERO, rows.get(2).getCoefficients().get(4));
+        Assert.assertEquals(BigDecimal.ONE, rows.get(2).getCoefficients().get(5));
 
 
         int objFuncIdx = tableau.getObjectiveFunctionIndex();
@@ -160,21 +160,21 @@ public class TableauTest
         List<EquationTableauRow> equationTableauRows = tableau.getEquationRows();
         Assert.assertEquals(2, equationTableauRows.size());
 
-        Assert.assertEquals(BigDecimal.valueOf(50.d), rows.get(0).getCoefficients().get(0));
-        Assert.assertEquals(BigDecimal.valueOf(1.d), rows.get(0).getCoefficients().get(1));
-        Assert.assertEquals(BigDecimal.valueOf(7.d), rows.get(0).getCoefficients().get(2));
-        Assert.assertEquals(BigDecimal.valueOf(-4.d), rows.get(0).getCoefficients().get(3));
-        Assert.assertEquals(BigDecimal.ONE, rows.get(0).getCoefficients().get(4));
-        Assert.assertEquals(BigDecimal.ZERO, rows.get(0).getCoefficients().get(5));
-        Assert.assertEquals(BigDecimal.ZERO, rows.get(0).getCoefficients().get(5));
+        Assert.assertEquals(BigDecimal.valueOf(50.d), rows.get(1).getCoefficients().get(0));
+        Assert.assertEquals(BigDecimal.valueOf(1.d), rows.get(1).getCoefficients().get(1));
+        Assert.assertEquals(BigDecimal.valueOf(7.d), rows.get(1).getCoefficients().get(2));
+        Assert.assertEquals(BigDecimal.valueOf(-4.d), rows.get(1).getCoefficients().get(3));
+        Assert.assertEquals(BigDecimal.ONE, rows.get(1).getCoefficients().get(4));
+        Assert.assertEquals(BigDecimal.ZERO, rows.get(1).getCoefficients().get(5));
+        Assert.assertEquals(BigDecimal.ZERO, rows.get(1).getCoefficients().get(5));
 
-        Assert.assertEquals(BigDecimal.valueOf(20.d), rows.get(1).getCoefficients().get(0));
-        Assert.assertEquals(BigDecimal.valueOf(6.d), rows.get(1).getCoefficients().get(1));
-        Assert.assertEquals(BigDecimal.valueOf(2.d), rows.get(1).getCoefficients().get(2));
-        Assert.assertEquals(BigDecimal.valueOf(1.d), rows.get(1).getCoefficients().get(3));
-        Assert.assertEquals(BigDecimal.ZERO, rows.get(1).getCoefficients().get(4));
-        Assert.assertEquals(BigDecimal.ONE.negate(), rows.get(1).getCoefficients().get(5));
-        Assert.assertEquals(BigDecimal.ONE, rows.get(1).getCoefficients().get(6));
+        Assert.assertEquals(BigDecimal.valueOf(20.d), rows.get(2).getCoefficients().get(0));
+        Assert.assertEquals(BigDecimal.valueOf(6.d), rows.get(2).getCoefficients().get(1));
+        Assert.assertEquals(BigDecimal.valueOf(2.d), rows.get(2).getCoefficients().get(2));
+        Assert.assertEquals(BigDecimal.valueOf(1.d), rows.get(2).getCoefficients().get(3));
+        Assert.assertEquals(BigDecimal.ZERO, rows.get(2).getCoefficients().get(4));
+        Assert.assertEquals(BigDecimal.ONE.negate(), rows.get(2).getCoefficients().get(5));
+        Assert.assertEquals(BigDecimal.ONE, rows.get(2).getCoefficients().get(6));
 
 
         int objFuncIdx = tableau.getObjectiveFunctionIndex();
@@ -226,19 +226,19 @@ public class TableauTest
         List<EquationTableauRow> equationTableauRows = tableau.getEquationRows();
         Assert.assertEquals(2, equationTableauRows.size());
 
-        Assert.assertEquals(BigDecimal.valueOf(30.d), rows.get(0).getCoefficients().get(0));
-        Assert.assertEquals(BigDecimal.valueOf(-1.d), rows.get(0).getCoefficients().get(1));
-        Assert.assertEquals(BigDecimal.valueOf(-7.d), rows.get(0).getCoefficients().get(2));
-        Assert.assertEquals(BigDecimal.valueOf(4.d), rows.get(0).getCoefficients().get(3));
-        Assert.assertEquals(BigDecimal.ONE, rows.get(0).getCoefficients().get(4));
-        Assert.assertEquals(BigDecimal.ZERO, rows.get(0).getCoefficients().get(5));
+        Assert.assertEquals(BigDecimal.valueOf(30.d), rows.get(1).getCoefficients().get(0));
+        Assert.assertEquals(BigDecimal.valueOf(-1.d), rows.get(1).getCoefficients().get(1));
+        Assert.assertEquals(BigDecimal.valueOf(-7.d), rows.get(1).getCoefficients().get(2));
+        Assert.assertEquals(BigDecimal.valueOf(4.d), rows.get(1).getCoefficients().get(3));
+        Assert.assertEquals(BigDecimal.ONE, rows.get(1).getCoefficients().get(4));
+        Assert.assertEquals(BigDecimal.ZERO, rows.get(1).getCoefficients().get(5));
 
-        Assert.assertEquals(BigDecimal.valueOf(20.d), rows.get(1).getCoefficients().get(0));
-        Assert.assertEquals(BigDecimal.valueOf(-6.d), rows.get(1).getCoefficients().get(1));
-        Assert.assertEquals(BigDecimal.valueOf(-2.d), rows.get(1).getCoefficients().get(2));
-        Assert.assertEquals(BigDecimal.valueOf(-1.d), rows.get(1).getCoefficients().get(3));
-        Assert.assertEquals(BigDecimal.ZERO, rows.get(1).getCoefficients().get(4));
-        Assert.assertEquals(BigDecimal.ONE, rows.get(1).getCoefficients().get(5));
+        Assert.assertEquals(BigDecimal.valueOf(20.d), rows.get(2).getCoefficients().get(0));
+        Assert.assertEquals(BigDecimal.valueOf(-6.d), rows.get(2).getCoefficients().get(1));
+        Assert.assertEquals(BigDecimal.valueOf(-2.d), rows.get(2).getCoefficients().get(2));
+        Assert.assertEquals(BigDecimal.valueOf(-1.d), rows.get(2).getCoefficients().get(3));
+        Assert.assertEquals(BigDecimal.ZERO, rows.get(2).getCoefficients().get(4));
+        Assert.assertEquals(BigDecimal.ONE, rows.get(2).getCoefficients().get(5));
 
 
         int objFuncIdx = tableau.getObjectiveFunctionIndex();
@@ -288,23 +288,23 @@ public class TableauTest
         List<EquationTableauRow> equationTableauRows = tableau.getEquationRows();
         Assert.assertEquals(2, equationTableauRows.size());
 
-        Assert.assertEquals(BigDecimal.valueOf(50.d), rows.get(0).getCoefficients().get(0));
-        Assert.assertEquals(BigDecimal.valueOf(1.d), rows.get(0).getCoefficients().get(1));
-        Assert.assertEquals(BigDecimal.valueOf(7.d), rows.get(0).getCoefficients().get(2));
-        Assert.assertEquals(BigDecimal.valueOf(-4.d), rows.get(0).getCoefficients().get(3));
-        Assert.assertEquals(BigDecimal.ONE.negate(), rows.get(0).getCoefficients().get(4));
-        Assert.assertEquals(BigDecimal.ZERO, rows.get(0).getCoefficients().get(5));
-        Assert.assertEquals(BigDecimal.ONE, rows.get(0).getCoefficients().get(6));
-        Assert.assertEquals(BigDecimal.ZERO, rows.get(0).getCoefficients().get(7));
+        Assert.assertEquals(BigDecimal.valueOf(50.d), rows.get(1).getCoefficients().get(0));
+        Assert.assertEquals(BigDecimal.valueOf(1.d), rows.get(1).getCoefficients().get(1));
+        Assert.assertEquals(BigDecimal.valueOf(7.d), rows.get(1).getCoefficients().get(2));
+        Assert.assertEquals(BigDecimal.valueOf(-4.d), rows.get(1).getCoefficients().get(3));
+        Assert.assertEquals(BigDecimal.ONE.negate(), rows.get(1).getCoefficients().get(4));
+        Assert.assertEquals(BigDecimal.ZERO, rows.get(1).getCoefficients().get(5));
+        Assert.assertEquals(BigDecimal.ONE, rows.get(1).getCoefficients().get(6));
+        Assert.assertEquals(BigDecimal.ZERO, rows.get(1).getCoefficients().get(7));
 
-        Assert.assertEquals(BigDecimal.valueOf(20.d), rows.get(1).getCoefficients().get(0));
-        Assert.assertEquals(BigDecimal.valueOf(6.d), rows.get(1).getCoefficients().get(1));
-        Assert.assertEquals(BigDecimal.valueOf(2.d), rows.get(1).getCoefficients().get(2));
-        Assert.assertEquals(BigDecimal.valueOf(1.d), rows.get(1).getCoefficients().get(3));
-        Assert.assertEquals(BigDecimal.ZERO, rows.get(1).getCoefficients().get(4));
-        Assert.assertEquals(BigDecimal.ONE.negate(), rows.get(1).getCoefficients().get(5));
-        Assert.assertEquals(BigDecimal.ZERO, rows.get(1).getCoefficients().get(6));
-        Assert.assertEquals(BigDecimal.ONE, rows.get(1).getCoefficients().get(7));
+        Assert.assertEquals(BigDecimal.valueOf(20.d), rows.get(2).getCoefficients().get(0));
+        Assert.assertEquals(BigDecimal.valueOf(6.d), rows.get(2).getCoefficients().get(1));
+        Assert.assertEquals(BigDecimal.valueOf(2.d), rows.get(2).getCoefficients().get(2));
+        Assert.assertEquals(BigDecimal.valueOf(1.d), rows.get(2).getCoefficients().get(3));
+        Assert.assertEquals(BigDecimal.ZERO, rows.get(2).getCoefficients().get(4));
+        Assert.assertEquals(BigDecimal.ONE.negate(), rows.get(2).getCoefficients().get(5));
+        Assert.assertEquals(BigDecimal.ZERO, rows.get(2).getCoefficients().get(6));
+        Assert.assertEquals(BigDecimal.ONE, rows.get(2).getCoefficients().get(7));
 
 
         int objFuncIdx = tableau.getObjectiveFunctionIndex();
@@ -342,22 +342,22 @@ public class TableauTest
         tableauBuilder.setProbliem(problem);
         Tableau tableau = tableauBuilder.build();
 
-        tableau.pivot(1, 2);
+        tableau.pivot(2, 2);
 
         List<GenericTableauRow> rows = tableau.getRows();
         Assert.assertEquals(4, rows.size());
 
         MathContext mc = new MathContext(3);
 
-        Assert.assertEquals(BigDecimal.valueOf(-20.d).doubleValue(), rows.get(0).getCoefficients().get(0).doubleValue(),1e-4);
-        Assert.assertEquals(BigDecimal.valueOf(-20.d).doubleValue(), rows.get(0).getCoefficients().get(1).doubleValue(),1e-4);
-        Assert.assertEquals(BigDecimal.valueOf(0.d).doubleValue(), rows.get(0).getCoefficients().get(2).doubleValue(),1e-4);
-        Assert.assertEquals(BigDecimal.valueOf(-7.5d).doubleValue(), rows.get(0).getCoefficients().get(3).doubleValue(), 1e-4);
+        Assert.assertEquals(BigDecimal.valueOf(-20.d).doubleValue(), rows.get(1).getCoefficients().get(0).doubleValue(),1e-4);
+        Assert.assertEquals(BigDecimal.valueOf(-20.d).doubleValue(), rows.get(1).getCoefficients().get(1).doubleValue(),1e-4);
+        Assert.assertEquals(BigDecimal.valueOf(0.d).doubleValue(), rows.get(1).getCoefficients().get(2).doubleValue(),1e-4);
+        Assert.assertEquals(BigDecimal.valueOf(-7.5d).doubleValue(), rows.get(1).getCoefficients().get(3).doubleValue(), 1e-4);
 
-        Assert.assertEquals(BigDecimal.valueOf(10.d).doubleValue(), rows.get(1).getCoefficients().get(0).doubleValue(), 1e-4);
-        Assert.assertEquals(BigDecimal.valueOf(3.d).doubleValue(), rows.get(1).getCoefficients().get(1).doubleValue(), 1e-4);
-        Assert.assertEquals(BigDecimal.valueOf(1.d).doubleValue(), rows.get(1).getCoefficients().get(2).doubleValue(),1e-4);
-        Assert.assertEquals(BigDecimal.valueOf(0.5d).floatValue(), rows.get(1).getCoefficients().get(3).doubleValue(),1e-4);
+        Assert.assertEquals(BigDecimal.valueOf(10.d).doubleValue(), rows.get(2).getCoefficients().get(0).doubleValue(), 1e-4);
+        Assert.assertEquals(BigDecimal.valueOf(3.d).doubleValue(), rows.get(2).getCoefficients().get(1).doubleValue(), 1e-4);
+        Assert.assertEquals(BigDecimal.valueOf(1.d).doubleValue(), rows.get(2).getCoefficients().get(2).doubleValue(),1e-4);
+        Assert.assertEquals(BigDecimal.valueOf(0.5d).floatValue(), rows.get(2).getCoefficients().get(3).doubleValue(),1e-4);
 
     }
 
@@ -480,7 +480,7 @@ public void testPivotBadColumn(){
         tableauBuilder.setProbliem(problem);
         try {
             Tableau tableau = tableauBuilder.build();
-            tableau.pivot(2,1);
+            tableau.pivot(0,1);
             Assert.fail("An exception must be thrown here");
         } catch(IllegalArgumentException ex){
             Assert.assertEquals("Objective function cannot be the pivot row.",ex.getMessage());

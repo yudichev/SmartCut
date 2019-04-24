@@ -35,10 +35,9 @@ public class ObjectiveFunctionTableauRow extends GenericTableauRow
 
     public final int getIncomingVariableIndex(int idx)
     {
-
         int index = INDEX_NOT_ASSIGNED;
         List<BigDecimal> coefficients = getCoefficients();
-        int maxIndex = Math.min(idx, coefficients.size());
+        int maxIndex = (idx == INDEX_NOT_ASSIGNED) ? coefficients.size() : Math.min(idx , coefficients.size());
         BigDecimal absMaxCoeff = BigDecimal.ZERO;
         for(int k = 1; k < maxIndex; k++) {
             BigDecimal coeff = coefficients.get(k).setScale(getPrecision()/2,RoundingMode.HALF_UP);

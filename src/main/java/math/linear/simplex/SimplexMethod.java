@@ -20,7 +20,7 @@ public class SimplexMethod
         ObjectiveFunctionTableauRow objFuncRow = (ObjectiveFunctionTableauRow) tableau.getRows().get(objFuncIdx);
         List<EquationTableauRow> equations = tableau.getEquationRows();
         int precision = tableau.getPrecision();
-        while (!objFuncRow.isOptimal()) {
+        while (!objFuncRow.isOptimal(tableau.getAuxiliaryFunctionIndex())) {
             int incomingIndex = objFuncRow.getIncomingVariableIndex();
             int outcomingIndex = getOutcomingIndex(incomingIndex, equations, precision);
             tableau.pivot(outcomingIndex, incomingIndex);
