@@ -2,7 +2,6 @@
  * Provides tests for Gomory method
  */
 
-import javafx.scene.control.Tab;
 import math.linear.basic.ObjectiveFunctionType;
 import math.linear.basic.Relation;
 import math.linear.problem.Problem;
@@ -60,14 +59,15 @@ public class GomoryMethodTest
 
         Tableau solvedInt = GomoryMethod.applyTo(solved);
 
-
-       Assert.assertArrayEquals(new double[]{22,0,13,0},solvedInt.getSolution(),0.1);
-
         System.out.println("\n-----------------------------------");
         double[] values = solvedInt.getSolution();
         for(int k = 0; k < values.length; k++){
             System.out.format("x(%1$d)=%2$.0f\n", k+1, values[k]);
         }
+
+       Assert.assertArrayEquals(new double[]{22,0,13,0},solvedInt.getSolution(),0.1);
+
+
     }
 
     @Test

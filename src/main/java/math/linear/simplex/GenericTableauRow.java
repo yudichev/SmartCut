@@ -70,7 +70,7 @@ public abstract class GenericTableauRow
             throw new RuntimeException("The size of the row does not match.");
 
         for(int k = 0; k < coefficients.size(); k++) {
-            coefficients.set(k,coefficients.get(k).add(row.getCoefficients().get(k).multiply(factor,mathContext),mathContext).stripTrailingZeros());
+            coefficients.set(k,restoreInteger(coefficients.get(k).add(row.getCoefficients().get(k).multiply(factor,mathContext),mathContext)));
         }
     }
 
@@ -84,7 +84,7 @@ public abstract class GenericTableauRow
         for(int k = 0; k < coefficients.size(); k++){
             BigDecimal coeff = coefficients.get(k);
             if(coeff.equals(BigDecimal.ZERO)) continue;
-            coefficients.set(k, coeff.multiply(factor,mathContext).stripTrailingZeros());
+            coefficients.set(k, restoreInteger(coeff.multiply(factor,mathContext)));
         }
     }
 
@@ -99,5 +99,15 @@ public abstract class GenericTableauRow
             }
         }
         return index;
+    }
+
+    private BigDecimal restoreInteger(BigDecimal value){
+        BigDecimal intValue = value.setScale(0, RoundingMode.HALF_UP);
+        BigDecimal difference = value.subtract(intValue).abs().setScale(getPrecision()/2, RoundingMode.FLOOR);
+        if(difference.signum() == 0){
+            return intValue;
+        } else {
+            return value;
+        }
     }
 }

@@ -46,16 +46,15 @@ public class Tableau
         this.rows.add(row);
     }
 
-    void addCuttingRow(GenericTableauRow row) {
+    int addCuttingRow(GenericTableauRow row) {
         row.setPrecision(precision);
         if(auxiliaryFunctionIndex == INDEX_NOT_ASSIGNED)
         {
             addRow(row);
+            return this.rows.size() - 1;
         } else {
-            int size = this.rows.size();
-            if(auxiliaryFunctionIndex == size - 1) {
-                this.rows.add(auxiliaryFunctionIndex++, row);
-            }
+            this.rows.add(auxiliaryFunctionIndex++, row);
+            return auxiliaryFunctionIndex - 1;
         }
     }
 
@@ -116,13 +115,17 @@ public class Tableau
     }
 
     /**
-     * Returns an unmodifiable list of rows
-     * @return
+     * Returns a list of rows
+     * @return list of rows
      */
     public final List<GenericTableauRow> getRows() {
-        return Collections.unmodifiableList(this.rows);
+        return this.rows;
     }
 
+    /**
+     * Returns rows of type EquationTableauRow only
+     * @return a list of equation rows
+     */
     public final List<EquationTableauRow> getEquationRows() {
         return this.rows.stream().filter(row -> row instanceof EquationTableauRow)
             .map(row -> (EquationTableauRow) row).collect(Collectors.toList());
@@ -130,7 +133,7 @@ public class Tableau
 
     /**
      * Returns the index of the objective function row
-     * @return
+     * @return the number of the row related to the objective function
      */
     public final int getObjectiveFunctionIndex()
     {
@@ -138,8 +141,8 @@ public class Tableau
     }
 
     /**
-     * Returns the index of the auxiliery function row
-     * @return
+     * Returns the index of the auxiliary function row
+     * @return the number of the row related to the auxiliary function
      */
     public final int getAuxiliaryFunctionIndex()
     {
@@ -151,6 +154,18 @@ public class Tableau
         return numberOfProblemVariables;
     }
 
+    int insertAdditionalColumn(){
+        int index;
+        if(auxiliaryVariablesFirstIndex == INDEX_NOT_ASSIGNED){
+            this.rows.stream().forEach(row -> row.getCoefficients().add(BigDecimal.ZERO ));
+            index = getRowSize();
+        } else {
+            this.rows.stream().forEach(row -> row.getCoefficients().add(auxiliaryVariablesFirstIndex, BigDecimal.ZERO));
+            index = auxiliaryVariablesFirstIndex++;
+        }
+        setRowSize(getRowSize() + 1);
+        return index;
+    }
     /**
      * Performs pivot operation. The initial state of the tableau must contain at least one equation row and an objective function.
      * @param rowNumber the row number to pivot at
@@ -197,6 +212,10 @@ public class Tableau
         }
     }
 
+    /**
+     * Returns an array of values of the variables representing a solution of the problem
+     * @return array of values
+     */
     public final double[] getSolution(){
         List<EquationTableauRow> equationRows = this.getEquationRows();
         double[] solutionValues = new double[numberOfProblemVariables];
@@ -211,6 +230,10 @@ public class Tableau
         return solutionValues;
     }
 
+    /**
+     * Returns an array of values of the variables representing a solution of the problem
+     * @return array of values as BigDecimal
+     */
     public final List<BigDecimal> getSolutionBigDecimal(){
         List<EquationTableauRow> equationRows = this.getEquationRows();
         List<BigDecimal> solutionValues = new ArrayList<>();
