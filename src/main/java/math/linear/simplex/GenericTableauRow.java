@@ -40,7 +40,7 @@ public abstract class GenericTableauRow
      * Returns the number of coefficients
      * @return number of coefficients in a row
      */
-    public final int getSize(){
+    final int getSize(){
         return coefficients.size();
     }
 
@@ -49,7 +49,7 @@ public abstract class GenericTableauRow
      * Returns an unmodifiable list of coefficients in this row
      * @return
      */
-    public final List<BigDecimal> getCoefficients(){
+    final List<BigDecimal> getCoefficients(){
         return coefficients;
     }
 

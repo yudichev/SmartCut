@@ -24,16 +24,16 @@ public class ObjectiveFunctionTableauRow extends GenericTableauRow
         this.type = type;
     }
 
-    public enum Type {
+    enum Type {
         STANDARD, AUXILIARY
     }
 
-    public final int getIncomingVariableIndex()
+    final int getIncomingVariableIndex()
     {
         return getIncomingVariableIndex(getCoefficients().size());
     }
 
-    public final int getIncomingVariableIndex(int idx)
+    final int getIncomingVariableIndex(int idx)
     {
         int index = INDEX_NOT_ASSIGNED;
         List<BigDecimal> coefficients = getCoefficients();
@@ -51,11 +51,11 @@ public class ObjectiveFunctionTableauRow extends GenericTableauRow
         return index;
     }
 
-    public final boolean isOptimal() {
+    final boolean isOptimal() {
         return isOptimal(getCoefficients().size());
     }
 
-    public final boolean isOptimal(int idx) {
+    final boolean isOptimal(int idx) {
         return getIncomingVariableIndex(idx) == INDEX_NOT_ASSIGNED;
     }
 

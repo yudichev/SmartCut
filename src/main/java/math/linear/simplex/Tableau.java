@@ -141,7 +141,7 @@ public class Tableau
      * Returns rows of type EquationTableauRow only
      * @return a list of equation rows
      */
-    public final List<EquationTableauRow> getEquationRows() {
+    final List<EquationTableauRow> getEquationRows() {
         return this.rows.stream().filter(row -> row instanceof EquationTableauRow)
             .map(row -> (EquationTableauRow) row).collect(Collectors.toList());
     }
@@ -150,7 +150,7 @@ public class Tableau
      * Returns the index of the objective function row
      * @return the number of the row related to the objective function
      */
-    public final int getObjectiveFunctionIndex()
+    final int getObjectiveFunctionIndex()
     {
         return objectiveFunctionIndex;
     }
@@ -159,7 +159,7 @@ public class Tableau
      * Returns the index of the auxiliary function row
      * @return the number of the row related to the auxiliary function
      */
-    public final int getAuxiliaryFunctionIndex()
+    final int getAuxiliaryFunctionIndex()
     {
         return auxiliaryFunctionIndex;
     }
@@ -168,16 +168,8 @@ public class Tableau
      * Returns the row containing coefficients for objective function
      * @return
      */
-    public ObjectiveFunctionTableauRow getObjectiveFunction(){
+    ObjectiveFunctionTableauRow getObjectiveFunction(){
         return (ObjectiveFunctionTableauRow) rows.get(0);
-    }
-
-    /**
-     * Returns auxiliary function if present, returns empty otherwise.
-     * @return Optional for auxiliary function.
-     */
-    public Optional<ObjectiveFunctionTableauRow> getAuxiliaryFunction(){
-        return auxiliaryFunctionIndex == INDEX_NOT_ASSIGNED ? Optional.empty(): Optional.of((ObjectiveFunctionTableauRow) rows.get(auxiliaryFunctionIndex));
     }
 
 
@@ -190,7 +182,7 @@ public class Tableau
      * @param rowNumber the row number to pivot at
      * @param columnNumber the column number to pivot at
      */
-    public final void pivot(int rowNumber, int columnNumber) {
+    final void pivot(int rowNumber, int columnNumber) {
         if(this.rows.size() == 0) {
             throw new IllegalStateException("Tableau contains no data.");
         }
