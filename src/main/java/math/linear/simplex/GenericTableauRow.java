@@ -101,6 +101,11 @@ public abstract class GenericTableauRow
         return index;
     }
 
+    void cutTo(int idx) {
+        coefficients = coefficients.subList(0, idx);
+    }
+
+
     private BigDecimal restoreInteger(BigDecimal value){
         BigDecimal intValue = value.setScale(0, RoundingMode.HALF_UP);
         BigDecimal difference = value.subtract(intValue).abs().setScale(getPrecision()/2, RoundingMode.FLOOR);

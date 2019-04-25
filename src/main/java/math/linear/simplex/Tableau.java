@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class Tableau
@@ -90,6 +91,15 @@ public class Tableau
         this.numberOfProblemVariables = numberOfProblemVariables;
     }
 
+    void cutoffAuxiliary(){
+        if(auxiliaryFunctionIndex == INDEX_NOT_ASSIGNED) return;
+        rows.remove(auxiliaryFunctionIndex);
+        auxiliaryFunctionIndex = INDEX_NOT_ASSIGNED;
+        rows.stream().forEach(row ->  row.cutTo(auxiliaryVariablesFirstIndex));
+        rowSize = auxiliaryVariablesFirstIndex;
+        auxiliaryVariablesFirstIndex = INDEX_NOT_ASSIGNED;
+    }
+
 
     /**
      * Returns the lowest index of columns related to auxiliary variables
@@ -149,23 +159,27 @@ public class Tableau
         return auxiliaryFunctionIndex;
     }
 
+    /**
+     * Returns the row containing coefficients for objective function
+     * @return
+     */
+    public ObjectiveFunctionTableauRow getObjectiveFunction(){
+        return (ObjectiveFunctionTableauRow) rows.get(0);
+    }
+
+    /**
+     * Returns auxiliary function if present, returns empty otherwise.
+     * @return Optional for auxiliary function.
+     */
+    public Optional<ObjectiveFunctionTableauRow> getAuxiliaryFunction(){
+        return auxiliaryFunctionIndex == INDEX_NOT_ASSIGNED ? Optional.empty(): Optional.of((ObjectiveFunctionTableauRow) rows.get(auxiliaryFunctionIndex));
+    }
+
 
     int getNumberOfProblemVariables(){
         return numberOfProblemVariables;
     }
 
-    int insertAdditionalColumn(){
-        int index;
-        if(auxiliaryVariablesFirstIndex == INDEX_NOT_ASSIGNED){
-            this.rows.stream().forEach(row -> row.getCoefficients().add(BigDecimal.ZERO ));
-            index = getRowSize();
-        } else {
-            this.rows.stream().forEach(row -> row.getCoefficients().add(auxiliaryVariablesFirstIndex, BigDecimal.ZERO));
-            index = auxiliaryVariablesFirstIndex++;
-        }
-        setRowSize(getRowSize() + 1);
-        return index;
-    }
     /**
      * Performs pivot operation. The initial state of the tableau must contain at least one equation row and an objective function.
      * @param rowNumber the row number to pivot at

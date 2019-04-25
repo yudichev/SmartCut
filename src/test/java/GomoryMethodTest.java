@@ -97,5 +97,30 @@ public class GomoryMethodTest
             System.out.format("x(%1$d)=%2$.0f\n", k+1, values[k]);
         }
     }
+    @Test
+    public void testGomoryMehtod4(){
+        Problem problem = Problem.getInstance();
+        problem.setPrecision(16);
+        problem.addEquation(ProblemEquation.make(new double[]{3., 4.7, -0.2,0.,4.}, Relation.GREATER_OR_EQUAL, 86.d));
+        problem.addEquation(ProblemEquation.make(new double[]{1., 3., 0., 5., 1.2}, Relation.GREATER_OR_EQUAL, 65.d));
+        problem.addObjectiveFunction(ProblemObjectiveFunction.make(new double[]{1., 0.2, 3.5, 2.1, 4.7,}, ObjectiveFunctionType.MINIMUM));
+
+        TableauBuilder tableauBuilder = TableauBuilder.getInstance();
+        tableauBuilder.setProbliem(problem);
+        Tableau tableau = tableauBuilder.build();
+
+        Tableau solved = SimplexMethod.applyTwoPhases(tableau);
+
+        Tableau solvedInt = GomoryMethod.applyTo(solved);
+
+
+        Assert.assertArrayEquals(new double[]{0,22,0,0,0},solvedInt.getSolution(),0.1);
+
+        System.out.println("\n-----------------------------------");
+        double[] values = solvedInt.getSolution();
+        for(int k = 0; k < values.length; k++){
+            System.out.format("x(%1$d)=%2$.0f\n", k+1, values[k]);
+        }
+    }
 
 }

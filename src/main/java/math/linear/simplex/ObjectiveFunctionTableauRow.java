@@ -58,4 +58,5 @@ public class ObjectiveFunctionTableauRow extends GenericTableauRow
     public final boolean isOptimal(int idx) {
         return getIncomingVariableIndex(idx) == INDEX_NOT_ASSIGNED;
     }
+
 }

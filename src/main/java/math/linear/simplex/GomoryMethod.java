@@ -11,10 +11,11 @@ public class GomoryMethod {
 
     public static Tableau applyTo(Tableau tableau)
     {
+        tableau.cutoffAuxiliary();
         List<BigDecimal> solution = tableau.getSolutionBigDecimal();
         int biggestFractionIndex = getBiggestFractionIndex(solution, tableau.getPrecision());
 
-        while(biggestFractionIndex != NOT_ASSIGNED) {
+        while(biggestFractionIndex != NOT_ASSIGNED ) {
             getCuttingPlane(tableau, biggestFractionIndex);
             solution = tableau.getSolutionBigDecimal();
             biggestFractionIndex = getBiggestFractionIndex(solution, tableau.getPrecision());
@@ -30,15 +31,21 @@ public class GomoryMethod {
         List<BigDecimal> fractions = equation.getCoefficients().stream().sequential()
             .map(coeff -> coeff.subtract(coeff.setScale(0, RoundingMode.FLOOR)))
             .collect(Collectors.toList());
-        EquationTableauRow cuttingRow = new EquationTableauRow(0,fractions);
-        int rowIdx = tableau.addCuttingRow(cuttingRow);
-        int additionalColumnIdx = tableau.insertAdditionalColumn();
-        cuttingRow.getCoefficients().set(additionalColumnIdx,BigDecimal.ONE.negate());
+        fractions.add(BigDecimal.ONE.negate());
+        EquationTableauRow cuttingRow = new EquationTableauRow(equation.getSize() + 1,fractions);
 
-        int columnIdx = getIncomingIndex(cuttingRow, (ObjectiveFunctionTableauRow) tableau.getRows().get(0),additionalColumnIdx);
+
+        tableau.getRows().stream().forEach(row -> row.getCoefficients().add(BigDecimal.ZERO));
+        tableau.setRowSize(tableau.getRowSize() + 1);
+        tableau.addCuttingRow(cuttingRow);
+
+        int auxilieryFunctionIndex = tableau.getAuxiliaryFunctionIndex();
+
+        int rowIdx = auxilieryFunctionIndex < 0 ? tableau.getRows().size() - 1 : tableau.getAuxiliaryFunctionIndex() - 1;
+        int columnIdx = getIncomingIndex(tableau,rowIdx);
         tableau.pivot(rowIdx, columnIdx);
 
-        //SimplexMethod.applySinglePhase(tableau);
+       //SimplexMethod.applySinglePhase(tableau);
     }
 
     private static int getBiggestFractionIndex(List<BigDecimal> solution, int precision) {
@@ -57,14 +64,13 @@ public class GomoryMethod {
         return index;
     }
 
-    private static int getIncomingIndex(EquationTableauRow cuttingRow, ObjectiveFunctionTableauRow objFunc, int exIdx) {
+    private static int getIncomingIndex(EquationTableauRow cuttingRow, ObjectiveFunctionTableauRow objFunc) {
         int index = NOT_ASSIGNED;
         int precision = cuttingRow.getPrecision();
         List<BigDecimal> cuttingRowCoefficients = cuttingRow.getCoefficients();
         List<BigDecimal> objectiveFunctionCoefficients = objFunc.getCoefficients();
         BigDecimal minValue = null;
-        for(int k = 1; k < cuttingRowCoefficients.size() - 1; k++){
-            if(k == exIdx) continue;
+        for(int k = 1; k < cuttingRow.getSize() - 1; k++){
             BigDecimal crValue = cuttingRowCoefficients.get(k).abs();
             BigDecimal ofValue = objectiveFunctionCoefficients.get(k).abs();
             if(crValue.signum() != 0) {
@@ -76,6 +82,56 @@ public class GomoryMethod {
                     minValue = ratio;
                     index = k;
                 }
+            }
+        }
+
+        return index;
+    }
+
+    private static int getIncomingIndex(Tableau tableux, int cuttingRowIndex){
+        int precision = tableux.getPrecision();
+        BigDecimal minRatio = null;
+        int index = NOT_ASSIGNED;
+        /*
+        for(int k = 1; k < tableux.getRowSize() ; k++){
+            int outcomingIndex = SimplexMethod.getOutcomingIndex(k,tableux.getEquationRows(),precision);
+            if(outcomingIndex == cuttingRowIndex) return k;
+
+            if(outcomingIndex == NOT_ASSIGNED) continue;
+            List<BigDecimal> coeffs = tableux.getRows().get(outcomingIndex).getCoefficients();
+            BigDecimal ratio = coeffs.get(0).divide(coeffs.get(k),precision/2,RoundingMode.HALF_UP);
+            if(minRatio == null || (ratio.signum() > 0 && ratio.compareTo(minRatio) < 0)) {
+                minRatio = ratio;
+                index = k;
+            }
+
+        }
+        */
+        /*
+        if(index == NOT_ASSIGNED){
+            GenericTableauRow cuttingRow  = tableux.getRows().get(cuttingRowIndex);
+            List<BigDecimal> coeffs = cuttingRow.getCoefficients();
+            BigDecimal maxValue = null;
+            for(int k = 1; k < cuttingRow.getSize(); k++){
+                BigDecimal currentValue = coeffs.get(k);
+                if(maxValue == null || currentValue.compareTo(maxValue) > 0) {
+                    maxValue = currentValue;
+                    index = k;
+                }
+            }
+        }
+        */
+
+        ObjectiveFunctionTableauRow objFunc = tableux.getObjectiveFunction();
+        GenericTableauRow cutRow = tableux.getRows().get(cuttingRowIndex);
+        for(int k = 1; k < cutRow.getSize() - 1 ; k++){
+            BigDecimal cutCoeff = cutRow.getCoefficients().get(k);
+            if(cutCoeff.signum() == 0) continue;
+            BigDecimal objfCoeff = objFunc.getCoefficients().get(k);
+            BigDecimal ratio = objfCoeff.divide(cutCoeff,precision/2,RoundingMode.HALF_UP);
+            if(minRatio == null || ratio.compareTo(minRatio) < 0){
+                minRatio = ratio;
+                index = k;
             }
         }
 

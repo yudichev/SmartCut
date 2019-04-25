@@ -20,7 +20,7 @@ public class SimplexMethod
         ObjectiveFunctionTableauRow objFuncRow = (ObjectiveFunctionTableauRow) tableau.getRows().get(objFuncIdx);
         List<EquationTableauRow> equations = tableau.getEquationRows();
         int precision = tableau.getPrecision();
-        while (!objFuncRow.isOptimal(tableau.getAuxiliaryFunctionIndex())) {
+        while (!objFuncRow.isOptimal()) {
             int incomingIndex = objFuncRow.getIncomingVariableIndex();
             int outcomingIndex = getOutcomingIndex(incomingIndex, equations, precision);
             tableau.pivot(outcomingIndex, incomingIndex);
@@ -37,7 +37,7 @@ public class SimplexMethod
             .filter(coeff-> coeff.signum() == 0).count() > 0L;
     }
 
-    private static int getOutcomingIndex(int incomingIndex, List<EquationTableauRow> equations, int precision) {
+    static int getOutcomingIndex(int incomingIndex, List<EquationTableauRow> equations, int precision) {
         int outcomingIndex = NOT_ASSIGNED;
         BigDecimal minRatio = null;
         for(int k = 0; k < equations.size(); k++) {
