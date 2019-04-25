@@ -15,7 +15,15 @@ public class SimplexMethod
 {
     private static int NOT_ASSIGNED = -1;
 
-    public static Tableau applySinglePhase(Tableau tableau){
+    public static Tableau applyTo(Tableau tableau) {
+        if(tableau.isTwoPahses()){
+            return applyTwoPhases(tableau);
+        } else {
+            return applySinglePhase(tableau);
+        }
+    }
+
+    static Tableau applySinglePhase(Tableau tableau){
         int objFuncIdx = tableau.getObjectiveFunctionIndex();
         ObjectiveFunctionTableauRow objFuncRow = (ObjectiveFunctionTableauRow) tableau.getRows().get(objFuncIdx);
         List<EquationTableauRow> equations = tableau.getEquationRows();
@@ -58,7 +66,7 @@ public class SimplexMethod
         return outcomingIndex;
     }
 
-    public static Tableau applyTwoPhases(Tableau tableau){
+    static Tableau applyTwoPhases(Tableau tableau){
         int auxFuncIdx = tableau.getAuxiliaryFunctionIndex();
         ObjectiveFunctionTableauRow auxFuncRow = (ObjectiveFunctionTableauRow) tableau.getRows().get(auxFuncIdx);
         List<EquationTableauRow> equations = tableau.getEquationRows();

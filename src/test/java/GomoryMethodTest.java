@@ -14,6 +14,10 @@ import math.linear.simplex.TableauBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.math.RoundingMode;
+import java.time.Duration;
+import java.time.Instant;
+
 public class GomoryMethodTest
 {
     @Test
@@ -28,7 +32,7 @@ public class GomoryMethodTest
         tableauBuilder.setProbliem(problem);
         Tableau tableau = tableauBuilder.build();
 
-        Tableau solved = SimplexMethod.applySinglePhase(tableau);
+        Tableau solved = SimplexMethod.applyTo(tableau);
 
         Tableau solvedInt = GomoryMethod.applyTo(solved);
 
@@ -55,7 +59,7 @@ public class GomoryMethodTest
         tableauBuilder.setProbliem(problem);
         Tableau tableau = tableauBuilder.build();
 
-        Tableau solved = SimplexMethod.applyTwoPhases(tableau);
+        Tableau solved = SimplexMethod.applyTo(tableau);
 
         Tableau solvedInt = GomoryMethod.applyTo(solved);
 
@@ -84,7 +88,7 @@ public class GomoryMethodTest
         tableauBuilder.setProbliem(problem);
         Tableau tableau = tableauBuilder.build();
 
-        Tableau solved = SimplexMethod.applyTwoPhases(tableau);
+        Tableau solved = SimplexMethod.applyTo(tableau);
 
         Tableau solvedInt = GomoryMethod.applyTo(solved);
 
@@ -109,7 +113,7 @@ public class GomoryMethodTest
         tableauBuilder.setProbliem(problem);
         Tableau tableau = tableauBuilder.build();
 
-        Tableau solved = SimplexMethod.applyTwoPhases(tableau);
+        Tableau solved = SimplexMethod.applyTo(tableau);
 
         Tableau solvedInt = GomoryMethod.applyTo(solved);
 
@@ -122,5 +126,41 @@ public class GomoryMethodTest
             System.out.format("x(%1$d)=%2$.0f\n", k+1, values[k]);
         }
     }
+
+    @Test
+    public void testGomoryMethod5(){
+        Instant start = Instant.now();
+        Problem problem = Problem.getInstance();
+        problem.setPrecision(32);
+        problem.addEquation(ProblemEquation.make(new double[]{3., 1, 2, 4.}, Relation.GREATER_OR_EQUAL, 34d));
+        problem.addEquation(ProblemEquation.make(new double[]{7., 6., 15., 34.}, Relation.GREATER_OR_EQUAL, 56.d));
+        problem.addEquation(ProblemEquation.make(new double[]{1., 3., -1., 8.}, Relation.LESS_OR_EQUAL, 29d));
+        problem.addEquation(ProblemEquation.make(new double[]{3., 9, 7., 16.}, Relation.GREATER_OR_EQUAL, 45d));
+        problem.addEquation(ProblemEquation.make(new double[]{24., 7, 15., 9}, Relation.GREATER_OR_EQUAL, 80.d));
+        problem.addEquation(ProblemEquation.make(new double[]{3, 1., 2., -3}, Relation.LESS_OR_EQUAL, 16d));
+        problem.addEquation(ProblemEquation.make(new double[]{5., 1, 2, 1}, Relation.GREATER_OR_EQUAL, 4d));
+        problem.addObjectiveFunction(ProblemObjectiveFunction.make(new double[]{4., 6., 1.,6.}, ObjectiveFunctionType.MINIMUM));
+
+        TableauBuilder tableauBuilder = TableauBuilder.getInstance();
+        tableauBuilder.setProbliem(problem);
+        Tableau tableau = tableauBuilder.build();
+
+        Tableau solved = SimplexMethod.applyTo(tableau);
+
+        Tableau solvedInt = GomoryMethod.applyTo(solved);
+
+        System.out.println("\n-----------------------------------");
+        double[] values = solvedInt.getSolution();
+        for(int k = 0; k < values.length; k++){
+            System.out.format("x(%1$d)=%2$.0f\n", k+1, values[k]);
+        }
+
+       Assert.assertArrayEquals(new double[]{0.d,0.d,11.d,3.d},values,0.01);
+
+        Instant end = Instant.now();
+        System.out.println("Duration " + Duration.between(start,end).toMillis() + "ms");
+
+    }
+
 
 }

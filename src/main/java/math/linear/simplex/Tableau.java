@@ -34,6 +34,11 @@ public class Tableau
     }
 
 
+    boolean isTwoPahses(){
+       return auxiliaryFunctionIndex != INDEX_NOT_ASSIGNED;
+    }
+
+
     void addRow(GenericTableauRow row) {
         int size = row.getSize();
         if(rowSize == 0) {

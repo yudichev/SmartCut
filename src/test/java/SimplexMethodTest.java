@@ -33,7 +33,7 @@ public class SimplexMethodTest
         tableauBuilder.setProbliem(problem);
         Tableau tableau = tableauBuilder.build();
 
-        Tableau solved = SimplexMethod.applySinglePhase(tableau);
+        Tableau solved = SimplexMethod.applyTo(tableau);
 
         System.out.println("\n-----------------------------------");
         double[] values = solved.getSolution();
@@ -62,7 +62,7 @@ public class SimplexMethodTest
         tableauBuilder.setProbliem(problem);
         Tableau tableau = tableauBuilder.build();
 
-        Tableau solved = SimplexMethod.applySinglePhase(tableau);
+        Tableau solved = SimplexMethod.applyTo(tableau);
 
         System.out.println("\n-----------------------------------");
         double[] values = solved.getSolution();
@@ -93,7 +93,7 @@ public class SimplexMethodTest
         tableauBuilder.setProbliem(problem);
         Tableau tableau = tableauBuilder.build();
 
-        Tableau solved = SimplexMethod.applySinglePhase(tableau);
+        Tableau solved = SimplexMethod.applyTo(tableau);
 
         System.out.println("\n-----------------------------------");
         double[] values = solved.getSolution();
@@ -119,7 +119,7 @@ public class SimplexMethodTest
         tableauBuilder.setProbliem(problem);
         Tableau tableau = tableauBuilder.build();
 
-        Tableau solved = SimplexMethod.applySinglePhase(tableau);
+        Tableau solved = SimplexMethod.applyTo(tableau);
 
         System.out.println("\n-----------------------------------");
         double[] values = solved.getSolution();
@@ -144,7 +144,7 @@ public class SimplexMethodTest
 
         try
         {
-            SimplexMethod.applySinglePhase(tableau);
+            SimplexMethod.applyTo(tableau);
             Assert.fail("Exception 'Solution does not exist' must be thrown here.");
         }catch(RuntimeException ex){
             Assert.assertEquals("Solution does not exist.", ex.getMessage());
@@ -164,7 +164,7 @@ public class SimplexMethodTest
         tableauBuilder.setProbliem(problem);
         Tableau tableau = tableauBuilder.build();
 
-        Tableau solved = SimplexMethod.applyTwoPhases(tableau);
+        Tableau solved = SimplexMethod.applyTo(tableau);
 
         System.out.println("\n-----------------------------------");
         double[] values = solved.getSolution();
@@ -196,7 +196,7 @@ public class SimplexMethodTest
         tableauBuilder.setProbliem(problem);
         Tableau tableau = tableauBuilder.build();
 
-        Tableau solved = SimplexMethod.applyTwoPhases(tableau);
+        Tableau solved = SimplexMethod.applyTo(tableau);
 
         System.out.println("\n-----------------------------------");
         double[] values = solved.getSolution();
@@ -228,7 +228,7 @@ public class SimplexMethodTest
         tableauBuilder.setProbliem(problem);
         Tableau tableau = tableauBuilder.build();
 
-        Tableau solved = SimplexMethod.applyTwoPhases(tableau);
+        Tableau solved = SimplexMethod.applyTo(tableau);
 
         System.out.println("\n-----------------------------------");
         double[] values = solved.getSolution();
@@ -260,7 +260,7 @@ public class SimplexMethodTest
         tableauBuilder.setProbliem(problem);
         Tableau tableau = tableauBuilder.build();
 
-        Tableau solved = SimplexMethod.applyTwoPhases(tableau);
+        Tableau solved = SimplexMethod.applyTo(tableau);
 
         System.out.println("\n-----------------------------------");
         double[] values = solved.getSolution();
@@ -296,7 +296,7 @@ public class SimplexMethodTest
         tableauBuilder.setProbliem(problem);
         Tableau tableau = tableauBuilder.build();
 
-        Tableau solved = SimplexMethod.applyTwoPhases(tableau);
+        Tableau solved = SimplexMethod.applyTo(tableau);
 
         System.out.println("\n-----------------------------------");
         double[] values = solved.getSolution();
@@ -330,7 +330,7 @@ public class SimplexMethodTest
         tableauBuilder.setProbliem(problem);
         Tableau tableau = tableauBuilder.build();
 
-        Tableau solved = SimplexMethod.applyTwoPhases(tableau);
+        Tableau solved = SimplexMethod.applyTo(tableau);
 
         System.out.println("\n-----------------------------------");
         double[] values = solved.getSolution();
@@ -368,7 +368,7 @@ public class SimplexMethodTest
 
         try
         {
-            SimplexMethod.applyTwoPhases(tableau);
+            SimplexMethod.applyTo(tableau);
             Assert.fail("Exception 'The problem has no base plane.' must be throw here");
         } catch(RuntimeException ex){
             Assert.assertEquals("The problem has no base plane.", ex.getMessage());
