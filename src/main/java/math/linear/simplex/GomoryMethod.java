@@ -85,4 +85,32 @@ public class GomoryMethod {
         return index;
     }
 
+    private static int[] getIncomingIndex2(Tableau tableux, int cuttingRowIndex){
+        int precision = tableux.getPrecision();
+        BigDecimal minRatio = null;
+        int index = NOT_ASSIGNED;
+
+        GenericTableauRow cutRow = tableux.getRows().get(cuttingRowIndex);
+        int oind = NOT_ASSIGNED;
+        int outIndex = NOT_ASSIGNED;
+        for(int k = 1; k < cutRow.getSize() - 1 ; k++){
+            oind = tableux.getOutcomingIndex(k);
+            if(oind == NOT_ASSIGNED) continue;
+            if(cuttingRowIndex == oind) return new int[]{cuttingRowIndex, k};
+            EquationTableauRow equation = (EquationTableauRow) tableux.getRows().get(oind);
+            if(equation.getBasicVariableIndex() == k) continue;
+            BigDecimal coeff = equation.getCoefficients().get(k);
+            if(coeff.signum() == 0) continue;
+            BigDecimal freeCoeff = equation.getCoefficients().get(0);
+            BigDecimal ratio = freeCoeff.divide(coeff, precision/2, RoundingMode.HALF_UP);
+            if(minRatio == null || (ratio.signum() > 0 && ratio.compareTo(minRatio) < 0) ) {
+                minRatio = ratio;
+                index = k;
+                outIndex = oind;
+            }
+        }
+
+        return new int[]{outIndex, index};
+    }
+
 }

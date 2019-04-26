@@ -172,6 +172,27 @@ public class Tableau
         return (ObjectiveFunctionTableauRow) rows.get(0);
     }
 
+    int getOutcomingIndex(int incomingIndex) {
+        int outcomingIndex = INDEX_NOT_ASSIGNED;
+        BigDecimal minRatio = null;
+        List<EquationTableauRow> equations = getEquationRows();
+        for(int k = 0; k < equations.size(); k++) {
+            EquationTableauRow eq = equations.get(k);
+            List<BigDecimal> coefficients = eq.getCoefficients();
+            BigDecimal currentCoeff = coefficients.get(incomingIndex);
+            BigDecimal freeCoeff = coefficients.get(0);
+
+            MathContext mathContext = new MathContext(precision);
+            if(currentCoeff.signum() > 0){
+                BigDecimal ratio = freeCoeff.divide(currentCoeff,mathContext);
+                if(minRatio == null || (ratio.signum() > 0 && minRatio.compareTo(ratio) > 0)){
+                    minRatio = ratio;
+                    outcomingIndex = k + 1;
+                }
+            }
+        }
+        return outcomingIndex;
+    }
 
     int getNumberOfProblemVariables(){
         return numberOfProblemVariables;
@@ -198,7 +219,7 @@ public class Tableau
 
 
         if(columnNumber < 0 || columnNumber > rowSize) {
-            throw new IllegalArgumentException("Column number is out of range.");
+            throw new IllegalArgumentException("Column number is out of range: " + columnNumber);
         }
 
         GenericTableauRow pivotRow = this.rows.get(rowNumber);
