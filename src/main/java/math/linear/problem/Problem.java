@@ -1,5 +1,7 @@
 package math.linear.problem;
 
+import math.linear.basic.MathUtils;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -8,6 +10,7 @@ public class Problem {
     private List<ProblemEquation> equations;
     private ProblemObjectiveFunction objectiveFunction;
     private int precision = 16;
+    private int numberOfVariables = MathUtils.NOT_ASSIGNED;
 
     private Problem() {
         equations = new ArrayList<>();
@@ -19,10 +22,24 @@ public class Problem {
 
     public void addEquation(ProblemEquation equation){
         this.equations.add(equation);
+        if(numberOfVariables == MathUtils.NOT_ASSIGNED){
+            numberOfVariables = equation.getLength() - 1;
+        }
+    }
+
+    public void addAllEquations(List<ProblemEquation> equations){
+        this.equations.addAll(equations);
+        if(numberOfVariables == MathUtils.NOT_ASSIGNED){
+            numberOfVariables = equations.get(0).getLength() - 1;
+        }
     }
 
     public void addObjectiveFunction(ProblemObjectiveFunction objectiveFunction){
         this.objectiveFunction = objectiveFunction;
+    }
+
+    public int getNumberOfVariables(){
+        return numberOfVariables;
     }
 
     public List<ProblemEquation> getEquations(){
@@ -48,7 +65,7 @@ public class Problem {
         if(objectiveFunction == null){
             throw new IllegalStateException("No objective function assigned");
         }
-        int length = -1;
+        int length = MathUtils.NOT_ASSIGNED;
         for(ProblemEquation eq : equations){
             if(length == -1) {
                 length = eq.getLength();

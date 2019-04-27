@@ -54,6 +54,11 @@ public class ProblemObjectiveFunction
         return new ProblemObjectiveFunction(valuesExtended, type);
     }
 
+    public ProblemObjectiveFunction copy(){
+        double[] coeffs = getCoefficients();
+        return new ProblemObjectiveFunction(coeffs, getType());
+    }
+
 
 
 }
