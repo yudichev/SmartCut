@@ -42,7 +42,7 @@ public class GomoryMethodTest
         System.out.println("\n-----------------------------------");
         double[] values = solvedInt.getSolution();
         for(int k = 0; k < values.length; k++){
-            System.out.format("x(%1$d)=%2$.0f\n", k+1, values[k]);
+            System.out.format("x(%1$d)=%2$.2f\n", k+1, values[k]);
         }
     }
 

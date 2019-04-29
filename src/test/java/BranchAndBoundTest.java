@@ -24,15 +24,15 @@ public class BranchAndBoundTest {
 
         Tableau solvedInt = BranchAndBoundMethod.applyTo(problem, solved);
 
-/*
-        Assert.assertArrayEquals(new double[]{0,53,19,1},solvedInt.getSolution(),0.1);
+
+        //Assert.assertArrayEquals(new double[]{0,53,19,1},solvedInt.getSolution(),0.1);
 
         System.out.println("\n-----------------------------------");
         double[] values = solvedInt.getSolution();
         for(int k = 0; k < values.length; k++){
             System.out.format("x(%1$d)=%2$.0f\n", k+1, values[k]);
         }
-        */
+
     }
 
 }

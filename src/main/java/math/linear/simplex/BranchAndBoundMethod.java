@@ -4,6 +4,7 @@ import math.linear.basic.MathUtils;
 import math.linear.basic.Relation;
 import math.linear.problem.Problem;
 import math.linear.problem.ProblemEquation;
+import math.linear.problem.ProblemObjectiveFunction;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -18,10 +19,11 @@ public class BranchAndBoundMethod {
         int precision = tableau.getPrecision();
         List<BigDecimal> solution = tableau.getSolutionBigDecimal();
 
-        int nonIntegerIndex = MathUtils.NOT_ASSIGNED;
+        int nonIntegerIndex;
         BigDecimal value = null;
-
+        Tableau nextTableau = tableau;
         do {
+            nonIntegerIndex = MathUtils.NOT_ASSIGNED;
             for (int k = 1; k < solution.size(); k++) {
                 value = solution.get(k);
                 if (!MathUtils.isInteger(value, precision)) {
@@ -31,12 +33,12 @@ public class BranchAndBoundMethod {
             }
 
             if (nonIntegerIndex == MathUtils.NOT_ASSIGNED) {
-                return tableau;
+                return nextTableau;
             }
 
 
             Iteration nextResult = getNextStep(nextProblem, precision, nonIntegerIndex, value);
-            Tableau nextTableau = nextResult.solution;
+            nextTableau = nextResult.solution;
             nextProblem = nextResult.problem;
             if (nextTableau != null)
                 solution = nextTableau.getSolutionBigDecimal();
@@ -104,7 +106,10 @@ public class BranchAndBoundMethod {
         if(solution1 != null && solution2 != null){
             BigDecimal free1 = solution1.getSolutionBigDecimal().get(0);
             BigDecimal free2 = solution2.getSolutionBigDecimal().get(0);
-            if(free1.compareTo(free2) > 0) {
+
+            double dfree1 = evaluateObjective(problem.getObjectiveFunction(),solution1.getSolution());
+            double dfree2 = evaluateObjective(problem.getObjectiveFunction(),solution2.getSolution());
+            if(Double.compare(dfree1,dfree2) > 0) {
                 return new Iteration(problem1,solution1);
             } else {
                 return new Iteration(problem2, solution2);
@@ -112,6 +117,15 @@ public class BranchAndBoundMethod {
         }
 
         return null;
+    }
+
+    private static double evaluateObjective(ProblemObjectiveFunction objFunc, double[] solution){
+        double[] objFunCoeff = objFunc.getCoefficients();
+        double result = 0.;
+        for(int k = 1; k < solution.length; k++){
+            result += objFunCoeff[k] * solution[k];
+        }
+        return result;
     }
 
     private static class Iteration {
