@@ -1,6 +1,7 @@
 package math.linear.simplex;
 
 import math.linear.basic.MathUtils;
+import math.linear.basic.ObjectiveFunctionType;
 import math.linear.basic.Relation;
 import math.linear.problem.Problem;
 import math.linear.problem.ProblemEquation;
@@ -117,7 +118,10 @@ public class BranchAndBoundMethod {
 
             double dfree1 = evaluateObjective(problem.getObjectiveFunction(),solution1.getSolution());
             double dfree2 = evaluateObjective(problem.getObjectiveFunction(),solution2.getSolution());
-            if(Double.compare(dfree1,dfree2) > 0) {
+
+            ObjectiveFunctionType type = problem.getObjectiveFunction().getType();
+
+            if((type.isFindMaximum() && Double.compare(dfree1,dfree2) > 0) || (type.isFindMinimum() && Double.compare(dfree1,dfree2) < 0)) {
                 return new Iteration(problem1,solution1);
             } else {
                 return new Iteration(problem2, solution2);
