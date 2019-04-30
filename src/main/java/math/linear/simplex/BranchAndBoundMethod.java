@@ -21,14 +21,22 @@ public class BranchAndBoundMethod {
 
         int nonIntegerIndex;
         BigDecimal value = null;
+
         Tableau nextTableau = tableau;
         do {
+            BigDecimal maxFraction = null;
             nonIntegerIndex = MathUtils.NOT_ASSIGNED;
+            BigDecimal nextValue = null;
             for (int k = 1; k < solution.size(); k++) {
                 value = solution.get(k);
                 if (!MathUtils.isInteger(value, precision)) {
-                    nonIntegerIndex = k;
-                    break;
+                    BigDecimal fraction = MathUtils.getFraction(value, precision);
+                    if(maxFraction == null || fraction.compareTo(maxFraction) >= 0)
+                    {
+                        nonIntegerIndex = k;
+                        maxFraction = fraction;
+                        nextValue = value;
+                    }
                 }
             }
 
@@ -37,7 +45,7 @@ public class BranchAndBoundMethod {
             }
 
 
-            Iteration nextResult = getNextStep(nextProblem, precision, nonIntegerIndex, value);
+            Iteration nextResult = getNextStep(nextProblem, precision, nonIntegerIndex, nextValue);
             nextTableau = nextResult.solution;
             nextProblem = nextResult.problem;
             if (nextTableau != null)
@@ -122,8 +130,8 @@ public class BranchAndBoundMethod {
     private static double evaluateObjective(ProblemObjectiveFunction objFunc, double[] solution){
         double[] objFunCoeff = objFunc.getCoefficients();
         double result = 0.;
-        for(int k = 1; k < solution.length; k++){
-            result += objFunCoeff[k] * solution[k];
+        for(int k = 1; k <= solution.length; k++){
+            result += objFunCoeff[k] * solution[k - 1];
         }
         return result;
     }
